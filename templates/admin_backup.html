@@ -475,34 +475,10 @@
           },
 
           async setupGoogleDrive() {
-            try {
-              this.loading = true;
-              const response = await fetch('/api/backup/google-drive/setup', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ credentials_file: 'credentials.json' }),
-              });
-
-              const data = await response.json();
-              if (data.success) {
-                this.showAlert('Google Drive configurado com sucesso!', 'success');
-                this.loadStats();
-              } else {
-                this.showAlert(
-                  data.error || 'Erro ao configurar Google Drive. Verifique se o arquivo credentials.json existe.',
-                  'error'
-                );
-              }
-            } catch (error) {
-              this.showAlert(
-                'Erro ao configurar Google Drive. Verifique se o arquivo credentials.json existe na raiz do projeto.',
-                'error'
-              );
-            } finally {
-              this.loading = false;
-            }
+            this.showAlert(
+              'Google Drive temporariamente desabilitado devido a bloqueio de conta. Os backups estão sendo salvos localmente com sucesso.',
+              'info'
+            );
           },
 
           async saveConfig() {

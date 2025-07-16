@@ -4,11 +4,11 @@
     "username": "matheus.gallina",
     "name": "Matheus Gallina",
     "email": "matheus@velozfibra.com",
-    "password_hash": "pbkdf2:sha256:600000$TaYC5Pwf79QfrnTL$05a09638ef29e33f344cdf945ed2f65f292b8c3c4e5807fd23805332b8937b80",
+    "password_hash": "pbkdf2:sha256:600000$cxdyNLhB267b6bO8$bcb25a84f5aa97bf66efba132a4a274385653ac5fa2e54dc32f299635a04b6ac",
     "role": "admin",
     "created_at": "2025-07-16T13:32:43.121386",
     "last_login": "2025-07-16T15:18:03.394604",
     "is_active": true,
-    "updated_at": "2025-07-16T16:04:37.855659"
+    "updated_at": "2025-07-16T16:30:18.762072"
   }
 ]
