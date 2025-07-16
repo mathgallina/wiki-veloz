@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log de Atividades - Wiki Veloz Fibra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  </head>
+  <body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white shadow-lg">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center space-x-4">
+            <a href="/" class="text-2xl font-bold">VELOZ FIBRA</a>
+            <span class="text-blue-200">|</span>
+            <span class="text-lg">Log de Atividades</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <span class="text-blue-200">Olá, {{ current_user.name }}</span>
+            <a href="/logout" class="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg transition-colors">
+              <i class="fas fa-sign-out-alt mr-2"></i>Sair
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md">
+      <div class="container mx-auto px-4 py-3">
+        <div class="flex space-x-6">
+          <a href="/" class="text-gray-600 hover:text-blue-600 transition-colors">
+            <i class="fas fa-home mr-2"></i>Início
+          </a>
+          <a href="/admin/users" class="text-gray-600 hover:text-blue-600 transition-colors">
+            <i class="fas fa-users mr-2"></i>Usuários
+          </a>
+          <a href="/admin/analytics" class="text-gray-600 hover:text-blue-600 transition-colors">
+            <i class="fas fa-chart-bar mr-2"></i>Analytics
+          </a>
+          <a href="/admin/notifications" class="text-gray-600 hover:text-blue-600 transition-colors">
+            <i class="fas fa-bell mr-2"></i>Notificações
+          </a>
+          <a href="/admin/backup" class="text-gray-600 hover:text-blue-600 transition-colors">
+            <i class="fas fa-database mr-2"></i>Backup
+          </a>
+          <a href="/admin/activity" class="text-blue-600 font-semibold">
+            <i class="fas fa-history mr-2"></i>Atividades
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">
+          <i class="fas fa-history mr-3 text-blue-600"></i>
+          Log de Atividades
+        </h1>
+        <p class="text-gray-600">Visualize todas as atividades realizadas no sistema</p>
+      </div>
+
+      <!-- Activities List -->
+      <div class="bg-white rounded-lg shadow-md">
+        <div class="p-6 border-b border-gray-200">
+          <h2 class="text-xl font-semibold text-gray-800">Atividades Recentes</h2>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Usuário
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Ação </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Detalhes
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> IP </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Data/Hora
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              {% for activity in activities %}
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">{{ activity.user_id }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                  >
+                    {{ activity.action }}
+                  </span>
+                </td>
+                <td class="px-6 py-4">
+                  <div class="text-sm text-gray-900">
+                    {% if activity.details %} {{ activity.details }} {% else %}
+                    <span class="text-gray-500">Sem detalhes</span>
+                    {% endif %}
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> {{ activity.ip_address }} </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> {{ activity.timestamp }} </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        {% if not activities %}
+        <div class="p-8 text-center">
+          <i class="fas fa-history text-gray-400 text-4xl mb-4"></i>
+          <p class="text-gray-500">Nenhuma atividade registrada ainda.</p>
+        </div>
+        {% endif %}
+      </div>
+    </main>
+  </body>
+</html>

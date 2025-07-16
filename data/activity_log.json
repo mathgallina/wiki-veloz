@@ -103,5 +103,33 @@
     "details": "Acesso à API de páginas",
     "timestamp": "2025-07-16T15:29:37.666768",
     "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:31:23.018539",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:31:29.782318",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:31:33.885927",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:35:24.324369",
+    "ip_address": "127.0.0.1"
   }
 ]
