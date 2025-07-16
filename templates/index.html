@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki Veloz Fibra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+        .markdown-content h1 { @apply text-3xl font-bold mb-4 text-gray-800; }
+        .markdown-content h2 { @apply text-2xl font-semibold mb-3 text-gray-700 mt-6; }
+        .markdown-content h3 { @apply text-xl font-semibold mb-2 text-gray-600 mt-4; }
+        .markdown-content p { @apply mb-3 text-gray-600 leading-relaxed; }
+        .markdown-content ul { @apply mb-3 pl-6; }
+        .markdown-content li { @apply mb-1 text-gray-600; }
+        .markdown-content strong { @apply font-semibold text-gray-800; }
+        .markdown-content em { @apply italic text-gray-700; }
+        .markdown-content blockquote { @apply border-l-4 border-blue-500 pl-4 italic text-gray-600 my-4; }
+        .markdown-content code { @apply bg-gray-100 px-2 py-1 rounded text-sm font-mono; }
+        .markdown-content pre { @apply bg-gray-100 p-4 rounded-lg overflow-x-auto my-4; }
+    </style>
+</head>
+<body class="bg-gray-50" x-data="wikiApp()">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div class="flex items-center ml-4 lg:ml-0">
+                        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-wifi text-white text-sm"></i>
+                        </div>
+                        <h1 class="ml-3 text-xl font-bold text-gray-900">Wiki Veloz Fibra</h1>
+                    </div>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="flex-1 max-w-lg mx-4 hidden md:block">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            placeholder="Pesquisar páginas..." 
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            x-model="searchQuery"
+                            @input="searchPages()"
+                        >
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <button @click="showLoginModal = true" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-user-circle text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex h-screen bg-gray-50">
+        <!-- Sidebar -->
+        <div class="sidebar-transition fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform lg:translate-x-0 lg:static lg:inset-0" 
+             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
+            
+            <div class="flex items-center justify-between h-16 px-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-900">Navegação</h2>
+                <button @click="sidebarOpen = false" class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <nav class="mt-5 px-2">
+                <div class="space-y-1">
+                    <template x-for="category in categories" :key="category">
+                        <div>
+                            <button @click="selectCategory(category)" 
+                                    class="w-full text-left px-3 py-2 text-sm font-medium rounded-md transition-colors"
+                                    :class="selectedCategory === category ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'">
+                                <i class="fas fa-folder mr-2"></i>
+                                <span x-text="getCategoryName(category)"></span>
+                            </button>
+                            
+                            <div x-show="selectedCategory === category" class="ml-4 mt-1 space-y-1">
+                                <template x-for="page in getPagesByCategory(category)" :key="page.id">
+                                    <button @click="selectPage(page)" 
+                                            class="w-full text-left px-3 py-1 text-sm rounded-md transition-colors"
+                                            :class="selectedPage && selectedPage.id === page.id ? 'bg-blue-50 text-blue-600' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'">
+                                        <i class="fas fa-file-alt mr-2"></i>
+                                        <span x-text="page.title"></span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </nav>
+
+            <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+                <button @click="showCreateModal = true" 
+                        class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>
+                    Nova Página
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Mobile Search -->
+            <div class="lg:hidden p-4 border-b border-gray-200">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        placeholder="Pesquisar páginas..." 
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        x-model="searchQuery"
+                        @input="searchPages()"
+                    >
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="flex-1 overflow-auto">
+                <div class="max-w-4xl mx-auto p-6">
+                    <div x-show="!selectedPage" class="text-center py-12">
+                        <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-book-open text-3xl text-blue-600"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-2">Bem-vindo à Wiki Veloz Fibra</h2>
+                        <p class="text-gray-600 mb-6">Selecione uma categoria e página no menu lateral para começar</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <template x-for="category in categories" :key="category">
+                                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+                                    <h3 class="font-semibold text-gray-900 mb-2" x-text="getCategoryName(category)"></h3>
+                                    <p class="text-sm text-gray-600 mb-3" x-text="getCategoryDescription(category)"></p>
+                                    <button @click="selectCategory(category)" 
+                                            class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                        Ver páginas →
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div x-show="selectedPage" class="bg-white rounded-lg shadow-sm border border-gray-200">
+                        <!-- Page Header -->
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-900" x-text="selectedPage.title"></h1>
+                                    <p class="text-sm text-gray-500 mt-1">
+                                        Última atualização: <span x-text="formatDate(selectedPage.updated_at)"></span>
+                                    </p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button @click="editMode = !editMode" 
+                                            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors">
+                                        <i class="fas fa-edit mr-1"></i>
+                                        <span x-text="editMode ? 'Visualizar' : 'Editar'"></span>
+                                    </button>
+                                    <button @click="deletePage(selectedPage.id)" 
+                                            class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors">
+                                        <i class="fas fa-trash mr-1"></i>
+                                        Excluir
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Page Content -->
+                        <div class="p-6">
+                            <div x-show="!editMode" class="markdown-content" x-html="renderMarkdown(selectedPage.content)"></div>
+                            
+                            <div x-show="editMode">
+                                <textarea 
+                                    x-model="selectedPage.content" 
+                                    class="w-full h-96 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                                    placeholder="Digite o conteúdo em Markdown..."
+                                ></textarea>
+                                <div class="mt-4 flex justify-end space-x-2">
+                                    <button @click="editMode = false" 
+                                            class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                                        Cancelar
+                                    </button>
+                                    <button @click="savePage()" 
+                                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                        Salvar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Page Modal -->
+    <div x-show="showCreateModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Nova Página</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Título</label>
+                            <input type="text" x-model="newPage.title" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Categoria</label>
+                            <select x-model="newPage.category" 
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="visao-empresa">Visão da Empresa</option>
+                                <option value="processos">Processos Internos</option>
+                                <option value="ferramentas">Ferramentas Utilizadas</option>
+                                <option value="onboarding">Onboarding</option>
+                                <option value="historico">Histórico de Mudanças</option>
+                                <option value="geral">Geral</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Conteúdo</label>
+                            <textarea x-model="newPage.content" 
+                                      class="w-full h-32 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                      placeholder="Digite o conteúdo em Markdown..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button @click="createPage()" 
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Criar Página
+                    </button>
+                    <button @click="showCreateModal = false" 
+                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div x-show="showLoginModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Acesso à Wiki</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Usuário</label>
+                            <input type="text" x-model="loginForm.username" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Senha</label>
+                            <input type="password" x-model="loginForm.password" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button @click="login()" 
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Entrar
+                    </button>
+                    <button @click="showLoginModal = false" 
+                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function wikiApp() {
+            return {
+                pages: [],
+                categories: [],
+                selectedCategory: null,
+                selectedPage: null,
+                searchQuery: '',
+                editMode: false,
+                sidebarOpen: false,
+                showCreateModal: false,
+                showLoginModal: false,
+                newPage: {
+                    title: '',
+                    category: 'geral',
+                    content: ''
+                },
+                loginForm: {
+                    username: '',
+                    password: ''
+                },
+
+                init() {
+                    this.loadPages();
+                    this.loadCategories();
+                },
+
+                async loadPages() {
+                    try {
+                        const response = await fetch('/api/pages');
+                        this.pages = await response.json();
+                    } catch (error) {
+                        console.error('Erro ao carregar páginas:', error);
+                    }
+                },
+
+                async loadCategories() {
+                    try {
+                        const response = await fetch('/api/categories');
+                        this.categories = await response.json();
+                    } catch (error) {
+                        console.error('Erro ao carregar categorias:', error);
+                    }
+                },
+
+                selectCategory(category) {
+                    this.selectedCategory = category;
+                    this.selectedPage = null;
+                },
+
+                selectPage(page) {
+                    this.selectedPage = page;
+                    this.editMode = false;
+                },
+
+                getPagesByCategory(category) {
+                    return this.pages.filter(page => page.category === category);
+                },
+
+                getCategoryName(category) {
+                    const names = {
+                        'visao-empresa': 'Visão da Empresa',
+                        'processos': 'Processos Internos',
+                        'ferramentas': 'Ferramentas Utilizadas',
+                        'onboarding': 'Onboarding',
+                        'historico': 'Histórico de Mudanças',
+                        'geral': 'Geral'
+                    };
+                    return names[category] || category;
+                },
+
+                getCategoryDescription(category) {
+                    const descriptions = {
+                        'visao-empresa': 'Missão, valores e objetivos da empresa',
+                        'processos': 'Fluxos de trabalho e procedimentos',
+                        'ferramentas': 'Sistemas e ferramentas utilizadas',
+                        'onboarding': 'Processo de integração de novos colaboradores',
+                        'historico': 'Mudanças e decisões importantes',
+                        'geral': 'Outros assuntos gerais'
+                    };
+                    return descriptions[category] || 'Páginas gerais';
+                },
+
+                async searchPages() {
+                    if (!this.searchQuery.trim()) {
+                        await this.loadPages();
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/api/search?q=${encodeURIComponent(this.searchQuery)}`);
+                        this.pages = await response.json();
+                    } catch (error) {
+                        console.error('Erro na pesquisa:', error);
+                    }
+                },
+
+                renderMarkdown(content) {
+                    return marked.parse(content || '');
+                },
+
+                formatDate(dateString) {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                },
+
+                async createPage() {
+                    try {
+                        const response = await fetch('/api/pages', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(this.newPage)
+                        });
+
+                        if (response.ok) {
+                            const newPage = await response.json();
+                            this.pages.push(newPage);
+                            this.selectedPage = newPage;
+                            this.showCreateModal = false;
+                            this.newPage = { title: '', category: 'geral', content: '' };
+                            await this.loadCategories();
+                        }
+                    } catch (error) {
+                        console.error('Erro ao criar página:', error);
+                    }
+                },
+
+                async savePage() {
+                    try {
+                        const response = await fetch(`/api/pages/${this.selectedPage.id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(this.selectedPage)
+                        });
+
+                        if (response.ok) {
+                            const updatedPage = await response.json();
+                            const index = this.pages.findIndex(p => p.id === updatedPage.id);
+                            if (index !== -1) {
+                                this.pages[index] = updatedPage;
+                            }
+                            this.editMode = false;
+                        }
+                    } catch (error) {
+                        console.error('Erro ao salvar página:', error);
+                    }
+                },
+
+                async deletePage(pageId) {
+                    if (!confirm('Tem certeza que deseja excluir esta página?')) {
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/api/pages/${pageId}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (response.ok) {
+                            this.pages = this.pages.filter(p => p.id !== pageId);
+                            this.selectedPage = null;
+                            await this.loadCategories();
+                        }
+                    } catch (error) {
+                        console.error('Erro ao excluir página:', error);
+                    }
+                },
+
+                login() {
+                    // Simulação de login - em produção seria integrado com sistema de autenticação
+                    if (this.loginForm.username && this.loginForm.password) {
+                        alert('Login realizado com sucesso!');
+                        this.showLoginModal = false;
+                        this.loginForm = { username: '', password: '' };
+                    } else {
+                        alert('Preencha usuário e senha');
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html> 
