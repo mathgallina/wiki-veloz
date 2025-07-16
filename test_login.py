@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
 
 import requests
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Dados do usuário
 username = "matheus.gallina"
-password = "Veloz2024!"
-password_hash = "pbkdf2:sha256:600000$2kqDbe4zWU5vTEsR$0d3c5f0ce8995da5138a2793b8ca05ef5d03a0d92a64c1e7f5ff4681e889ba02"
+password = "B@rcelona1998"
 
 print("🔍 Testando sistema de login...")
 print(f"Usuário: {username}")
 print(f"Senha: {password}")
-print(f"Hash da senha: {password_hash}")
+
+# Gerar novo hash para teste
+new_hash = generate_password_hash(password)
+print(f"Novo hash da senha: {new_hash}")
 
 # Testar verificação de senha
-is_valid = check_password_hash(password_hash, password)
+is_valid = check_password_hash(new_hash, password)
 print(f"✅ Senha válida: {is_valid}")
 
 # Testar login via HTTP

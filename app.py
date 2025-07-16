@@ -244,6 +244,167 @@ def admin_users():
     users = load_users()
     return render_template('admin_users.html', users=users)
 
+# Rotas para gerenciamento de usuários
+@app.route('/api/users', methods=['POST'])
+@login_required
+def create_user():
+    """Cria um novo usuário (apenas para admins)"""
+    if current_user.role != 'admin':
+        return jsonify({'error': 'Acesso negado'}), 403
+
+    data = request.get_json()
+    username = data.get('username')
+    name = data.get('name')
+    email = data.get('email')
+    password = data.get('password')
+    role = data.get('role', 'user')
+
+    if not all([username, name, email, password]):
+        return jsonify({'error': 'Todos os campos são obrigatórios'}), 400
+
+    users = load_users()
+
+    # Verificar se username já existe
+    if any(u['username'] == username for u in users):
+        return jsonify({'error': 'Nome de usuário já existe'}), 400
+
+    # Verificar se email já existe
+    if any(u.get('email') == email for u in users):
+        return jsonify({'error': 'Email já existe'}), 400
+
+    # Criar novo usuário
+    new_user = {
+        'id': f'user-{len(users) + 1:03d}',
+        'username': username,
+        'name': name,
+        'email': email,
+        'password_hash': generate_password_hash(password),
+        'role': role,
+        'created_at': datetime.now().isoformat(),
+        'last_login': None,
+        'is_active': True
+    }
+
+    users.append(new_user)
+    save_users(users)
+
+    log_activity(current_user.id, 'create_user', f'Criou usuário: {name} ({username})')
+
+    return jsonify({
+        'message': 'Usuário criado com sucesso',
+        'user': {
+            'id': new_user['id'],
+            'username': new_user['username'],
+            'name': new_user['name'],
+            'email': new_user['email'],
+            'role': new_user['role'],
+            'created_at': new_user['created_at'],
+            'is_active': new_user['is_active']
+        }
+    }), 201
+
+@app.route('/api/users/<user_id>', methods=['PUT'])
+@login_required
+def update_user(user_id):
+    """Atualiza um usuário (apenas para admins)"""
+    if current_user.role != 'admin':
+        return jsonify({'error': 'Acesso negado'}), 403
+
+    data = request.get_json()
+    users = load_users()
+
+    user = next((u for u in users if u['id'] == user_id), None)
+    if not user:
+        return jsonify({'error': 'Usuário não encontrado'}), 404
+
+    # Atualizar campos
+    if 'name' in data:
+        user['name'] = data['name']
+    if 'email' in data:
+        # Verificar se email já existe em outro usuário
+        if any(u.get('email') == data['email'] and u['id'] != user_id for u in users):
+            return jsonify({'error': 'Email já existe'}), 400
+        user['email'] = data['email']
+    if 'role' in data:
+        user['role'] = data['role']
+    if 'is_active' in data:
+        user['is_active'] = data['is_active']
+    if 'password' in data and data['password']:
+        user['password_hash'] = generate_password_hash(data['password'])
+
+    user['updated_at'] = datetime.now().isoformat()
+    save_users(users)
+
+    log_activity(current_user.id, 'update_user', f'Atualizou usuário: {user["name"]} ({user["username"]})')
+
+    return jsonify({
+        'message': 'Usuário atualizado com sucesso',
+        'user': {
+            'id': user['id'],
+            'username': user['username'],
+            'name': user['name'],
+            'email': user['email'],
+            'role': user['role'],
+            'created_at': user['created_at'],
+            'is_active': user['is_active']
+        }
+    })
+
+@app.route('/api/users/<user_id>', methods=['DELETE'])
+@login_required
+def delete_user(user_id):
+    """Deleta um usuário (apenas para admins)"""
+    if current_user.role != 'admin':
+        return jsonify({'error': 'Acesso negado'}), 403
+
+    # Não permitir deletar o próprio usuário
+    if current_user.id == user_id:
+        return jsonify({'error': 'Não é possível deletar sua própria conta'}), 400
+
+    users = load_users()
+    user = next((u for u in users if u['id'] == user_id), None)
+
+    if not user:
+        return jsonify({'error': 'Usuário não encontrado'}), 404
+
+    # Não permitir deletar o último admin
+    if user['role'] == 'admin' and sum(1 for u in users if u['role'] == 'admin' and u['is_active']) <= 1:
+        return jsonify({'error': 'Não é possível deletar o último administrador'}), 400
+
+    user_name = user['name']
+    user_username = user['username']
+
+    users.remove(user)
+    save_users(users)
+
+    log_activity(current_user.id, 'delete_user', f'Deletou usuário: {user_name} ({user_username})')
+
+    return jsonify({'message': 'Usuário deletado com sucesso'})
+
+@app.route('/api/users')
+@login_required
+def get_users():
+    """Lista todos os usuários (apenas para admins)"""
+    if current_user.role != 'admin':
+        return jsonify({'error': 'Acesso negado'}), 403
+
+    users = load_users()
+    # Retornar dados sem senhas
+    safe_users = []
+    for user in users:
+        safe_users.append({
+            'id': user['id'],
+            'username': user['username'],
+            'name': user['name'],
+            'email': user.get('email', ''),
+            'role': user['role'],
+            'created_at': user['created_at'],
+            'last_login': user.get('last_login'),
+            'is_active': user.get('is_active', True)
+        })
+
+    return jsonify(safe_users)
+
 @app.route('/admin/activity')
 @login_required
 def admin_activity():

@@ -123,6 +123,41 @@
               >
                 <i class="fas fa-user text-white text-sm"></i>
               </div>
+
+              <!-- Admin Menu -->
+              {% if current_user.role == 'admin' %}
+              <div class="relative" x-data="{ adminMenuOpen: false }">
+                <button
+                  @click="adminMenuOpen = !adminMenuOpen"
+                  class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                  title="Administração"
+                >
+                  <i class="fas fa-cog text-lg"></i>
+                </button>
+
+                <div
+                  x-show="adminMenuOpen"
+                  @click.away="adminMenuOpen = false"
+                  class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-700"
+                >
+                  <a
+                    href="/admin/users"
+                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <i class="fas fa-users mr-2"></i>
+                    Gerenciar Usuários
+                  </a>
+                  <a
+                    href="/admin/activity"
+                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <i class="fas fa-history mr-2"></i>
+                    Logs de Atividade
+                  </a>
+                </div>
+              </div>
+              {% endif %}
+
               <a
                 href="/logout"
                 class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerenciar Usuários - Wiki Veloz Fibra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  </head>
+  <body class="h-full bg-gray-50 dark:bg-gray-900">
+    <div class="min-h-full">
+      <!-- Header -->
+      <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between items-center py-4">
+            <div class="flex items-center">
+              <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                <i class="fas fa-users mr-2"></i>
+                Gerenciar Usuários
+              </h1>
+            </div>
+            <div class="flex items-center space-x-4">
+              <a href="/" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                <i class="fas fa-home mr-1"></i>
+                Voltar à Wiki
+              </a>
+              <a
+                href="/admin/activity"
+                class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              >
+                <i class="fas fa-history mr-1"></i>
+                Logs
+              </a>
+              <a href="/logout" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300">
+                <i class="fas fa-sign-out-alt mr-1"></i>
+                Sair
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div x-data="userManager()" class="space-y-6">
+          <!-- Botão para adicionar usuário -->
+          <div class="flex justify-between items-center">
+            <h2 class="text-lg font-medium text-gray-900 dark:text-white"> Usuários do Sistema </h2>
+            <button
+              @click="showCreateModal = true"
+              class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center"
+            >
+              <i class="fas fa-plus mr-2"></i>
+              Adicionar Usuário
+            </button>
+          </div>
+
+          <!-- Lista de usuários -->
+          <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    >
+                      Usuário
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    >
+                      Email
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    >
+                      Função
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    >
+                      Status
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    >
+                      Último Login
+                    </th>
+                    <th
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    >
+                      Ações
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  <template x-for="user in users" :key="user.id">
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                          <div class="flex-shrink-0 h-10 w-10">
+                            <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
+                              <span class="text-white font-medium" x-text="user.name.charAt(0).toUpperCase()"></span>
+                            </div>
+                          </div>
+                          <div class="ml-4">
+                            <div class="text-sm font-medium text-gray-900 dark:text-white" x-text="user.name"></div>
+                            <div class="text-sm text-gray-500 dark:text-gray-400" x-text="user.username"></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td
+                        class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
+                        x-text="user.email"
+                      ></td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span
+                          class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                          :class="user.role === 'admin' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'"
+                          x-text="user.role === 'admin' ? 'Administrador' : 'Usuário'"
+                        ></span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap">
+                        <span
+                          class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                          :class="user.is_active ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'"
+                          x-text="user.is_active ? 'Ativo' : 'Inativo'"
+                        ></span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        <span x-text="user.last_login ? formatDate(user.last_login) : 'Nunca'"></span>
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex space-x-2">
+                          <button
+                            @click="editUser(user)"
+                            class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                            title="Editar usuário"
+                          >
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button
+                            @click="deleteUser(user)"
+                            class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                            title="Deletar usuário"
+                            x-show="user.id !== 'admin-001'"
+                          >
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Modal para criar/editar usuário -->
+          <div
+            x-show="showCreateModal || showEditModal"
+            class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+          >
+            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+              <div class="mt-3">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                  <span x-text="showEditModal ? 'Editar Usuário' : 'Adicionar Usuário'"></span>
+                </h3>
+
+                <form @submit.prevent="showEditModal ? updateUser() : createUser()">
+                  <div class="space-y-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Nome Completo *
+                      </label>
+                      <input
+                        type="text"
+                        x-model="form.name"
+                        class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Nome de Usuário *
+                      </label>
+                      <input
+                        type="text"
+                        x-model="form.username"
+                        class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        required
+                        :disabled="showEditModal"
+                      />
+                    </div>
+
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"> Email * </label>
+                      <input
+                        type="email"
+                        x-model="form.email"
+                        class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Senha <span x-show="!showEditModal">*</span>
+                      </label>
+                      <input
+                        type="password"
+                        x-model="form.password"
+                        class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        :required="!showEditModal"
+                        :placeholder="showEditModal ? 'Deixe em branco para manter a senha atual' : ''"
+                      />
+                    </div>
+
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"> Função </label>
+                      <select
+                        x-model="form.role"
+                        class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      >
+                        <option value="user">Usuário</option>
+                        <option value="admin">Administrador</option>
+                      </select>
+                    </div>
+
+                    <div class="flex items-center">
+                      <input
+                        type="checkbox"
+                        x-model="form.is_active"
+                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label class="ml-2 block text-sm text-gray-700 dark:text-gray-300"> Usuário ativo </label>
+                    </div>
+                  </div>
+
+                  <div class="flex justify-end space-x-3 mt-6">
+                    <button
+                      type="button"
+                      @click="closeModal()"
+                      class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-md hover:bg-gray-200 dark:hover:bg-gray-500"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700"
+                    >
+                      <span x-text="showEditModal ? 'Atualizar' : 'Criar'"></span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      function userManager() {
+        return {
+          users: [],
+          showCreateModal: false,
+          showEditModal: false,
+          editingUser: null,
+          form: {
+            name: '',
+            username: '',
+            email: '',
+            password: '',
+            role: 'user',
+            is_active: true,
+          },
+
+          async init() {
+            await this.loadUsers();
+          },
+
+          async loadUsers() {
+            try {
+              const response = await fetch('/api/users');
+              if (response.ok) {
+                this.users = await response.json();
+              } else {
+                console.error('Erro ao carregar usuários');
+              }
+            } catch (error) {
+              console.error('Erro ao carregar usuários:', error);
+            }
+          },
+
+          createUser() {
+            const userData = {
+              name: this.form.name,
+              username: this.form.username,
+              email: this.form.email,
+              password: this.form.password,
+              role: this.form.role,
+              is_active: this.form.is_active,
+            };
+
+            fetch('/api/users', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(userData),
+            })
+              .then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  alert('Erro: ' + data.error);
+                } else {
+                  this.loadUsers();
+                  this.closeModal();
+                  alert('Usuário criado com sucesso!');
+                }
+              })
+              .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao criar usuário');
+              });
+          },
+
+          editUser(user) {
+            this.editingUser = user;
+            this.form = {
+              name: user.name,
+              username: user.username,
+              email: user.email,
+              password: '',
+              role: user.role,
+              is_active: user.is_active,
+            };
+            this.showEditModal = true;
+          },
+
+          updateUser() {
+            const userData = {
+              name: this.form.name,
+              email: this.form.email,
+              role: this.form.role,
+              is_active: this.form.is_active,
+            };
+
+            if (this.form.password) {
+              userData.password = this.form.password;
+            }
+
+            fetch(`/api/users/${this.editingUser.id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(userData),
+            })
+              .then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  alert('Erro: ' + data.error);
+                } else {
+                  this.loadUsers();
+                  this.closeModal();
+                  alert('Usuário atualizado com sucesso!');
+                }
+              })
+              .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao atualizar usuário');
+              });
+          },
+
+          deleteUser(user) {
+            if (!confirm(`Tem certeza que deseja deletar o usuário "${user.name}"?`)) {
+              return;
+            }
+
+            fetch(`/api/users/${user.id}`, {
+              method: 'DELETE',
+            })
+              .then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  alert('Erro: ' + data.error);
+                } else {
+                  this.loadUsers();
+                  alert('Usuário deletado com sucesso!');
+                }
+              })
+              .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao deletar usuário');
+              });
+          },
+
+          closeModal() {
+            this.showCreateModal = false;
+            this.showEditModal = false;
+            this.editingUser = null;
+            this.form = {
+              name: '',
+              username: '',
+              email: '',
+              password: '',
+              role: 'user',
+              is_active: true,
+            };
+          },
+
+          formatDate(dateString) {
+            if (!dateString) return 'Nunca';
+            const date = new Date(dateString);
+            return date.toLocaleString('pt-BR');
+          },
+        };
+      }
+    </script>
+  </body>
+</html>
