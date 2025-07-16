@@ -1,625 +1,759 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wiki Veloz Fibra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {}
-            }
-        }
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {},
+        },
+      };
     </script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        .sidebar-transition {
-            transition: transform 0.3s ease-in-out;
-        }
-        .markdown-content h1 { @apply text-3xl font-bold mb-4 text-gray-900 dark:text-white; }
-        .markdown-content h2 { @apply text-2xl font-semibold mb-3 text-gray-800 dark:text-gray-200 mt-6; }
-        .markdown-content h3 { @apply text-xl font-semibold mb-2 text-gray-700 dark:text-gray-300 mt-4; }
-        .markdown-content p { @apply mb-3 text-gray-600 dark:text-gray-300 leading-relaxed; }
-        .markdown-content ul { @apply mb-3 pl-6; }
-        .markdown-content li { @apply mb-1 text-gray-600 dark:text-gray-300; }
-        .markdown-content strong { @apply font-semibold text-gray-900 dark:text-white; }
-        .markdown-content em { @apply italic text-gray-700 dark:text-gray-200; }
-        .markdown-content blockquote { @apply border-l-4 border-blue-500 pl-4 italic text-gray-600 dark:text-gray-300 my-4; }
-        .markdown-content code { @apply bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200; }
-        .markdown-content pre { @apply bg-gray-100 dark:bg-gray-700 p-4 rounded-lg overflow-x-auto my-4 text-gray-800 dark:text-gray-200; }
+      .sidebar-transition {
+        transition: transform 0.3s ease-in-out;
+      }
+      .markdown-content h1 {
+        @apply text-3xl font-bold mb-4 text-gray-900 dark:text-white;
+      }
+      .markdown-content h2 {
+        @apply text-2xl font-semibold mb-3 text-gray-800 dark:text-gray-200 mt-6;
+      }
+      .markdown-content h3 {
+        @apply text-xl font-semibold mb-2 text-gray-700 dark:text-gray-300 mt-4;
+      }
+      .markdown-content p {
+        @apply mb-3 text-gray-600 dark:text-gray-300 leading-relaxed;
+      }
+      .markdown-content ul {
+        @apply mb-3 pl-6;
+      }
+      .markdown-content li {
+        @apply mb-1 text-gray-600 dark:text-gray-300;
+      }
+      .markdown-content strong {
+        @apply font-semibold text-gray-900 dark:text-white;
+      }
+      .markdown-content em {
+        @apply italic text-gray-700 dark:text-gray-200;
+      }
+      .markdown-content blockquote {
+        @apply border-l-4 border-blue-500 pl-4 italic text-gray-600 dark:text-gray-300 my-4;
+      }
+      .markdown-content code {
+        @apply bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200;
+      }
+      .markdown-content pre {
+        @apply bg-gray-100 dark:bg-gray-700 p-4 rounded-lg overflow-x-auto my-4 text-gray-800 dark:text-gray-200;
+      }
     </style>
-</head>
-<body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200" x-data="wikiApp()">
+  </head>
+  <body
+    class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200"
+    x-data="wikiApp()"
+  >
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200 dark:bg-gray-800 dark:shadow-lg dark:border-gray-700 transition-colors duration-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-gray-700 transition-colors">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                    <div class="flex items-center ml-4 lg:ml-0">
-                        <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-wifi text-white text-sm"></i>
-                        </div>
-                        <div class="ml-3">
-                            <h1 class="text-xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Central de Conhecimento</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Search Bar -->
-                <div class="flex-1 max-w-lg mx-4 hidden md:block">
-                    <div class="relative">
-                        <input 
-                            type="text" 
-                            placeholder="Pesquisar páginas..." 
-                            class="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
-                            x-model="searchQuery"
-                            @input="searchPages()"
-                        >
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex items-center space-x-4">
-                    <!-- Theme Toggle Button -->
-                    <button @click="toggleTheme()" 
-                            class="p-2 rounded-md text-gray-400 hover:text-gray-300 transition-colors"
-                            :title="isDarkMode ? 'Mudar para modo claro' : 'Mudar para modo escuro'">
-                        <i class="fas fa-sun text-xl" x-show="isDarkMode"></i>
-                        <i class="fas fa-moon text-xl" x-show="!isDarkMode"></i>
-                    </button>
-                    
-                    <button @click="showLoginModal = true" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors">
-                        <i class="fas fa-user-circle text-xl"></i>
-                    </button>
-                </div>
+    <header
+      class="bg-white shadow-sm border-b border-gray-200 dark:bg-gray-800 dark:shadow-lg dark:border-gray-700 transition-colors duration-200"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <button
+              @click="sidebarOpen = !sidebarOpen"
+              class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+            >
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+            <div class="flex items-center ml-4 lg:ml-0">
+              <div
+                class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-wifi text-white text-sm"></i>
+              </div>
+              <div class="ml-3">
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Central de Conhecimento</p>
+              </div>
             </div>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="flex-1 max-w-lg mx-4 hidden md:block">
+            <div class="relative">
+              <input
+                type="text"
+                placeholder="Pesquisar páginas..."
+                class="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+                x-model="searchQuery"
+                @input="searchPages()"
+              />
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <!-- Theme Toggle Button -->
+            <button
+              @click="toggleTheme()"
+              class="p-2 rounded-md text-gray-400 hover:text-gray-300 transition-colors"
+              :title="isDarkMode ? 'Mudar para modo claro' : 'Mudar para modo escuro'"
+            >
+              <i class="fas fa-sun text-xl" x-show="isDarkMode"></i>
+              <i class="fas fa-moon text-xl" x-show="!isDarkMode"></i>
+            </button>
+
+            <!-- User Info -->
+            <div class="flex items-center space-x-3">
+              <div class="text-right hidden sm:block">
+                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ current_user.name }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">{{ current_user.role.title() }}</p>
+              </div>
+              <div
+                class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center"
+              >
+                <i class="fas fa-user text-white text-sm"></i>
+              </div>
+              <a
+                href="/logout"
+                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                title="Sair"
+              >
+                <i class="fas fa-sign-out-alt text-lg"></i>
+              </a>
+            </div>
+          </div>
         </div>
+      </div>
     </header>
 
     <div class="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-        <!-- Sidebar -->
-        <div class="sidebar-transition fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg dark:bg-gray-800 transform lg:translate-x-0 lg:static lg:inset-0 transition-colors duration-200" 
-             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
-            
-            <div class="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Navegação</h2>
-                <button @click="sidebarOpen = false" class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-gray-700 transition-colors">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <nav class="mt-5 px-2">
-                <div class="space-y-1">
-                    <template x-for="category in categories" :key="category">
-                        <div>
-                            <button @click="selectCategory(category)" 
-                                    class="w-full text-left px-3 py-2 text-sm font-medium rounded-md transition-colors"
-                                    :class="selectedCategory === category ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'">
-                                <i class="fas fa-folder mr-2"></i>
-                                <span x-text="getCategoryName(category)"></span>
-                            </button>
-                            
-                            <div x-show="selectedCategory === category" class="ml-4 mt-1 space-y-1">
-                                <template x-for="page in getPagesByCategory(category)" :key="page.id">
-                                    <button @click="selectPage(page)" 
-                                            class="w-full text-left px-3 py-1 text-sm rounded-md transition-colors"
-                                            :class="selectedPage && selectedPage.id === page.id ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'">
-                                        <i class="fas fa-file-alt mr-2"></i>
-                                        <span x-text="page.title"></span>
-                                    </button>
-                                </template>
-                            </div>
-                        </div>
-                    </template>
-                </div>
-            </nav>
-
-            <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 transition-colors duration-200">
-                <button @click="showCreateModal = true" 
-                        class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                    <i class="fas fa-plus mr-2"></i>
-                    Nova Página
-                </button>
-            </div>
+      <!-- Sidebar -->
+      <div
+        class="sidebar-transition fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg dark:bg-gray-800 transform lg:translate-x-0 lg:static lg:inset-0 transition-colors duration-200"
+        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+      >
+        <div
+          class="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200"
+        >
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Navegação</h2>
+          <button
+            @click="sidebarOpen = false"
+            class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+          >
+            <i class="fas fa-times"></i>
+          </button>
         </div>
 
-        <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Mobile Search -->
-            <div class="lg:hidden p-4 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
-                <div class="relative">
-                    <input 
-                        type="text" 
-                        placeholder="Pesquisar páginas..." 
-                        class="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
-                        x-model="searchQuery"
-                        @input="searchPages()"
+        <nav class="mt-5 px-2">
+          <div class="space-y-1">
+            <template x-for="category in categories" :key="category">
+              <div>
+                <button
+                  @click="selectCategory(category)"
+                  class="w-full text-left px-3 py-2 text-sm font-medium rounded-md transition-colors"
+                  :class="selectedCategory === category ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'"
+                >
+                  <i class="fas fa-folder mr-2"></i>
+                  <span x-text="getCategoryName(category)"></span>
+                </button>
+
+                <div x-show="selectedCategory === category" class="ml-4 mt-1 space-y-1">
+                  <template x-for="page in getPagesByCategory(category)" :key="page.id">
+                    <button
+                      @click="selectPage(page)"
+                      class="w-full text-left px-3 py-1 text-sm rounded-md transition-colors"
+                      :class="selectedPage && selectedPage.id === page.id ? 'bg-blue-600 text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'"
                     >
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i class="fas fa-search text-gray-400"></i>
-                    </div>
+                      <i class="fas fa-file-alt mr-2"></i>
+                      <span x-text="page.title"></span>
+                    </button>
+                  </template>
                 </div>
-            </div>
+              </div>
+            </template>
+          </div>
+        </nav>
 
-            <!-- Content Area -->
-            <div class="flex-1 overflow-auto">
-                <div class="max-w-4xl mx-auto p-6">
-                    <div x-show="!selectedPage" class="py-8">
-                        <!-- Hero Section -->
-                        <div class="text-center mb-12">
-                            <div class="flex items-center justify-center mb-6">
-                                <div class="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mr-4">
-                                    <i class="fas fa-wifi text-2xl text-white"></i>
-                                </div>
-                                                            <div class="text-left">
-                                <h1 class="text-4xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
-                                <p class="text-lg text-gray-600 dark:text-gray-300">Internet de Ultra Velocidade</p>
-                            </div>
-                            </div>
-                            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Central de Conhecimento</h2>
-                            <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                                Bem-vindo à nossa Central de Conhecimento. Aqui você encontra tudo sobre processos, 
-                                ferramentas, procedimentos e informações essenciais para oferecer a melhor internet de 
-                                ultra velocidade para nossos clientes.
-                            </p>
-                        </div>
-
-                        <!-- Stats Section -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
-                                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-4">
-                                    <i class="fas fa-wifi text-blue-600 dark:text-blue-400 text-xl"></i>
-                                </div>
-                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Ultra Velocidade</h3>
-                                <p class="text-gray-600 dark:text-gray-300">Internet de alta performance</p>
-                            </div>
-                            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
-                                <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mx-auto mb-4">
-                                    <i class="fas fa-headset text-green-600 dark:text-green-400 text-xl"></i>
-                                </div>
-                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Suporte 24/7</h3>
-                                <p class="text-gray-600 dark:text-gray-300">Atendimento sempre disponível</p>
-                            </div>
-                            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center">
-                                <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mx-auto mb-4">
-                                    <i class="fas fa-shield-alt text-purple-600 dark:text-purple-400 text-xl"></i>
-                                </div>
-                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Fibra Óptica</h3>
-                                <p class="text-gray-600 dark:text-gray-300">Tecnologia de ponta</p>
-                            </div>
-                        </div>
-
-                        <!-- Categories Grid -->
-                        <div class="mb-8">
-                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Explore Nossas Seções</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                <template x-for="category in categories" :key="category">
-                                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 group cursor-pointer" @click="selectCategory(category)">
-                                        <div class="flex items-center mb-4">
-                                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mr-3">
-                                                <i class="fas fa-folder text-blue-600 dark:text-blue-400"></i>
-                                            </div>
-                                            <h4 class="font-semibold text-gray-900 dark:text-white text-lg" x-text="getCategoryName(category)"></h4>
-                                        </div>
-                                        <p class="text-gray-600 dark:text-gray-300 mb-4" x-text="getCategoryDescription(category)"></p>
-                                        <div class="flex items-center text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors">
-                                            <span class="text-sm font-medium">Explorar</span>
-                                            <i class="fas fa-arrow-right ml-2 text-xs"></i>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-
-                        <!-- Quick Actions -->
-                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900 p-8 rounded-xl">
-                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 text-center">Ações Rápidas</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <button @click="showCreateModal = true" 
-                                        class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 text-left group">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mr-3">
-                                            <i class="fas fa-plus text-green-600 dark:text-green-400"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-semibold text-gray-900 dark:text-white">Nova Página</h4>
-                                            <p class="text-sm text-gray-600 dark:text-gray-300">Criar novo conteúdo</p>
-                                        </div>
-                                    </div>
-                                </button>
-                                <button @click="searchQuery = ''; searchPages()" 
-                                        class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 text-left group">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mr-3">
-                                            <i class="fas fa-search text-blue-600 dark:text-blue-400"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-semibold text-gray-900 dark:text-white">Pesquisar</h4>
-                                            <p class="text-sm text-gray-600 dark:text-gray-300">Encontrar conteúdo</p>
-                                        </div>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div x-show="selectedPage" class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200">
-                        <!-- Page Header -->
-                        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white" x-text="selectedPage.title"></h1>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                        Última atualização: <span x-text="formatDate(selectedPage.updated_at)"></span>
-                                    </p>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <button @click="editMode = !editMode" 
-                                            class="px-3 py-1 text-sm bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                                        <i class="fas fa-edit mr-1"></i>
-                                        <span x-text="editMode ? 'Visualizar' : 'Editar'"></span>
-                                    </button>
-                                    <button @click="deletePage(selectedPage.id)" 
-                                            class="px-3 py-1 text-sm bg-red-100 text-red-700 dark:bg-red-700 dark:text-white rounded-md hover:bg-red-200 dark:hover:bg-red-600 transition-colors">
-                                        <i class="fas fa-trash mr-1"></i>
-                                        Excluir
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Page Content -->
-                        <div class="p-6">
-                            <div x-show="!editMode" class="markdown-content" x-html="renderMarkdown(selectedPage.content)"></div>
-                            
-                            <div x-show="editMode">
-                                <textarea 
-                                    x-model="selectedPage.content" 
-                                    class="w-full h-96 p-4 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm text-gray-900 dark:text-white transition-colors"
-                                    placeholder="Digite o conteúdo em Markdown..."
-                                ></textarea>
-                                <div class="mt-4 flex justify-end space-x-2">
-                                    <button @click="editMode = false" 
-                                            class="px-4 py-2 text-gray-700 bg-gray-100 dark:text-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-                                        Cancelar
-                                    </button>
-                                    <button @click="savePage()" 
-                                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                                        Salvar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div
+          class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 transition-colors duration-200"
+        >
+          <button
+            @click="showCreateModal = true"
+            class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <i class="fas fa-plus mr-2"></i>
+            Nova Página
+          </button>
         </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Mobile Search -->
+        <div class="lg:hidden p-4 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Pesquisar páginas..."
+              class="w-full pl-10 pr-4 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+              x-model="searchQuery"
+              @input="searchPages()"
+            />
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-search text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-auto">
+          <div class="max-w-4xl mx-auto p-6">
+            <div x-show="!selectedPage" class="py-8">
+              <!-- Hero Section -->
+              <div class="text-center mb-12">
+                <div class="flex items-center justify-center mb-6">
+                  <div
+                    class="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mr-4"
+                  >
+                    <i class="fas fa-wifi text-2xl text-white"></i>
+                  </div>
+                  <div class="text-left">
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
+                    <p class="text-lg text-gray-600 dark:text-gray-300">Internet de Ultra Velocidade</p>
+                  </div>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Central de Conhecimento</h2>
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                  Bem-vindo à nossa Central de Conhecimento. Aqui você encontra tudo sobre processos, ferramentas,
+                  procedimentos e informações essenciais para oferecer a melhor internet de ultra velocidade para nossos
+                  clientes.
+                </p>
+              </div>
+
+              <!-- Stats Section -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div
+                  class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center"
+                >
+                  <div
+                    class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-4"
+                  >
+                    <i class="fas fa-wifi text-blue-600 dark:text-blue-400 text-xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Ultra Velocidade</h3>
+                  <p class="text-gray-600 dark:text-gray-300">Internet de alta performance</p>
+                </div>
+                <div
+                  class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center"
+                >
+                  <div
+                    class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mx-auto mb-4"
+                  >
+                    <i class="fas fa-headset text-green-600 dark:text-green-400 text-xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Suporte 24/7</h3>
+                  <p class="text-gray-600 dark:text-gray-300">Atendimento sempre disponível</p>
+                </div>
+                <div
+                  class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center"
+                >
+                  <div
+                    class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mx-auto mb-4"
+                  >
+                    <i class="fas fa-shield-alt text-purple-600 dark:text-purple-400 text-xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Fibra Óptica</h3>
+                  <p class="text-gray-600 dark:text-gray-300">Tecnologia de ponta</p>
+                </div>
+              </div>
+
+              <!-- Categories Grid -->
+              <div class="mb-8">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Explore Nossas Seções</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <template x-for="category in categories" :key="category">
+                    <div
+                      class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 group cursor-pointer"
+                      @click="selectCategory(category)"
+                    >
+                      <div class="flex items-center mb-4">
+                        <div
+                          class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mr-3"
+                        >
+                          <i class="fas fa-folder text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                        <h4
+                          class="font-semibold text-gray-900 dark:text-white text-lg"
+                          x-text="getCategoryName(category)"
+                        ></h4>
+                      </div>
+                      <p class="text-gray-600 dark:text-gray-300 mb-4" x-text="getCategoryDescription(category)"></p>
+                      <div
+                        class="flex items-center text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors"
+                      >
+                        <span class="text-sm font-medium">Explorar</span>
+                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Quick Actions -->
+              <div
+                class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900 p-8 rounded-xl"
+              >
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 text-center">Ações Rápidas</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <button
+                    @click="showCreateModal = true"
+                    class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 text-left group"
+                  >
+                    <div class="flex items-center">
+                      <div
+                        class="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mr-3"
+                      >
+                        <i class="fas fa-plus text-green-600 dark:text-green-400"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-semibold text-gray-900 dark:text-white">Nova Página</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Criar novo conteúdo</p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    @click="searchQuery = ''; searchPages()"
+                    class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 text-left group"
+                  >
+                    <div class="flex items-center">
+                      <div
+                        class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mr-3"
+                      >
+                        <i class="fas fa-search text-blue-600 dark:text-blue-400"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-semibold text-gray-900 dark:text-white">Pesquisar</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Encontrar conteúdo</p>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              x-show="selectedPage"
+              class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200"
+            >
+              <!-- Page Header -->
+              <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white" x-text="selectedPage.title"></h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      Última atualização: <span x-text="formatDate(selectedPage.updated_at)"></span>
+                    </p>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <button
+                      @click="editMode = !editMode"
+                      class="px-3 py-1 text-sm bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                    >
+                      <i class="fas fa-edit mr-1"></i>
+                      <span x-text="editMode ? 'Visualizar' : 'Editar'"></span>
+                    </button>
+                    <button
+                      @click="deletePage(selectedPage.id)"
+                      class="px-3 py-1 text-sm bg-red-100 text-red-700 dark:bg-red-700 dark:text-white rounded-md hover:bg-red-200 dark:hover:bg-red-600 transition-colors"
+                    >
+                      <i class="fas fa-trash mr-1"></i>
+                      Excluir
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Page Content -->
+              <div class="p-6">
+                <div x-show="!editMode" class="markdown-content" x-html="renderMarkdown(selectedPage.content)"></div>
+
+                <div x-show="editMode">
+                  <textarea
+                    x-model="selectedPage.content"
+                    class="w-full h-96 p-4 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm text-gray-900 dark:text-white transition-colors"
+                    placeholder="Digite o conteúdo em Markdown..."
+                  ></textarea>
+                  <div class="mt-4 flex justify-end space-x-2">
+                    <button
+                      @click="editMode = false"
+                      class="px-4 py-2 text-gray-700 bg-gray-100 dark:text-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      @click="savePage()"
+                      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      Salvar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Create Page Modal -->
-    <div x-show="showCreateModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-            
-            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Nova Página</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Título</label>
-                            <input type="text" x-model="newPage.title" 
-                                   class="w-full px-3 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-colors">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoria</label>
-                            <select x-model="newPage.category" 
-                                    class="w-full px-3 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-colors">
-                                <option value="visao-empresa">Visão da Empresa</option>
-                                <option value="processos">Processos Internos</option>
-                                <option value="ferramentas">Ferramentas Utilizadas</option>
-                                <option value="operacional">Operacional</option>
-                                <option value="comercial">Comercial</option>
-                                <option value="suporte">Suporte Técnico</option>
-                                <option value="instalacao">Instalação e Manutenção</option>
-                                <option value="planos">Planos e Produtos</option>
-                                <option value="onboarding">Onboarding</option>
-                                <option value="historico">Histórico de Mudanças</option>
-                                <option value="geral">Geral</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Conteúdo</label>
-                            <textarea x-model="newPage.content" 
-                                      class="w-full h-32 px-3 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-colors"
-                                      placeholder="Digite o conteúdo em Markdown..."></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button @click="createPage()" 
-                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
-                        Criar Página
-                    </button>
-                    <button @click="showCreateModal = false" 
-                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
-                        Cancelar
-                    </button>
-                </div>
+    <div x-show="showCreateModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none">
+      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+        <div
+          class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+        >
+          <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Nova Página</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Título</label>
+                <input
+                  type="text"
+                  x-model="newPage.title"
+                  class="w-full px-3 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-colors"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoria</label>
+                <select
+                  x-model="newPage.category"
+                  class="w-full px-3 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-colors"
+                >
+                  <option value="visao-empresa">Visão da Empresa</option>
+                  <option value="processos">Processos Internos</option>
+                  <option value="ferramentas">Ferramentas Utilizadas</option>
+                  <option value="operacional">Operacional</option>
+                  <option value="comercial">Comercial</option>
+                  <option value="suporte">Suporte Técnico</option>
+                  <option value="instalacao">Instalação e Manutenção</option>
+                  <option value="planos">Planos e Produtos</option>
+                  <option value="onboarding">Onboarding</option>
+                  <option value="historico">Histórico de Mudanças</option>
+                  <option value="geral">Geral</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Conteúdo</label>
+                <textarea
+                  x-model="newPage.content"
+                  class="w-full h-32 px-3 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-colors"
+                  placeholder="Digite o conteúdo em Markdown..."
+                ></textarea>
+              </div>
             </div>
+          </div>
+          <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              @click="createPage()"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              Criar Página
+            </button>
+            <button
+              @click="showCreateModal = false"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- Login Modal -->
-    <div x-show="showLoginModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
-            
-            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
-                <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Acesso à Wiki</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Usuário</label>
-                            <input type="text" x-model="loginForm.username" 
-                                   class="w-full px-3 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-colors">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Senha</label>
-                            <input type="password" x-model="loginForm.password" 
-                                   class="w-full px-3 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-colors">
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button @click="login()" 
-                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
-                        Entrar
-                    </button>
-                    <button @click="showLoginModal = false" 
-                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
-                        Cancelar
-                    </button>
-                </div>
+    <div x-show="showLoginModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none">
+      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+        <div
+          class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full"
+        >
+          <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Acesso à Wiki</h3>
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Usuário</label>
+                <input
+                  type="text"
+                  x-model="loginForm.username"
+                  class="w-full px-3 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-colors"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Senha</label>
+                <input
+                  type="password"
+                  x-model="loginForm.password"
+                  class="w-full px-3 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-colors"
+                />
+              </div>
             </div>
+          </div>
+          <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              @click="login()"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              Entrar
+            </button>
+            <button
+              @click="showLoginModal = false"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <script>
-        function wikiApp() {
-            return {
-                pages: [],
-                categories: [],
-                selectedCategory: null,
-                selectedPage: null,
-                searchQuery: '',
-                editMode: false,
-                sidebarOpen: false,
-                showCreateModal: false,
-                showLoginModal: false,
-                isDarkMode: false,
-                newPage: {
-                    title: '',
-                    category: 'geral',
-                    content: ''
-                },
-                loginForm: {
-                    username: '',
-                    password: ''
-                },
+      function wikiApp() {
+        return {
+          pages: [],
+          categories: [],
+          selectedCategory: null,
+          selectedPage: null,
+          searchQuery: '',
+          editMode: false,
+          sidebarOpen: false,
+          showCreateModal: false,
+          showLoginModal: false,
+          isDarkMode: false,
+          newPage: {
+            title: '',
+            category: 'geral',
+            content: '',
+          },
+          loginForm: {
+            username: '',
+            password: '',
+          },
 
-                init() {
-                    this.loadPages();
-                    this.loadCategories();
-                    this.loadTheme();
-                },
+          init() {
+            this.loadPages();
+            this.loadCategories();
+            this.loadTheme();
+          },
 
-                async loadPages() {
-                    try {
-                        const response = await fetch('/api/pages');
-                        this.pages = await response.json();
-                    } catch (error) {
-                        console.error('Erro ao carregar páginas:', error);
-                    }
-                },
-
-                async loadCategories() {
-                    try {
-                        const response = await fetch('/api/categories');
-                        this.categories = await response.json();
-                    } catch (error) {
-                        console.error('Erro ao carregar categorias:', error);
-                    }
-                },
-
-                selectCategory(category) {
-                    this.selectedCategory = category;
-                    this.selectedPage = null;
-                },
-
-                selectPage(page) {
-                    this.selectedPage = page;
-                    this.editMode = false;
-                },
-
-                getPagesByCategory(category) {
-                    return this.pages.filter(page => page.category === category);
-                },
-
-                getCategoryName(category) {
-                    const names = {
-                        'visao-empresa': 'Visão da Empresa',
-                        'processos': 'Processos Internos',
-                        'ferramentas': 'Ferramentas Utilizadas',
-                        'onboarding': 'Onboarding',
-                        'historico': 'Histórico de Mudanças',
-                        'operacional': 'Operacional',
-                        'comercial': 'Comercial',
-                        'suporte': 'Suporte Técnico',
-                        'instalacao': 'Instalação e Manutenção',
-                        'planos': 'Planos e Produtos',
-                        'geral': 'Geral'
-                    };
-                    return names[category] || category;
-                },
-
-                getCategoryDescription(category) {
-                    const descriptions = {
-                        'visao-empresa': 'Missão, valores e objetivos da Veloz Fibra',
-                        'processos': 'Fluxos de trabalho e procedimentos internos',
-                        'ferramentas': 'Sistemas, apps e ferramentas utilizadas',
-                        'onboarding': 'Processo de integração de novos colaboradores',
-                        'historico': 'Mudanças, decisões e evolução da empresa',
-                        'operacional': 'Processos técnicos e operacionais',
-                        'comercial': 'Estratégias comerciais e vendas',
-                        'suporte': 'Procedimentos de suporte ao cliente',
-                        'instalacao': 'Processos de instalação e manutenção',
-                        'planos': 'Planos de internet e produtos oferecidos',
-                        'geral': 'Outros assuntos e informações gerais'
-                    };
-                    return descriptions[category] || 'Páginas gerais';
-                },
-
-                async searchPages() {
-                    if (!this.searchQuery.trim()) {
-                        await this.loadPages();
-                        return;
-                    }
-
-                    try {
-                        const response = await fetch(`/api/search?q=${encodeURIComponent(this.searchQuery)}`);
-                        this.pages = await response.json();
-                    } catch (error) {
-                        console.error('Erro na pesquisa:', error);
-                    }
-                },
-
-                renderMarkdown(content) {
-                    return marked.parse(content || '');
-                },
-
-                formatDate(dateString) {
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                },
-
-                async createPage() {
-                    try {
-                        const response = await fetch('/api/pages', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(this.newPage)
-                        });
-
-                        if (response.ok) {
-                            const newPage = await response.json();
-                            this.pages.push(newPage);
-                            this.selectedPage = newPage;
-                            this.showCreateModal = false;
-                            this.newPage = { title: '', category: 'geral', content: '' };
-                            await this.loadCategories();
-                        }
-                    } catch (error) {
-                        console.error('Erro ao criar página:', error);
-                    }
-                },
-
-                async savePage() {
-                    try {
-                        const response = await fetch(`/api/pages/${this.selectedPage.id}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(this.selectedPage)
-                        });
-
-                        if (response.ok) {
-                            const updatedPage = await response.json();
-                            const index = this.pages.findIndex(p => p.id === updatedPage.id);
-                            if (index !== -1) {
-                                this.pages[index] = updatedPage;
-                            }
-                            this.editMode = false;
-                        }
-                    } catch (error) {
-                        console.error('Erro ao salvar página:', error);
-                    }
-                },
-
-                async deletePage(pageId) {
-                    if (!confirm('Tem certeza que deseja excluir esta página?')) {
-                        return;
-                    }
-
-                    try {
-                        const response = await fetch(`/api/pages/${pageId}`, {
-                            method: 'DELETE'
-                        });
-
-                        if (response.ok) {
-                            this.pages = this.pages.filter(p => p.id !== pageId);
-                            this.selectedPage = null;
-                            await this.loadCategories();
-                        }
-                    } catch (error) {
-                        console.error('Erro ao excluir página:', error);
-                    }
-                },
-
-                login() {
-                    // Simulação de login - em produção seria integrado com sistema de autenticação
-                    if (this.loginForm.username && this.loginForm.password) {
-                        alert('Login realizado com sucesso!');
-                        this.showLoginModal = false;
-                        this.loginForm = { username: '', password: '' };
-                    } else {
-                        alert('Preencha usuário e senha');
-                    }
-                },
-
-                loadTheme() {
-                    // Carregar tema salvo no localStorage
-                    const savedTheme = localStorage.getItem('wiki-theme');
-                    if (savedTheme === 'dark') {
-                        this.isDarkMode = true;
-                        document.documentElement.classList.add('dark');
-                    } else {
-                        this.isDarkMode = false;
-                        document.documentElement.classList.remove('dark');
-                    }
-                },
-
-                toggleTheme() {
-                    this.isDarkMode = !this.isDarkMode;
-                    
-                    if (this.isDarkMode) {
-                        document.documentElement.classList.add('dark');
-                        localStorage.setItem('wiki-theme', 'dark');
-                    } else {
-                        document.documentElement.classList.remove('dark');
-                        localStorage.setItem('wiki-theme', 'light');
-                    }
-                }
+          async loadPages() {
+            try {
+              const response = await fetch('/api/pages');
+              this.pages = await response.json();
+            } catch (error) {
+              console.error('Erro ao carregar páginas:', error);
             }
-        }
+          },
+
+          async loadCategories() {
+            try {
+              const response = await fetch('/api/categories');
+              this.categories = await response.json();
+            } catch (error) {
+              console.error('Erro ao carregar categorias:', error);
+            }
+          },
+
+          selectCategory(category) {
+            this.selectedCategory = category;
+            this.selectedPage = null;
+          },
+
+          selectPage(page) {
+            this.selectedPage = page;
+            this.editMode = false;
+          },
+
+          getPagesByCategory(category) {
+            return this.pages.filter(page => page.category === category);
+          },
+
+          getCategoryName(category) {
+            const names = {
+              'visao-empresa': 'Visão da Empresa',
+              processos: 'Processos Internos',
+              ferramentas: 'Ferramentas Utilizadas',
+              onboarding: 'Onboarding',
+              historico: 'Histórico de Mudanças',
+              operacional: 'Operacional',
+              comercial: 'Comercial',
+              suporte: 'Suporte Técnico',
+              instalacao: 'Instalação e Manutenção',
+              planos: 'Planos e Produtos',
+              geral: 'Geral',
+            };
+            return names[category] || category;
+          },
+
+          getCategoryDescription(category) {
+            const descriptions = {
+              'visao-empresa': 'Missão, valores e objetivos da Veloz Fibra',
+              processos: 'Fluxos de trabalho e procedimentos internos',
+              ferramentas: 'Sistemas, apps e ferramentas utilizadas',
+              onboarding: 'Processo de integração de novos colaboradores',
+              historico: 'Mudanças, decisões e evolução da empresa',
+              operacional: 'Processos técnicos e operacionais',
+              comercial: 'Estratégias comerciais e vendas',
+              suporte: 'Procedimentos de suporte ao cliente',
+              instalacao: 'Processos de instalação e manutenção',
+              planos: 'Planos de internet e produtos oferecidos',
+              geral: 'Outros assuntos e informações gerais',
+            };
+            return descriptions[category] || 'Páginas gerais';
+          },
+
+          async searchPages() {
+            if (!this.searchQuery.trim()) {
+              await this.loadPages();
+              return;
+            }
+
+            try {
+              const response = await fetch(`/api/search?q=${encodeURIComponent(this.searchQuery)}`);
+              this.pages = await response.json();
+            } catch (error) {
+              console.error('Erro na pesquisa:', error);
+            }
+          },
+
+          renderMarkdown(content) {
+            return marked.parse(content || '');
+          },
+
+          formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+          },
+
+          async createPage() {
+            try {
+              const response = await fetch('/api/pages', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(this.newPage),
+              });
+
+              if (response.ok) {
+                const newPage = await response.json();
+                this.pages.push(newPage);
+                this.selectedPage = newPage;
+                this.showCreateModal = false;
+                this.newPage = { title: '', category: 'geral', content: '' };
+                await this.loadCategories();
+              }
+            } catch (error) {
+              console.error('Erro ao criar página:', error);
+            }
+          },
+
+          async savePage() {
+            try {
+              const response = await fetch(`/api/pages/${this.selectedPage.id}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(this.selectedPage),
+              });
+
+              if (response.ok) {
+                const updatedPage = await response.json();
+                const index = this.pages.findIndex(p => p.id === updatedPage.id);
+                if (index !== -1) {
+                  this.pages[index] = updatedPage;
+                }
+                this.editMode = false;
+              }
+            } catch (error) {
+              console.error('Erro ao salvar página:', error);
+            }
+          },
+
+          async deletePage(pageId) {
+            if (!confirm('Tem certeza que deseja excluir esta página?')) {
+              return;
+            }
+
+            try {
+              const response = await fetch(`/api/pages/${pageId}`, {
+                method: 'DELETE',
+              });
+
+              if (response.ok) {
+                this.pages = this.pages.filter(p => p.id !== pageId);
+                this.selectedPage = null;
+                await this.loadCategories();
+              }
+            } catch (error) {
+              console.error('Erro ao excluir página:', error);
+            }
+          },
+
+          login() {
+            // Simulação de login - em produção seria integrado com sistema de autenticação
+            if (this.loginForm.username && this.loginForm.password) {
+              alert('Login realizado com sucesso!');
+              this.showLoginModal = false;
+              this.loginForm = { username: '', password: '' };
+            } else {
+              alert('Preencha usuário e senha');
+            }
+          },
+
+          loadTheme() {
+            // Carregar tema salvo no localStorage
+            const savedTheme = localStorage.getItem('wiki-theme');
+            if (savedTheme === 'dark') {
+              this.isDarkMode = true;
+              document.documentElement.classList.add('dark');
+            } else {
+              this.isDarkMode = false;
+              document.documentElement.classList.remove('dark');
+            }
+          },
+
+          toggleTheme() {
+            this.isDarkMode = !this.isDarkMode;
+
+            if (this.isDarkMode) {
+              document.documentElement.classList.add('dark');
+              localStorage.setItem('wiki-theme', 'dark');
+            } else {
+              document.documentElement.classList.remove('dark');
+              localStorage.setItem('wiki-theme', 'light');
+            }
+          },
+        };
+      }
     </script>
-</body>
-</html> 
+  </body>
+</html>

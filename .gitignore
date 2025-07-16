@@ -39,9 +39,6 @@ Thumbs.db
 # Logs
 *.log
 
-# Data files (opcional - remova se quiser versionar os dados)
-data/pages.json
-
 # Uploads
 static/uploads/*
 !static/uploads/.gitkeep
