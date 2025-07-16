@@ -1,6 +1,9 @@
 import os
 import json
+import uuid
 from datetime import datetime, timedelta
+from werkzeug.utils import secure_filename
+from pathlib import Path
 
 from flask import (
     Flask,
@@ -10,6 +13,7 @@ from flask import (
     redirect,
     url_for,
     flash,
+    send_from_directory,
 )
 from flask_cors import CORS
 from flask_login import (
@@ -36,6 +40,14 @@ app.secret_key = os.environ.get("SECRET_KEY", "veloz-fibra-secret-key-2024")
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(
     hours=8
 )  # Sessão de 8 horas
+
+# Configurações para upload de arquivos
+app.config["UPLOAD_FOLDER"] = "static/uploads"
+app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024  # 50MB max
+ALLOWED_EXTENSIONS = {"pdf", "doc", "docx", "txt", "jpg", "jpeg", "png", "gif"}
+
+# Criar pasta de uploads se não existir
+os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 
 # Configuração do Flask-Login
 login_manager = LoginManager()
@@ -345,6 +357,65 @@ def create_sample_data():
         save_pages(sample_pages)
         return sample_pages
     return pages
+
+
+# Funções para gerenciar PDFs e arquivos
+def allowed_file(filename):
+    """Verifica se a extensão do arquivo é permitida"""
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def load_pdfs():
+    """Carrega PDFs do arquivo JSON"""
+    try:
+        with open("data/pdfs.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+
+
+def save_pdfs(pdfs):
+    """Salva PDFs no arquivo JSON"""
+    os.makedirs("data", exist_ok=True)
+    with open("data/pdfs.json", "w", encoding="utf-8") as f:
+        json.dump(pdfs, f, ensure_ascii=False, indent=2)
+
+
+def create_pdf_entry(filename, original_filename, page_id=None, description=""):
+    """Cria uma entrada de PDF"""
+    return {
+        "id": str(uuid.uuid4()),
+        "filename": filename,
+        "original_filename": original_filename,
+        "page_id": page_id,
+        "description": description,
+        "uploaded_by": current_user.id,
+        "uploaded_at": datetime.now().isoformat(),
+        "file_size": os.path.getsize(
+            os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        ),
+        "download_count": 0,
+    }
+
+
+def get_pdfs_by_page(page_id):
+    """Retorna PDFs associados a uma página"""
+    pdfs = load_pdfs()
+    return [pdf for pdf in pdfs if pdf.get("page_id") == page_id]
+
+
+def delete_pdf_file(pdf_id):
+    """Remove arquivo PDF do sistema"""
+    pdfs = load_pdfs()
+    pdf = next((p for p in pdfs if p["id"] == pdf_id), None)
+    if pdf:
+        file_path = os.path.join(app.config["UPLOAD_FOLDER"], pdf["filename"])
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        pdfs.remove(pdf)
+        save_pdfs(pdfs)
+        return True
+    return False
 
 
 # Rotas de autenticação
@@ -811,6 +882,13 @@ def admin_notifications():
     if current_user.role != "admin":
         return redirect(url_for("index"))
     return render_template("admin_notifications.html")
+
+
+@app.route("/admin/pdfs")
+@login_required
+def admin_pdfs():
+    """Página de gerenciamento de PDFs"""
+    return render_template("admin_pdfs.html")
 
 
 @app.route("/api/analytics/overview")
@@ -1493,6 +1571,139 @@ def setup_google_drive_route():
 
     except Exception as e:
         return jsonify({"error": f"Erro ao configurar Google Drive: {str(e)}"}), 500
+
+
+# Rotas para gerenciamento de PDFs
+@app.route("/api/pdfs", methods=["GET"])
+@login_required
+def get_pdfs():
+    """Retorna lista de PDFs"""
+    page_id = request.args.get("page_id")
+    pdfs = load_pdfs()
+
+    if page_id:
+        pdfs = [pdf for pdf in pdfs if pdf.get("page_id") == page_id]
+
+    return jsonify({"pdfs": pdfs})
+
+
+@app.route("/api/pdfs", methods=["POST"])
+@login_required
+def upload_pdf():
+    """Faz upload de um PDF"""
+    if "file" not in request.files:
+        return jsonify({"error": "Nenhum arquivo enviado"}), 400
+
+    file = request.files["file"]
+    if file.filename == "":
+        return jsonify({"error": "Nenhum arquivo selecionado"}), 400
+
+    if not allowed_file(file.filename):
+        return jsonify({"error": "Tipo de arquivo não permitido"}), 400
+
+    # Gerar nome único para o arquivo
+    filename = secure_filename(file.filename)
+    unique_filename = f"{uuid.uuid4().hex}_{filename}"
+
+    # Salvar arquivo
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
+    file.save(file_path)
+
+    # Criar entrada no banco
+    page_id = request.form.get("page_id")
+    description = request.form.get("description", "")
+
+    pdf_entry = create_pdf_entry(unique_filename, filename, page_id, description)
+
+    pdfs = load_pdfs()
+    pdfs.append(pdf_entry)
+    save_pdfs(pdfs)
+
+    # Registrar atividade
+    log_activity(
+        current_user.id,
+        "pdf_uploaded",
+        f"PDF enviado: {filename}"
+    )
+
+    return jsonify({
+        "success": True,
+        "message": "PDF enviado com sucesso",
+        "pdf": pdf_entry
+    })
+
+
+@app.route("/api/pdfs/<pdf_id>", methods=["DELETE"])
+@login_required
+def delete_pdf(pdf_id):
+    """Remove um PDF"""
+    if current_user.role != "admin":
+        return jsonify({"error": "Acesso negado"}), 403
+
+    success = delete_pdf_file(pdf_id)
+
+    if success:
+        # Registrar atividade
+        log_activity(
+            current_user.id,
+            "pdf_deleted",
+            f"PDF removido: {pdf_id}"
+        )
+
+        return jsonify({
+            "success": True,
+            "message": "PDF removido com sucesso"
+        })
+    else:
+        return jsonify({"error": "PDF não encontrado"}), 404
+
+
+@app.route("/uploads/<filename>")
+@login_required
+def download_file(filename):
+    """Download de arquivo"""
+    try:
+        # Verificar se o arquivo existe
+        file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        if not os.path.exists(file_path):
+            return jsonify({"error": "Arquivo não encontrado"}), 404
+
+        # Incrementar contador de downloads
+        pdfs = load_pdfs()
+        pdf = next((p for p in pdfs if p["filename"] == filename), None)
+        if pdf:
+            pdf["download_count"] += 1
+            save_pdfs(pdfs)
+
+        return send_from_directory(
+            app.config["UPLOAD_FOLDER"],
+            filename,
+            as_attachment=True
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/pdfs/<pdf_id>/view")
+@login_required
+def view_pdf(pdf_id):
+    """Visualiza um PDF"""
+    pdfs = load_pdfs()
+    pdf = next((p for p in pdfs if p["id"] == pdf_id), None)
+
+    if not pdf:
+        return jsonify({"error": "PDF não encontrado"}), 404
+
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], pdf["filename"])
+    if not os.path.exists(file_path):
+        return jsonify({"error": "Arquivo não encontrado"}), 404
+
+    return send_from_directory(
+        app.config["UPLOAD_FOLDER"],
+        pdf["filename"],
+        mimetype="application/pdf"
+    )
 
 
 if __name__ == "__main__":
