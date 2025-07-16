@@ -130,6 +130,113 @@ def save_pages(pages):
     with open('data/pages.json', 'w', encoding='utf-8') as f:
         json.dump(pages, f, ensure_ascii=False, indent=2)
 
+# Funções para gerenciar notificações
+def load_notifications():
+    """Carrega notificações do arquivo JSON"""
+    try:
+        with open('data/notifications.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+
+def save_notifications(notifications):
+    """Salva notificações no arquivo JSON"""
+    os.makedirs('data', exist_ok=True)
+    with open('data/notifications.json', 'w', encoding='utf-8') as f:
+        json.dump(notifications, f, ensure_ascii=False, indent=2)
+
+def create_notification(user_id, title, message, notification_type='info', priority='normal', expires_at=None):
+    """Cria uma nova notificação"""
+    notification = {
+        'id': f'notif-{datetime.now().strftime("%Y%m%d%H%M%S")}-{user_id}',
+        'user_id': user_id,
+        'title': title,
+        'message': message,
+        'type': notification_type,  # info, success, warning, error
+        'priority': priority,  # low, normal, high, urgent
+        'is_read': False,
+        'created_at': datetime.now().isoformat(),
+        'expires_at': expires_at,
+        'action_url': None,
+        'action_text': None
+    }
+
+    notifications = load_notifications()
+    notifications.append(notification)
+    save_notifications(notifications)
+
+    return notification
+
+def get_user_notifications(user_id, include_read=False, limit=50):
+    """Obtém notificações de um usuário"""
+    notifications = load_notifications()
+    user_notifications = []
+
+    for notif in notifications:
+        if notif['user_id'] == user_id:
+            # Verificar se a notificação não expirou
+            if notif.get('expires_at'):
+                expires_at = datetime.fromisoformat(notif['expires_at'])
+                if datetime.now() > expires_at:
+                    continue
+
+            if include_read or not notif['is_read']:
+                user_notifications.append(notif)
+
+    # Ordenar por prioridade e data de criação
+    user_notifications.sort(key=lambda x: (
+        {'urgent': 4, 'high': 3, 'normal': 2, 'low': 1}[x['priority']],
+        x['created_at']
+    ), reverse=True)
+
+    return user_notifications[:limit]
+
+def mark_notification_as_read(notification_id):
+    """Marca uma notificação como lida"""
+    notifications = load_notifications()
+
+    for notif in notifications:
+        if notif['id'] == notification_id:
+            notif['is_read'] = True
+            notif['read_at'] = datetime.now().isoformat()
+            save_notifications(notifications)
+            return True
+
+    return False
+
+def mark_all_notifications_as_read(user_id):
+    """Marca todas as notificações de um usuário como lidas"""
+    notifications = load_notifications()
+    updated = False
+
+    for notif in notifications:
+        if notif['user_id'] == user_id and not notif['is_read']:
+            notif['is_read'] = True
+            notif['read_at'] = datetime.now().isoformat()
+            updated = True
+
+    if updated:
+        save_notifications(notifications)
+
+    return updated
+
+def delete_notification(notification_id):
+    """Deleta uma notificação"""
+    notifications = load_notifications()
+
+    for i, notif in enumerate(notifications):
+        if notif['id'] == notification_id:
+            del notifications[i]
+            save_notifications(notifications)
+            return True
+
+    return False
+
+def get_unread_count(user_id):
+    """Obtém o número de notificações não lidas de um usuário"""
+    notifications = get_user_notifications(user_id, include_read=False)
+    return len(notifications)
+
 def create_sample_data():
     """Cria dados de exemplo se não existirem"""
     pages = load_pages()
@@ -557,12 +664,18 @@ def get_categories():
 @app.route('/admin/analytics')
 @login_required
 def admin_analytics():
-    """Página de analytics e relatórios (apenas para admins)"""
+    """Página de analytics para administradores"""
     if current_user.role != 'admin':
-        flash('Acesso negado. Apenas administradores podem ver analytics.', 'error')
         return redirect(url_for('index'))
-
     return render_template('admin_analytics.html')
+
+@app.route('/admin/notifications')
+@login_required
+def admin_notifications():
+    """Página de gerenciamento de notificações para administradores"""
+    if current_user.role != 'admin':
+        return redirect(url_for('index'))
+    return render_template('admin_notifications.html')
 
 @app.route('/api/analytics/overview')
 @login_required
@@ -798,8 +911,152 @@ def export_analytics():
 
     return jsonify(export_data)
 
+# Rotas para o sistema de notificações
+@app.route('/api/notifications')
+@login_required
+def get_notifications():
+    """Retorna notificações do usuário atual"""
+    try:
+        include_read = request.args.get('include_read', 'false').lower() == 'true'
+        limit = int(request.args.get('limit', 50))
+
+        notifications = get_user_notifications(current_user.id, include_read, limit)
+
+        return jsonify({
+            'notifications': notifications,
+            'unread_count': get_unread_count(current_user.id)
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/notifications/<notification_id>/read', methods=['POST'])
+@login_required
+def mark_notification_read(notification_id):
+    """Marca uma notificação como lida"""
+    try:
+        success = mark_notification_as_read(notification_id)
+        if success:
+            return jsonify({'success': True, 'message': 'Notificação marcada como lida'})
+        else:
+            return jsonify({'error': 'Notificação não encontrada'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/notifications/read-all', methods=['POST'])
+@login_required
+def mark_all_notifications_read():
+    """Marca todas as notificações do usuário como lidas"""
+    try:
+        success = mark_all_notifications_as_read(current_user.id)
+        return jsonify({
+            'success': True,
+            'message': 'Todas as notificações foram marcadas como lidas'
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/notifications/<notification_id>', methods=['DELETE'])
+@login_required
+def delete_notification_route(notification_id):
+    """Deleta uma notificação"""
+    try:
+        success = delete_notification(notification_id)
+        if success:
+            return jsonify({'success': True, 'message': 'Notificação deletada'})
+        else:
+            return jsonify({'error': 'Notificação não encontrada'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/notifications/unread-count')
+@login_required
+def get_unread_count_route():
+    """Retorna o número de notificações não lidas"""
+    try:
+        count = get_unread_count(current_user.id)
+        return jsonify({'unread_count': count})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Rota para criar notificações (apenas admin)
+@app.route('/api/notifications', methods=['POST'])
+@login_required
+def create_notification_route():
+    """Cria uma nova notificação (apenas admin)"""
+    if current_user.role != 'admin':
+        return jsonify({'error': 'Acesso negado'}), 403
+
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        title = data.get('title')
+        message = data.get('message')
+        notification_type = data.get('type', 'info')
+        priority = data.get('priority', 'normal')
+        expires_at = data.get('expires_at')
+        action_url = data.get('action_url')
+        action_text = data.get('action_text')
+
+        if not user_id or not title or not message:
+            return jsonify({'error': 'user_id, title e message são obrigatórios'}), 400
+
+        notification = create_notification(
+            user_id=user_id,
+            title=title,
+            message=message,
+            notification_type=notification_type,
+            priority=priority,
+            expires_at=expires_at
+        )
+
+        # Adicionar action_url e action_text se fornecidos
+        if action_url or action_text:
+            notifications = load_notifications()
+            for notif in notifications:
+                if notif['id'] == notification['id']:
+                    notif['action_url'] = action_url
+                    notif['action_text'] = action_text
+                    save_notifications(notifications)
+                    break
+
+        return jsonify({
+            'success': True,
+            'notification': notification,
+            'message': 'Notificação criada com sucesso'
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Função para criar notificações automáticas
+def create_automatic_notifications():
+    """Cria notificações automáticas baseadas em eventos"""
+    users = load_users()
+
+    # Notificação de boas-vindas para novos usuários
+    for user in users:
+        if user.get('is_active', True):
+            # Verificar se é um usuário novo (criado nas últimas 24h)
+            created_at = datetime.fromisoformat(user['created_at'])
+            if datetime.now() - created_at < timedelta(hours=24):
+                # Verificar se já existe notificação de boas-vindas
+                existing_notifications = get_user_notifications(user['id'], include_read=True)
+                welcome_exists = any(
+                    'Bem-vindo' in notif['title']
+                    for notif in existing_notifications
+                )
+
+                if not welcome_exists:
+                    create_notification(
+                        user_id=user['id'],
+                        title='Bem-vindo à Wiki Veloz Fibra!',
+                        message=f'Olá {user["name"]}! Bem-vindo à nossa central de conhecimento. Explore as páginas e descubra tudo sobre a Veloz Fibra.',
+                        notification_type='success',
+                        priority='normal'
+                    )
+
 if __name__ == '__main__':
     # Criar dados de exemplo e usuário admin na primeira execução
     create_sample_data()
     create_default_admin()
+    create_automatic_notifications()
     app.run(debug=True, host='0.0.0.0', port=8000)

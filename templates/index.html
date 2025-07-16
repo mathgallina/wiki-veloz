@@ -112,9 +112,141 @@
               <i class="fas fa-moon text-xl" x-show="!isDarkMode"></i>
             </button>
 
+            <!-- Notifications Button -->
+            <div class="relative" x-data="{ notificationsOpen: false }">
+              <button
+                @click="notificationsOpen = !notificationsOpen; loadNotifications()"
+                class="p-2 rounded-md text-gray-400 hover:text-gray-300 transition-colors relative"
+                title="Notificações"
+              >
+                <i class="fas fa-bell text-xl"></i>
+                <!-- Notification Badge -->
+                <div
+                  x-show="unreadCount > 0"
+                  class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+                  x-text="unreadCount"
+                ></div>
+              </button>
+
+              <!-- Notifications Dropdown -->
+              <div
+                x-show="notificationsOpen"
+                @click.away="notificationsOpen = false"
+                class="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-700 max-h-96 overflow-y-auto"
+              >
+                <!-- Notifications Header -->
+                <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Notificações</h3>
+                    <button
+                      @click="markAllAsRead()"
+                      class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                      x-show="unreadCount > 0"
+                    >
+                      Marcar todas como lidas
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Notifications List -->
+                <div x-show="notifications.length === 0" class="px-4 py-8 text-center">
+                  <i class="fas fa-bell text-gray-400 text-2xl mb-2"></i>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">Nenhuma notificação</p>
+                </div>
+
+                <template x-for="notification in notifications" :key="notification.id">
+                  <div
+                    class="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                    :class="!notification.is_read ? 'bg-blue-50 dark:bg-blue-900/20' : ''"
+                    @click="markAsRead(notification.id)"
+                  >
+                    <div class="flex items-start space-x-3">
+                      <!-- Notification Icon -->
+                      <div class="flex-shrink-0">
+                        <div
+                          class="w-8 h-8 rounded-full flex items-center justify-center"
+                          :class="{
+                            'bg-blue-100 text-blue-600': notification.type === 'info',
+                            'bg-green-100 text-green-600': notification.type === 'success',
+                            'bg-yellow-100 text-yellow-600': notification.type === 'warning',
+                            'bg-red-100 text-red-600': notification.type === 'error'
+                          }"
+                        >
+                          <i
+                            class="fas text-sm"
+                            :class="{
+                              'fa-info': notification.type === 'info',
+                              'fa-check': notification.type === 'success',
+                              'fa-exclamation-triangle': notification.type === 'warning',
+                              'fa-exclamation-circle': notification.type === 'error'
+                            }"
+                          ></i>
+                        </div>
+                      </div>
+
+                      <!-- Notification Content -->
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                          <p
+                            class="text-sm font-medium text-gray-900 dark:text-white"
+                            :class="!notification.is_read ? 'font-semibold' : ''"
+                            x-text="notification.title"
+                          ></p>
+                          <div class="flex items-center space-x-2">
+                            <!-- Priority Badge -->
+                            <span
+                              class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                              :class="{
+                                'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200': notification.priority === 'low',
+                                'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200': notification.priority === 'normal',
+                                'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200': notification.priority === 'high',
+                                'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200': notification.priority === 'urgent'
+                              }"
+                              x-text="notification.priority"
+                            ></span>
+
+                            <!-- Delete Button -->
+                            <button
+                              @click.stop="deleteNotification(notification.id)"
+                              class="text-gray-400 hover:text-red-500 transition-colors"
+                              title="Deletar notificação"
+                            >
+                              <i class="fas fa-trash text-xs"></i>
+                            </button>
+                          </div>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1" x-text="notification.message"></p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2" x-text="formatDate(notification.created_at)"></p>
+
+                        <!-- Action Button -->
+                        <div x-show="notification.action_url && notification.action_text" class="mt-2">
+                          <a
+                            :href="notification.action_url"
+                            class="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                          >
+                            <span x-text="notification.action_text"></span>
+                            <i class="fas fa-external-link-alt ml-1"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- Load More Button -->
+                <div x-show="notifications.length > 0" class="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
+                  <button
+                    @click="loadMoreNotifications()"
+                    class="w-full text-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                  >
+                    Carregar mais notificações
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <!-- User Info -->
-            <div class="flex items-center space-x-3">
-              <div class="text-right hidden sm:block">
+            <div class="text-right hidden sm:block">
                 <p class="text-sm font-medium text-gray-900 dark:text-white">{{ current_user.name }}</p>
                 <p class="text-xs text-gray-500 dark:text-gray-400">{{ current_user.role.title() }}</p>
               </div>
@@ -592,11 +724,16 @@
             username: '',
             password: '',
           },
+          // Notifications properties
+          notifications: [],
+          unreadCount: 0,
+          notificationsLoaded: false,
 
           init() {
             this.loadPages();
             this.loadCategories();
             this.loadTheme();
+            this.loadUnreadCount();
           },
 
           async loadPages() {
@@ -792,6 +929,92 @@
             } else {
               document.documentElement.classList.remove('dark');
               localStorage.setItem('wiki-theme', 'light');
+            }
+          },
+
+          async loadUnreadCount() {
+            try {
+              const response = await fetch('/api/notifications/unread-count');
+              const data = await response.json();
+              this.unreadCount = data.unread_count;
+            } catch (error) {
+              console.error('Erro ao carregar contador de notificações:', error);
+            }
+          },
+
+          // Notifications methods
+          async loadNotifications() {
+            if (this.notificationsLoaded) return;
+            try {
+              const response = await fetch('/api/notifications');
+              const data = await response.json();
+              this.notifications = data.notifications;
+              this.unreadCount = data.unread_count;
+              this.notificationsLoaded = true;
+            } catch (error) {
+              console.error('Erro ao carregar notificações:', error);
+            }
+          },
+
+          async markAsRead(notificationId) {
+            try {
+              const response = await fetch(`/api/notifications/${notificationId}/read`, {
+                method: 'POST',
+              });
+              if (response.ok) {
+                const notification = this.notifications.find(n => n.id === notificationId);
+                if (notification) {
+                  notification.is_read = true;
+                  this.unreadCount = Math.max(0, this.unreadCount - 1);
+                }
+              }
+            } catch (error) {
+              console.error('Erro ao marcar notificação como lida:', error);
+            }
+          },
+
+          async markAllAsRead() {
+            try {
+              const response = await fetch('/api/notifications/read-all', {
+                method: 'POST',
+              });
+              if (response.ok) {
+                this.notifications = this.notifications.map(n => ({ ...n, is_read: true }));
+                this.unreadCount = 0;
+              }
+            } catch (error) {
+              console.error('Erro ao marcar todas como lidas:', error);
+            }
+          },
+
+          async deleteNotification(notificationId) {
+            if (!confirm('Tem certeza que deseja excluir esta notificação?')) {
+              return;
+            }
+            try {
+              const response = await fetch(`/api/notifications/${notificationId}`, {
+                method: 'DELETE',
+              });
+              if (response.ok) {
+                const notification = this.notifications.find(n => n.id === notificationId);
+                if (notification && !notification.is_read) {
+                  this.unreadCount = Math.max(0, this.unreadCount - 1);
+                }
+                this.notifications = this.notifications.filter(n => n.id !== notificationId);
+              }
+            } catch (error) {
+              console.error('Erro ao excluir notificação:', error);
+            }
+          },
+
+          async loadMoreNotifications() {
+            try {
+              const response = await fetch(`/api/notifications?limit=${this.notifications.length + 10}`);
+              const data = await response.json();
+              this.notifications = data.notifications;
+              this.unreadCount = data.unread_count;
+            } catch (error) {
+              console.error('Erro ao carregar mais notificações:', error);
             }
           },
         };
