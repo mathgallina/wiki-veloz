@@ -12,5 +12,96 @@
     "details": "Login realizado por Matheus Gallina",
     "timestamp": "2025-07-16T13:43:25.250162",
     "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-16T15:18:03.394858",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:18:03.682466",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:18:23.226218",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:18:50.739312",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:19:16.340275",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:19:24.233903",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:20:07.279722",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:24:34.659361",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:27:30.288331",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:29:06.556489",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:29:14.170684",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:29:30.013459",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-16T15:29:37.666768",
+    "ip_address": "127.0.0.1"
   }
 ]

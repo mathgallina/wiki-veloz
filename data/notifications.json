@@ -6,10 +6,11 @@
     "message": "Olá Matheus Gallina! Bem-vindo à nossa central de conhecimento. Explore as páginas e descubra tudo sobre a Veloz Fibra.",
     "type": "success",
     "priority": "normal",
-    "is_read": false,
+    "is_read": true,
     "created_at": "2025-07-16T14:24:15.475050",
     "expires_at": null,
     "action_url": null,
-    "action_text": null
+    "action_text": null,
+    "read_at": "2025-07-16T15:19:30.830084"
   }
 ]
