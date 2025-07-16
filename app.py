@@ -1455,20 +1455,44 @@ def setup_google_drive_route():
         data = request.get_json() or {}
         credentials_file = data.get("credentials_file", "credentials.json")
 
+        # Verificar se o arquivo de credenciais existe
+        if not os.path.exists(credentials_file):
+            error_msg = (
+                f"Arquivo de credenciais '{credentials_file}' não encontrado. "
+                f"Baixe o arquivo credentials.json do Google Cloud Console e "
+                f"coloque na raiz do projeto. Veja o arquivo "
+                f"CREDENCIAIS_GOOGLE_DRIVE.md para instruções."
+            )
+            return jsonify({"error": error_msg}), 400
+
         success = backup_system.setup_google_drive(credentials_file)
 
         if success:
+            # Registrar atividade
+            log_activity(
+                current_user.id,
+                "google_drive_configured",
+                "Google Drive configurado com sucesso"
+            )
+
+            success_msg = (
+                "Google Drive configurado com sucesso! "
+                "Os próximos backups serão enviados automaticamente para o Google Drive."
+            )
             return jsonify({
                 "success": True,
-                "message": "Google Drive configurado com sucesso"
+                "message": success_msg
             })
         else:
-            return jsonify({
-                "error": "Erro ao configurar Google Drive"
-            }), 500
+            error_msg = (
+                "Erro ao configurar Google Drive. "
+                "Verifique se o arquivo credentials.json está correto e se a "
+                "Google Drive API está ativada."
+            )
+            return jsonify({"error": error_msg}), 500
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Erro ao configurar Google Drive: {str(e)}"}), 500
 
 
 if __name__ == "__main__":
