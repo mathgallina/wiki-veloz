@@ -1,0 +1,9 @@
+[
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-16T13:38:16.409573",
+    "ip_address": "127.0.0.1"
+  }
+]
