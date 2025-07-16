@@ -56,7 +56,7 @@ def create_default_admin():
             'username': 'matheus.gallina',
             'name': 'Matheus Gallina',
             'email': 'matheus@velozfibra.com',
-            'password_hash': generate_password_hash('Veloz2024!'),
+            'password_hash': generate_password_hash('B@rcelona1998'),
             'role': 'admin',
             'created_at': datetime.now().isoformat(),
             'last_login': None,
@@ -65,6 +65,15 @@ def create_default_admin():
         users.append(admin_user)
         save_users(users)
         print("✅ Usuário administrador criado: Matheus Gallina")
+    else:
+        # Atualizar senha do admin existente
+        for user in users:
+            if user['role'] == 'admin':
+                user['password_hash'] = generate_password_hash('B@rcelona1998')
+                user['updated_at'] = datetime.now().isoformat()
+                save_users(users)
+                print("✅ Senha do administrador atualizada: Matheus Gallina")
+                break
 
 def log_activity(user_id, action, details=None):
     """Registra atividade do usuário"""
