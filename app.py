@@ -304,6 +304,9 @@ def get_unread_count(user_id):
 
 def create_sample_data():
     """Cria dados de exemplo se não existirem"""
+    # Criar setores padrão
+    create_default_sectors()
+    
     pages = load_pages()
     if not pages:
         sample_pages = [
@@ -383,14 +386,103 @@ def save_pdfs(pdfs):
         json.dump(pdfs, f, ensure_ascii=False, indent=2)
 
 
-def create_pdf_entry(filename, original_filename, page_id=None, description=""):
-    """Cria uma entrada de PDF"""
+# Funções para gerenciar setores/áreas da empresa
+def load_sectors():
+    """Carrega setores do arquivo JSON"""
+    try:
+        with open("data/sectors.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return []
+
+
+def save_sectors(sectors):
+    """Salva setores no arquivo JSON"""
+    os.makedirs("data", exist_ok=True)
+    with open("data/sectors.json", "w", encoding="utf-8") as f:
+        json.dump(sectors, f, ensure_ascii=False, indent=2)
+
+
+def create_default_sectors():
+    """Cria setores padrão da empresa"""
+    sectors = load_sectors()
+    
+    if not sectors:
+        default_sectors = [
+            {
+                "id": "comercial",
+                "name": "Comercial",
+                "description": "Setor responsável por vendas e relacionamento com clientes",
+                "color": "blue",
+                "icon": "fas fa-handshake",
+                "created_at": datetime.now().isoformat()
+            },
+            {
+                "id": "tecnico",
+                "name": "Técnico",
+                "description": "Setor responsável por instalação e manutenção técnica",
+                "color": "green",
+                "icon": "fas fa-tools",
+                "created_at": datetime.now().isoformat()
+            },
+            {
+                "id": "financeiro",
+                "name": "Financeiro",
+                "description": "Setor responsável por contabilidade e finanças",
+                "color": "yellow",
+                "icon": "fas fa-calculator",
+                "created_at": datetime.now().isoformat()
+            },
+            {
+                "id": "rh",
+                "name": "Recursos Humanos",
+                "description": "Setor responsável por gestão de pessoas",
+                "color": "purple",
+                "icon": "fas fa-users",
+                "created_at": datetime.now().isoformat()
+            },
+            {
+                "id": "administrativo",
+                "name": "Administrativo",
+                "description": "Setor responsável por administração geral",
+                "color": "gray",
+                "icon": "fas fa-building",
+                "created_at": datetime.now().isoformat()
+            },
+            {
+                "id": "marketing",
+                "name": "Marketing",
+                "description": "Setor responsável por marketing e comunicação",
+                "color": "pink",
+                "icon": "fas fa-bullhorn",
+                "created_at": datetime.now().isoformat()
+            },
+            {
+                "id": "ti",
+                "name": "Tecnologia da Informação",
+                "description": "Setor responsável por sistemas e tecnologia",
+                "color": "indigo",
+                "icon": "fas fa-laptop-code",
+                "created_at": datetime.now().isoformat()
+            }
+        ]
+        
+        sectors = default_sectors
+        save_sectors(sectors)
+        print("✅ Setores padrão criados")
+
+
+def create_pdf_entry(filename, original_filename, sector_id=None, page_id=None, description="", training_date=None, trainer=""):
+    """Cria uma entrada de PDF com informações de setor e treinamento"""
     return {
         "id": str(uuid.uuid4()),
         "filename": filename,
         "original_filename": original_filename,
+        "sector_id": sector_id,
         "page_id": page_id,
         "description": description,
+        "training_date": training_date,
+        "trainer": trainer,
         "uploaded_by": current_user.id,
         "uploaded_at": datetime.now().isoformat(),
         "file_size": os.path.getsize(
@@ -398,6 +490,12 @@ def create_pdf_entry(filename, original_filename, page_id=None, description=""):
         ),
         "download_count": 0,
     }
+
+
+def get_pdfs_by_sector(sector_id):
+    """Retorna PDFs associados a um setor"""
+    pdfs = load_pdfs()
+    return [pdf for pdf in pdfs if pdf.get("sector_id") == sector_id]
 
 
 def get_pdfs_by_page(page_id):
@@ -1535,14 +1633,143 @@ def setup_google_drive_route():
         return jsonify({"error": f"Erro ao configurar Google Drive: {str(e)}"}), 500
 
 
-# Rotas para gerenciamento de PDFs
+# Rotas para gerenciamento de setores
+@app.route("/api/sectors", methods=["GET"])
+@login_required
+def get_sectors():
+    """Retorna lista de setores"""
+    sectors = load_sectors()
+    return jsonify({"sectors": sectors})
+
+
+@app.route("/api/sectors", methods=["POST"])
+@login_required
+def create_sector():
+    """Cria um novo setor (apenas para admins)"""
+    if current_user.role != "admin":
+        return jsonify({"error": "Acesso negado"}), 403
+
+    data = request.get_json()
+    name = data.get("name")
+    description = data.get("description", "")
+    color = data.get("color", "gray")
+    icon = data.get("icon", "fas fa-folder")
+
+    if not name:
+        return jsonify({"error": "Nome do setor é obrigatório"}), 400
+
+    sectors = load_sectors()
+    
+    # Verificar se já existe um setor com este nome
+    if any(s["name"].lower() == name.lower() for s in sectors):
+        return jsonify({"error": "Setor já existe"}), 400
+
+    # Criar novo setor
+    new_sector = {
+        "id": slugify(name),
+        "name": name,
+        "description": description,
+        "color": color,
+        "icon": icon,
+        "created_at": datetime.now().isoformat(),
+        "created_by": current_user.id
+    }
+
+    sectors.append(new_sector)
+    save_sectors(sectors)
+
+    log_activity(current_user.id, "create_sector", f"Criou setor: {name}")
+
+    return jsonify({
+        "success": True,
+        "message": "Setor criado com sucesso",
+        "sector": new_sector
+    }), 201
+
+
+@app.route("/api/sectors/<sector_id>", methods=["PUT"])
+@login_required
+def update_sector(sector_id):
+    """Atualiza um setor (apenas para admins)"""
+    if current_user.role != "admin":
+        return jsonify({"error": "Acesso negado"}), 403
+
+    data = request.get_json()
+    sectors = load_sectors()
+
+    sector = next((s for s in sectors if s["id"] == sector_id), None)
+    if not sector:
+        return jsonify({"error": "Setor não encontrado"}), 404
+
+    # Atualizar campos
+    if "name" in data:
+        sector["name"] = data["name"]
+    if "description" in data:
+        sector["description"] = data["description"]
+    if "color" in data:
+        sector["color"] = data["color"]
+    if "icon" in data:
+        sector["icon"] = data["icon"]
+
+    sector["updated_at"] = datetime.now().isoformat()
+    sector["updated_by"] = current_user.id
+
+    save_sectors(sectors)
+
+    log_activity(current_user.id, "update_sector", f"Atualizou setor: {sector['name']}")
+
+    return jsonify({
+        "success": True,
+        "message": "Setor atualizado com sucesso",
+        "sector": sector
+    })
+
+
+@app.route("/api/sectors/<sector_id>", methods=["DELETE"])
+@login_required
+def delete_sector(sector_id):
+    """Remove um setor (apenas para admins)"""
+    if current_user.role != "admin":
+        return jsonify({"error": "Acesso negado"}), 403
+
+    sectors = load_sectors()
+    sector = next((s for s in sectors if s["id"] == sector_id), None)
+    
+    if not sector:
+        return jsonify({"error": "Setor não encontrado"}), 404
+
+    # Verificar se há PDFs associados a este setor
+    pdfs = load_pdfs()
+    sector_pdfs = [pdf for pdf in pdfs if pdf.get("sector_id") == sector_id]
+    
+    if sector_pdfs:
+        return jsonify({
+            "error": f"Não é possível excluir o setor. Existem {len(sector_pdfs)} PDFs associados."
+        }), 400
+
+    sectors.remove(sector)
+    save_sectors(sectors)
+
+    log_activity(current_user.id, "delete_sector", f"Removeu setor: {sector['name']}")
+
+    return jsonify({
+        "success": True,
+        "message": "Setor removido com sucesso"
+    })
+
+
+# Rotas para gerenciamento de PDFs (modificadas para incluir setores)
 @app.route("/api/pdfs", methods=["GET"])
 @login_required
 def get_pdfs():
-    """Retorna lista de PDFs"""
+    """Retorna lista de PDFs com filtros por setor e página"""
+    sector_id = request.args.get("sector_id")
     page_id = request.args.get("page_id")
     pdfs = load_pdfs()
 
+    if sector_id:
+        pdfs = [pdf for pdf in pdfs if pdf.get("sector_id") == sector_id]
+    
     if page_id:
         pdfs = [pdf for pdf in pdfs if pdf.get("page_id") == page_id]
 
@@ -1552,7 +1779,7 @@ def get_pdfs():
 @app.route("/api/pdfs", methods=["POST"])
 @login_required
 def upload_pdf():
-    """Faz upload de um PDF"""
+    """Faz upload de um PDF com informações de setor e treinamento"""
     if "file" not in request.files:
         return jsonify({"error": "Nenhum arquivo enviado"}), 400
 
@@ -1571,22 +1798,54 @@ def upload_pdf():
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
     file.save(file_path)
 
-    # Criar entrada no banco
+    # Obter dados do formulário
+    sector_id = request.form.get("sector_id")
     page_id = request.form.get("page_id")
     description = request.form.get("description", "")
+    training_date = request.form.get("training_date")
+    trainer = request.form.get("trainer", "")
 
-    pdf_entry = create_pdf_entry(unique_filename, filename, page_id, description)
+    # Validar setor se fornecido
+    if sector_id:
+        sectors = load_sectors()
+        sector = next((s for s in sectors if s["id"] == sector_id), None)
+        if not sector:
+            return jsonify({"error": "Setor inválido"}), 400
+
+    # Criar entrada no banco
+    pdf_entry = create_pdf_entry(
+        unique_filename, 
+        filename, 
+        sector_id, 
+        page_id, 
+        description,
+        training_date,
+        trainer
+    )
 
     pdfs = load_pdfs()
     pdfs.append(pdf_entry)
     save_pdfs(pdfs)
 
     # Registrar atividade
-    log_activity(current_user.id, "pdf_uploaded", f"PDF enviado: {filename}")
+    sector_name = "Sem setor"
+    if sector_id:
+        sectors = load_sectors()
+        sector = next((s for s in sectors if s["id"] == sector_id), None)
+        if sector:
+            sector_name = sector["name"]
 
-    return jsonify(
-        {"success": True, "message": "PDF enviado com sucesso", "pdf": pdf_entry}
+    log_activity(
+        current_user.id, 
+        "pdf_uploaded", 
+        f"PDF enviado: {filename} para setor: {sector_name}"
     )
+
+    return jsonify({
+        "success": True, 
+        "message": "PDF enviado com sucesso", 
+        "pdf": pdf_entry
+    })
 
 
 @app.route("/api/pdfs/<pdf_id>", methods=["DELETE"])
