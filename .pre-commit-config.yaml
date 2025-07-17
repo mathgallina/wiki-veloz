@@ -1,0 +1,83 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-json
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: name-tests-test
+      - id: requirements-txt-fixer
+
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
+    hooks:
+      - id: black
+        language_version: python3
+        args: [--line-length=88]
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: [--profile=black, --line-length=88]
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        args: [--max-line-length=88, --extend-ignore=E203, W503]
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.5.1
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-requests, types-Pillow]
+
+  - repo: https://github.com/pycqa/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+        args: [-r, ., -f, json, -o, bandit-report.json]
+        exclude: ^(.venv/|venv/|tests/)
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.9.1
+    hooks:
+      - id: pyupgrade
+        args: [--py39-plus]
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v8.45.0
+    hooks:
+      - id: eslint
+        files: \.(js|jsx|ts|tsx)$
+        types: [file]
+        additional_dependencies:
+          - eslint@8.45.0
+          - '@typescript-eslint/eslint-plugin@6.0.0'
+          - '@typescript-eslint/parser@6.0.0'
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v3.0.0
+    hooks:
+      - id: prettier
+        types_or: [javascript, jsx, ts, tsx, json, css, scss, html, markdown]
+
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.16.4
+    hooks:
+      - id: typos
+        args: [--write-changes]
+
+  - repo: https://github.com/streetsidesoftware/cspell-cli
+    rev: v7.3.7
+    hooks:
+      - id: cspell
+        args: [--config, .cspell.json]

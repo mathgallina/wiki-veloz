@@ -1,6 +1,48 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wiki-veloz-fibra"
+version = "1.0.0"
+description = "Sistema de Wiki Interna da Veloz Fibra"
+authors = [
+    {name = "Matheus Gallina", email = "matheus@velozfibra.com"}
+]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "flask>=2.3.0",
+    "flask-login>=0.6.0",
+    "werkzeug>=2.3.0",
+    "bcrypt>=4.0.0",
+    "python-dotenv>=1.0.0",
+    "requests>=2.31.0",
+    "pillow>=10.0.0",
+    "cryptography>=41.0.0",
+    "google-auth>=2.23.0",
+    "google-auth-oauthlib>=1.1.0",
+    "google-auth-httplib2>=0.1.1",
+    "google-api-python-client>=2.100.0"
+]
+
+[tool.setuptools]
+packages = []
+py-modules = ["app"]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "isort>=5.12.0",
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pre-commit>=3.4.0"
+]
+
 [tool.black]
 line-length = 88
-target-version = ['py38']
+target-version = ['py39']
 include = '\.pyi?$'
 extend-exclude = '''
 /(
@@ -15,3 +57,57 @@ extend-exclude = '''
   | dist
 )/
 '''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["wiki_veloz"]
+known_third_party = ["flask", "werkzeug", "bcrypt", "requests", "pillow", "cryptography"]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "build",
+    "dist",
+    "*.egg-info"
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=app",
+    "--cov-report=term-missing",
+    "--cov-report=html"
+]
+
+[tool.coverage.run]
+source = ["app.py"]
+omit = [
+    "*/tests/*",
+    "*/venv/*",
+    "*/.venv/*"
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]

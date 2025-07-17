@@ -1,202 +1,393 @@
-# Wiki Veloz Fibra
+# 🚀 Wiki Veloz Fibra
 
-Sistema de wiki interna para centralizar informações, processos e documentação da empresa Veloz Fibra.
+Sistema de Wiki Interna da Veloz Fibra - Plataforma completa para documentação, gerenciamento de usuários, upload de PDFs e backup automático.
 
-## 🚀 Características
+## ✨ Funcionalidades
 
-- **Design Moderno**: Interface limpa e responsiva
-- **Navegação Intuitiva**: Menu lateral organizado por categorias
-- **Edição Simples**: Suporte a Markdown para formatação
-- **Pesquisa Rápida**: Busca por palavras-chave
-- **Dados Locais**: Armazenamento em JSON (sem banco de dados complexo)
-- **Fácil Manutenção**: Código simples e personalizável
+### 📚 **Wiki e Documentação**
 
-## 📋 Categorias Disponíveis
+- ✅ Criação e edição de páginas
+- ✅ Categorização de conteúdo
+- ✅ Sistema de busca avançada
+- ✅ Histórico de mudanças
+- ✅ Markdown support
 
-- **Visão da Empresa**: Missão, valores e objetivos
-- **Processos Internos**: Fluxos de trabalho e procedimentos
-- **Ferramentas Utilizadas**: Sistemas e ferramentas da empresa
-- **Onboarding**: Processo de integração de novos colaboradores
-- **Histórico de Mudanças**: Decisões e mudanças importantes
-- **Geral**: Outros assuntos
+### 👥 **Gerenciamento de Usuários**
 
-## 🛠️ Instalação
+- ✅ Sistema de login seguro
+- ✅ Controle de acesso por roles
+- ✅ Perfis de usuário
+- ✅ Logs de atividade
+- ✅ Notificações em tempo real
+
+### 📄 **Sistema de PDFs**
+
+- ✅ Upload de documentos
+- ✅ Visualização inline
+- ✅ Download seguro
+- ✅ Categorização
+- ✅ Busca por conteúdo
+
+### 💾 **Sistema de Backup**
+
+- ✅ Backup automático
+- ✅ Criptografia de dados
+- ✅ Compressão inteligente
+- ✅ Integração Google Drive (opcional)
+- ✅ Restauração de dados
+
+### 📊 **Analytics e Relatórios**
+
+- ✅ Dashboard administrativo
+- ✅ Métricas de uso
+- ✅ Relatórios exportáveis
+- ✅ Gráficos interativos
+
+## 🛠️ Tecnologias
+
+### Backend
+
+- **Python 3.9+**
+- **Flask** - Framework web
+- **Flask-Login** - Autenticação
+- **Werkzeug** - Utilitários web
+- **bcrypt** - Criptografia de senhas
+- **Pillow** - Processamento de imagens
+- **cryptography** - Criptografia avançada
+
+### Frontend
+
+- **HTML5** - Estrutura
+- **Tailwind CSS** - Estilização
+- **Alpine.js** - Interatividade
+- **JavaScript** - Funcionalidades
+
+### DevOps
+
+- **Docker** - Containerização
+- **Git** - Versionamento
+- **Pre-commit** - Qualidade de código
+- **Black** - Formatação Python
+- **Flake8** - Linting Python
+- **ESLint** - Linting JavaScript
+
+## 🚀 Instalação
 
 ### Pré-requisitos
 
-- Python 3.7 ou superior
-- pip (gerenciador de pacotes Python)
+- Python 3.9+
+- Node.js 16+
+- Git
 
-### Passos para Instalação
+### 1. Clone o repositório
 
-1. **Clone ou baixe o projeto**
-   ```bash
-   # Se estiver usando git
-   git clone <url-do-repositorio>
-   cd wiki-veloz
-   ```
+```bash
+git clone https://github.com/seu-usuario/wiki-veloz-fibra.git
+cd wiki-veloz-fibra
+```
 
-2. **Instale as dependências**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 2. Configure o ambiente Python
 
-3. **Execute o aplicativo**
-   ```bash
-   python app.py
-   ```
+```bash
+# Crie o ambiente virtual
+python3 -m venv .venv
 
-4. **Acesse no navegador**
-   ```
-   http://localhost:8000
-   ```
+# Ative o ambiente
+source .venv/bin/activate  # Linux/Mac
+# ou
+.venv\Scripts\activate     # Windows
+
+# Instale as dependências
+pip install -r requirements.txt
+```
+
+### 3. Configure o ambiente Node.js
+
+```bash
+# Instale as dependências do frontend
+npm install
+
+# Compile o CSS
+npm run build:css
+```
+
+### 4. Configure as variáveis de ambiente
+
+```bash
+# Crie o arquivo .env
+cp .env.example .env
+
+# Edite as variáveis conforme necessário
+nano .env
+```
+
+### 5. Inicialize o banco de dados
+
+```bash
+# Execute o script de inicialização
+python3 app.py
+```
+
+### 6. Execute o servidor
+
+```bash
+# Desenvolvimento
+python3 app.py
+
+# Ou usando Docker
+docker-compose up -d
+```
+
+## 📖 Uso
+
+### Acesso ao Sistema
+
+1. Abra o navegador em `http://localhost:8000`
+2. Faça login com as credenciais:
+   - **Usuário**: `matheus.gallina`
+   - **Senha**: `B@rcelona1998`
+
+### Funcionalidades Principais
+
+#### 📚 Criar Páginas
+
+1. Acesse a página inicial
+2. Clique em "Nova Página"
+3. Preencha título, categoria e conteúdo
+4. Use Markdown para formatação
+5. Salve a página
+
+#### 📄 Upload de PDFs
+
+1. Acesse "Gerenciar PDFs" no menu
+2. Arraste arquivos ou clique para selecionar
+3. Adicione descrição e tags
+4. Visualize ou baixe os documentos
+
+#### 👥 Gerenciar Usuários
+
+1. Acesse "Gerenciar Usuários" (apenas admin)
+2. Crie novos usuários
+3. Defina roles e permissões
+4. Monitore atividades
+
+#### 💾 Sistema de Backup
+
+1. Acesse "Sistema de Backup"
+2. Configure backup automático
+3. Monitore status dos backups
+4. Restaure dados quando necessário
+
+## 🧪 Testes
+
+### Executar Testes
+
+```bash
+# Todos os testes
+pytest
+
+# Com cobertura
+pytest --cov=app --cov-report=html
+
+# Testes específicos
+pytest tests/test_users.py
+```
+
+### Qualidade de Código
+
+```bash
+# Formatação
+black . --line-length=88
+
+# Linting
+flake8 . --max-line-length=88
+
+# Organizar imports
+isort . --profile=black
+
+# Verificar tudo
+npm run check
+```
+
+## 🐳 Docker
+
+### Desenvolvimento
+
+```bash
+# Construir imagem
+docker build -t wiki-veloz .
+
+# Executar container
+docker run -p 8000:8000 wiki-veloz
+
+# Ou usar docker-compose
+docker-compose up -d
+```
+
+### Produção
+
+```bash
+# Construir para produção
+docker build -t wiki-veloz:prod .
+
+# Executar com variáveis de produção
+docker run -d \
+  -p 8000:8000 \
+  -e FLASK_ENV=production \
+  -e SECRET_KEY=sua-chave-secreta \
+  wiki-veloz:prod
+```
 
 ## 📁 Estrutura do Projeto
 
 ```
-wiki-veloz/
-├── app.py                 # Aplicação Flask principal
+wiki-veloz-fibra/
+├── app.py                 # Aplicação principal
 ├── requirements.txt       # Dependências Python
-├── README.md             # Este arquivo
-├── data/                 # Dados das páginas (criado automaticamente)
-│   └── pages.json       # Arquivo JSON com o conteúdo
-├── static/               # Arquivos estáticos
-│   └── uploads/         # Uploads de arquivos
-└── templates/            # Templates HTML
-    └── index.html       # Template principal
+├── package.json          # Dependências Node.js
+├── pyproject.toml        # Configuração Python
+├── tailwind.config.js    # Configuração Tailwind
+├── .pre-commit-config.yaml # Hooks de qualidade
+├── Dockerfile            # Containerização
+├── docker-compose.yml    # Orquestração
+├── .vscode/             # Configurações VS Code
+│   └── settings.json
+├── data/                # Dados da aplicação
+│   ├── users.json
+│   ├── pages.json
+│   ├── notifications.json
+│   └── activity_log.json
+├── static/              # Arquivos estáticos
+│   ├── css/
+│   ├── js/
+│   └── uploads/
+├── templates/           # Templates HTML
+│   ├── index.html
+│   ├── login.html
+│   └── admin_*.html
+├── tests/              # Testes automatizados
+│   ├── __init__.py
+│   ├── conftest.py
+│   └── test_*.py
+└── backups/            # Backups do sistema
 ```
 
-## 🎯 Como Usar
+## 🔧 Configuração
 
-### Visualizando Páginas
-1. Acesse a wiki no navegador
-2. Use o menu lateral para navegar por categorias
-3. Clique em uma página para visualizar o conteúdo
+### Variáveis de Ambiente
 
-### Criando Nova Página
-1. Clique no botão "Nova Página" no menu lateral
-2. Preencha o título, categoria e conteúdo
-3. O conteúdo pode ser formatado usando Markdown
-4. Clique em "Criar Página"
-
-### Editando Páginas
-1. Abra uma página existente
-2. Clique no botão "Editar"
-3. Modifique o conteúdo usando Markdown
-4. Clique em "Salvar"
-
-### Pesquisando
-1. Use a barra de pesquisa no topo da página
-2. Digite palavras-chave para encontrar páginas
-3. Os resultados aparecem automaticamente
-
-## 📝 Formatação Markdown
-
-O sistema suporta formatação Markdown para criar conteúdo rico:
-
-```markdown
-# Título Principal
-## Subtítulo
-### Sub-subtítulo
-
-**Texto em negrito**
-*Texto em itálico*
-
-- Lista com marcadores
-- Outro item
-
-1. Lista numerada
-2. Segundo item
-
-[Link](https://exemplo.com)
-
-![Imagem](url-da-imagem)
-
-> Citação ou destaque
-```
-
-## 🔧 Personalização
-
-### Adicionando Novas Categorias
-1. Edite o arquivo `templates/index.html`
-2. Adicione a nova categoria na função `getCategoryName()`
-3. Adicione a descrição na função `getCategoryDescription()`
-
-### Modificando o Design
-1. O design usa Tailwind CSS via CDN
-2. Edite as classes CSS no template HTML
-3. Personalize cores, fontes e layout conforme necessário
-
-### Configurações do Backend
-1. Edite `app.py` para modificar rotas e lógica
-2. Adicione novas funcionalidades conforme necessário
-3. Configure autenticação real se necessário
-
-## 🚀 Deploy
-
-### Opção 1: Local (Desenvolvimento)
 ```bash
-python app.py
+# .env
+FLASK_ENV=development
+SECRET_KEY=sua-chave-secreta
+UPLOAD_FOLDER=static/uploads
+MAX_CONTENT_LENGTH=52428800
 ```
 
-### Opção 2: Streamlit Cloud
-1. Crie uma conta no Streamlit Cloud
-2. Conecte seu repositório GitHub
-3. Configure o arquivo `requirements.txt`
-4. Deploy automático
+### Configurações do VS Code
 
-### Opção 3: VPS/Server
-1. Configure um servidor Linux
-2. Instale Python e dependências
-3. Use gunicorn para produção:
-   ```bash
-   pip install gunicorn
-   gunicorn -w 4 -b 0.0.0.0:5000 app:app
-   ```
+O projeto inclui configurações otimizadas para:
 
-## 📊 Dados de Exemplo
+- ✅ Formatação automática
+- ✅ Linting em tempo real
+- ✅ IntelliSense para Python
+- ✅ Suporte a Tailwind CSS
+- ✅ Git integration
+- ✅ Debugging
 
-O sistema vem com páginas de exemplo incluídas:
-- Visão da Empresa
-- Ferramentas Utilizadas
-- Processos Internos
-- Onboarding de Novos Colaboradores
-- Histórico de Mudanças
+## 📊 Monitoramento
+
+### Logs
+
+- Logs de aplicação em `logs/`
+- Logs de atividade em `data/activity_log.json`
+- Logs de erro em console
+
+### Métricas
+
+- Dashboard de analytics em `/admin/analytics`
+- Relatórios exportáveis
+- Métricas de performance
 
 ## 🔒 Segurança
 
-- Sistema de login simulado (pode ser expandido)
-- Validação de entrada no backend
-- Sanitização de conteúdo Markdown
+### Implementado
 
-## 🛠️ Manutenção
+- ✅ Autenticação segura
+- ✅ Criptografia de senhas
+- ✅ Controle de acesso por roles
+- ✅ Validação de entrada
+- ✅ Sanitização de dados
+- ✅ Proteção CSRF
+- ✅ Headers de segurança
 
-### Backup dos Dados
-- O arquivo `data/pages.json` contém todo o conteúdo
-- Faça backup regular deste arquivo
-- Considere versionamento com Git
+### Recomendações
 
-### Atualizações
-1. Mantenha as dependências atualizadas
-2. Teste em ambiente de desenvolvimento
-3. Faça backup antes de atualizações
+- Use HTTPS em produção
+- Configure firewall adequado
+- Mantenha dependências atualizadas
+- Monitore logs de segurança
+- Faça backups regulares
 
-## 📞 Suporte
+## 🤝 Contribuição
 
-Para dúvidas ou problemas:
-1. Verifique os logs do console
-2. Consulte a documentação do Flask
-3. Teste em diferentes navegadores
+### Como Contribuir
 
-## 🎨 Tecnologias Utilizadas
+1. Fork o projeto
+2. Crie uma branch: `git checkout -b feature/nova-funcionalidade`
+3. Commit suas mudanças: `git commit -am 'Adiciona nova funcionalidade'`
+4. Push para a branch: `git push origin feature/nova-funcionalidade`
+5. Abra um Pull Request
 
-- **Backend**: Python + Flask
-- **Frontend**: HTML + Tailwind CSS + Alpine.js
-- **Formatação**: Markdown
-- **Armazenamento**: JSON
-- **Deploy**: Local/Streamlit Cloud/VPS
+### Padrões de Código
+
+- Use Black para formatação Python
+- Use Prettier para formatação JavaScript
+- Siga as convenções PEP 8
+- Escreva testes para novas funcionalidades
+- Documente APIs e funções
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## 👨‍💻 Desenvolvido por
+
+**Matheus Gallina** - [matheus@velozfibra.com](mailto:matheus@velozfibra.com)
+
+## 🆘 Suporte
+
+### Problemas Comuns
+
+#### Erro de Porta Ocupada
+
+```bash
+# Encontre o processo
+lsof -ti:8000
+
+# Mate o processo
+kill -9 $(lsof -ti:8000)
+```
+
+#### Erro de Dependências
+
+```bash
+# Reinstale as dependências
+pip install -r requirements.txt --force-reinstall
+```
+
+#### Problemas de CSS
+
+```bash
+# Recompile o CSS
+npm run build:css:prod
+```
+
+### Contato
+
+- **Email**: matheus@velozfibra.com
+- **Issues**: [GitHub Issues](https://github.com/seu-usuario/wiki-veloz-fibra/issues)
 
 ---
 
-**Desenvolvido para Veloz Fibra** 🚀
-*Centralizando conhecimento, conectando pessoas* 
+**⭐ Se este projeto te ajudou, considere dar uma estrela!**

@@ -1,35 +1,35 @@
-import os
 import json
+import os
 import uuid
 from datetime import datetime, timedelta
-from werkzeug.utils import secure_filename
-from pathlib import Path
 
 from flask import (
     Flask,
-    render_template,
-    request,
+    flash,
     jsonify,
     redirect,
-    url_for,
-    flash,
+    render_template,
+    request,
     send_from_directory,
+    url_for,
 )
 from flask_cors import CORS
 from flask_login import (
     LoginManager,
     UserMixin,
+    current_user,
+    login_required,
     login_user,
     logout_user,
-    login_required,
-    current_user,
 )
-from werkzeug.security import generate_password_hash, check_password_hash
 from slugify import slugify
+from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 
 # Sistema de Backup
 try:
     from backup_system import backup_system, init_backup_system
+
     BACKUP_SYSTEM_AVAILABLE = True
 except ImportError:
     BACKUP_SYSTEM_AVAILABLE = False
@@ -37,9 +37,7 @@ except ImportError:
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "veloz-fibra-secret-key-2024")
-app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(
-    hours=8
-)  # Sessão de 8 horas
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)  # Sessão de 8 horas
 
 # Configurações para upload de arquivos
 app.config["UPLOAD_FOLDER"] = "static/uploads"
@@ -90,7 +88,9 @@ def create_default_admin():
     users = load_users()
 
     # Verificar se já existe um admin
-    if not any(user["role"] == "admin" for user in users):
+    admin_exists = any(user["role"] == "admin" for user in users)
+
+    if not admin_exists:
         admin_user = {
             "id": "admin-001",
             "username": "matheus.gallina",
@@ -106,13 +106,15 @@ def create_default_admin():
         save_users(users)
         print("✅ Usuário administrador criado: Matheus Gallina")
     else:
-        # Atualizar senha do admin existente
+        # Apenas atualizar a senha se for o usuário específico
         for user in users:
-            if user["role"] == "admin":
-                user["password_hash"] = generate_password_hash("B@rcelona1998")
-                user["updated_at"] = datetime.now().isoformat()
-                save_users(users)
-                print("✅ Senha do administrador atualizada: Matheus Gallina")
+            if user["role"] == "admin" and user["username"] == "matheus.gallina":
+                # Só atualizar se a senha for diferente
+                if not check_password_hash(user["password_hash"], "Matheus Gallina"):
+                    user["password_hash"] = generate_password_hash("Matheus Gallina")
+                    user["updated_at"] = datetime.now().isoformat()
+                    save_users(users)
+                    print("✅ Senha do administrador atualizada: Matheus Gallina")
                 break
 
 
@@ -429,9 +431,7 @@ def login():
         users = load_users()
         user_data = next((u for u in users if u["username"] == username), None)
 
-        if user_data and check_password_hash(
-            user_data["password_hash"], password
-        ):
+        if user_data and check_password_hash(user_data["password_hash"], password):
             user = User(
                 user_data["id"],
                 user_data["username"],
@@ -534,9 +534,7 @@ def create_user():
     users.append(new_user)
     save_users(users)
 
-    log_activity(
-        current_user.id, "create_user", f"Criou usuário: {name} ({username})"
-    )
+    log_activity(current_user.id, "create_user", f"Criou usuário: {name} ({username})")
 
     return (
         jsonify(
@@ -576,10 +574,7 @@ def update_user(user_id):
         user["name"] = data["name"]
     if "email" in data:
         # Verificar se email já existe em outro usuário
-        if any(
-            u.get("email") == data["email"] and u["id"] != user_id
-            for u in users
-        ):
+        if any(u.get("email") == data["email"] and u["id"] != user_id for u in users):
             return jsonify({"error": "Email já existe"}), 400
         user["email"] = data["email"]
     if "role" in data:
@@ -637,13 +632,10 @@ def delete_user(user_id):
     # Não permitir deletar o último admin
     if (
         user["role"] == "admin"
-        and sum(1 for u in users if u["role"] == "admin" and u["is_active"])
-        <= 1
+        and sum(1 for u in users if u["role"] == "admin" and u["is_active"]) <= 1
     ):
         return (
-            jsonify(
-                {"error": "Não é possível deletar o último administrador"}
-            ),
+            jsonify({"error": "Não é possível deletar o último administrador"}),
             400,
         )
 
@@ -775,9 +767,7 @@ def create_page():
     pages.append(new_page)
     save_pages(pages)
 
-    log_activity(
-        current_user.id, "page_create", f'Criou página: {data["title"]}'
-    )
+    log_activity(current_user.id, "page_create", f'Criou página: {data["title"]}')
     return jsonify(new_page), 201
 
 
@@ -788,9 +778,7 @@ def update_page(page_id):
     data = request.get_json()
     pages = load_pages()
 
-    page_index = next(
-        (i for i, p in enumerate(pages) if p["id"] == page_id), None
-    )
+    page_index = next((i for i, p in enumerate(pages) if p["id"] == page_id), None)
 
     if page_index is None:
         return jsonify({"error": "Página não encontrada"}), 404
@@ -808,9 +796,7 @@ def update_page(page_id):
     )
 
     save_pages(pages)
-    log_activity(
-        current_user.id, "page_update", f"Atualizou página: {old_title}"
-    )
+    log_activity(current_user.id, "page_update", f"Atualizou página: {old_title}")
     return jsonify(pages[page_index])
 
 
@@ -935,9 +921,7 @@ def get_analytics_overview():
                 )
                 page_views[page_title] = page_views.get(page_title, 0) + 1
 
-        top_pages = sorted(
-            page_views.items(), key=lambda x: x[1], reverse=True
-        )[:5]
+        top_pages = sorted(page_views.items(), key=lambda x: x[1], reverse=True)[:5]
 
         # Atividades por tipo
         activity_types = {}
@@ -988,8 +972,7 @@ def get_analytics_overview():
                     "recent_activities": len(recent_activities),
                 },
                 "top_pages": [
-                    {"title": title, "views": views}
-                    for title, views in top_pages
+                    {"title": title, "views": views} for title, views in top_pages
                 ],
                 "activity_types": activity_types,
                 "top_users": top_users,
@@ -1028,9 +1011,7 @@ def get_page_analytics():
         )
 
     # Páginas mais recentes
-    recent_pages = sorted(pages, key=lambda x: x["updated_at"], reverse=True)[
-        :10
-    ]
+    recent_pages = sorted(pages, key=lambda x: x["updated_at"], reverse=True)[:10]
 
     # Páginas por tamanho (aproximado)
     pages_by_size = []
@@ -1164,14 +1145,10 @@ def export_analytics():
 def get_notifications():
     """Retorna notificações do usuário atual"""
     try:
-        include_read = (
-            request.args.get("include_read", "false").lower() == "true"
-        )
+        include_read = request.args.get("include_read", "false").lower() == "true"
         limit = int(request.args.get("limit", 50))
 
-        notifications = get_user_notifications(
-            current_user.id, include_read, limit
-        )
+        notifications = get_user_notifications(current_user.id, include_read, limit)
 
         return jsonify(
             {
@@ -1222,9 +1199,7 @@ def delete_notification_route(notification_id):
     try:
         success = delete_notification(notification_id)
         if success:
-            return jsonify(
-                {"success": True, "message": "Notificação deletada"}
-            )
+            return jsonify({"success": True, "message": "Notificação deletada"})
         else:
             return jsonify({"error": "Notificação não encontrada"}), 404
     except Exception as e:
@@ -1263,9 +1238,7 @@ def create_notification_route():
 
         if not user_id or not title or not message:
             return (
-                jsonify(
-                    {"error": "user_id, title e message são obrigatórios"}
-                ),
+                jsonify({"error": "user_id, title e message são obrigatórios"}),
                 400,
             )
 
@@ -1315,8 +1288,7 @@ def create_automatic_notifications():
                     user["id"], include_read=True
                 )
                 welcome_exists = any(
-                    "Bem-vindo" in notif["title"]
-                    for notif in existing_notifications
+                    "Bem-vindo" in notif["title"] for notif in existing_notifications
                 )
 
                 if not welcome_exists:
@@ -1333,12 +1305,15 @@ def create_automatic_notifications():
 # SISTEMA DE BACKUP E RESTAURAÇÃO
 # ============================================================================
 
+
 @app.route("/admin/backup")
 @login_required
 def admin_backup():
     """Página administrativa de backup"""
     if current_user.role != "admin":
-        flash("Acesso negado. Apenas administradores podem acessar esta página.", "error")
+        flash(
+            "Acesso negado. Apenas administradores podem acessar esta página.", "error"
+        )
         return redirect(url_for("index"))
 
     return render_template("admin_backup.html")
@@ -1365,16 +1340,12 @@ def create_backup_route():
 
         # Registrar atividade
         log_activity(
-            current_user.id,
-            "backup_created",
-            f"Backup criado: {result['name']}"
+            current_user.id, "backup_created", f"Backup criado: {result['name']}"
         )
 
-        return jsonify({
-            "success": True,
-            "message": "Backup criado com sucesso",
-            "backup": result
-        })
+        return jsonify(
+            {"success": True, "message": "Backup criado com sucesso", "backup": result}
+        )
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -1418,14 +1389,16 @@ def restore_backup_route(backup_id):
         log_activity(
             current_user.id,
             "backup_restored",
-            f"Backup restaurado: {result['backup_info']['name']}"
+            f"Backup restaurado: {result['backup_info']['name']}",
         )
 
-        return jsonify({
-            "success": True,
-            "message": "Backup restaurado com sucesso",
-            "result": result
-        })
+        return jsonify(
+            {
+                "success": True,
+                "message": "Backup restaurado com sucesso",
+                "result": result,
+            }
+        )
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -1448,16 +1421,9 @@ def delete_backup_route(backup_id):
             return jsonify({"error": result["error"]}), 500
 
         # Registrar atividade
-        log_activity(
-            current_user.id,
-            "backup_deleted",
-            f"Backup removido: {backup_id}"
-        )
+        log_activity(current_user.id, "backup_deleted", f"Backup removido: {backup_id}")
 
-        return jsonify({
-            "success": True,
-            "message": "Backup removido com sucesso"
-        })
+        return jsonify({"success": True, "message": "Backup removido com sucesso"})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -1476,10 +1442,7 @@ def backup_stats_route():
     try:
         stats = backup_system.get_backup_stats()
         config = backup_system.config
-        return jsonify({
-            "stats": stats,
-            "config": config
-        })
+        return jsonify({"stats": stats, "config": config})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -1509,11 +1472,13 @@ def backup_config_route():
 
             backup_system.save_config()
 
-            return jsonify({
-                "success": True,
-                "message": "Configurações atualizadas",
-                "config": backup_system.config
-            })
+            return jsonify(
+                {
+                    "success": True,
+                    "message": "Configurações atualizadas",
+                    "config": backup_system.config,
+                }
+            )
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -1550,17 +1515,14 @@ def setup_google_drive_route():
             log_activity(
                 current_user.id,
                 "google_drive_configured",
-                "Google Drive configurado com sucesso"
+                "Google Drive configurado com sucesso",
             )
 
             success_msg = (
                 "Google Drive configurado com sucesso! "
                 "Os próximos backups serão enviados automaticamente para o Google Drive."
             )
-            return jsonify({
-                "success": True,
-                "message": success_msg
-            })
+            return jsonify({"success": True, "message": success_msg})
         else:
             error_msg = (
                 "Erro ao configurar Google Drive. "
@@ -1620,17 +1582,11 @@ def upload_pdf():
     save_pdfs(pdfs)
 
     # Registrar atividade
-    log_activity(
-        current_user.id,
-        "pdf_uploaded",
-        f"PDF enviado: {filename}"
-    )
+    log_activity(current_user.id, "pdf_uploaded", f"PDF enviado: {filename}")
 
-    return jsonify({
-        "success": True,
-        "message": "PDF enviado com sucesso",
-        "pdf": pdf_entry
-    })
+    return jsonify(
+        {"success": True, "message": "PDF enviado com sucesso", "pdf": pdf_entry}
+    )
 
 
 @app.route("/api/pdfs/<pdf_id>", methods=["DELETE"])
@@ -1644,16 +1600,9 @@ def delete_pdf(pdf_id):
 
     if success:
         # Registrar atividade
-        log_activity(
-            current_user.id,
-            "pdf_deleted",
-            f"PDF removido: {pdf_id}"
-        )
+        log_activity(current_user.id, "pdf_deleted", f"PDF removido: {pdf_id}")
 
-        return jsonify({
-            "success": True,
-            "message": "PDF removido com sucesso"
-        })
+        return jsonify({"success": True, "message": "PDF removido com sucesso"})
     else:
         return jsonify({"error": "PDF não encontrado"}), 404
 
@@ -1676,9 +1625,7 @@ def download_file(filename):
             save_pdfs(pdfs)
 
         return send_from_directory(
-            app.config["UPLOAD_FOLDER"],
-            filename,
-            as_attachment=True
+            app.config["UPLOAD_FOLDER"], filename, as_attachment=True
         )
 
     except Exception as e:
@@ -1700,9 +1647,7 @@ def view_pdf(pdf_id):
         return jsonify({"error": "Arquivo não encontrado"}), 404
 
     return send_from_directory(
-        app.config["UPLOAD_FOLDER"],
-        pdf["filename"],
-        mimetype="application/pdf"
+        app.config["UPLOAD_FOLDER"], pdf["filename"], mimetype="application/pdf"
     )
 
 
