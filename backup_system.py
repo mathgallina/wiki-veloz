@@ -24,29 +24,30 @@ try:
     from google_auth_oauthlib.flow import InstalledAppFlow
     from googleapiclient.discovery import build
     from googleapiclient.http import MediaFileUpload, MediaIoBaseDownload
+
     GOOGLE_DRIVE_AVAILABLE = True
 except ImportError:
     GOOGLE_DRIVE_AVAILABLE = False
-    print("⚠️ Google Drive API não disponível. "
-          "Instale: pip install google-auth google-auth-oauthlib "
-          "google-auth-httplib2 google-api-python-client")
+    print(
+        "⚠️ Google Drive API não disponível. "
+        "Install: pip install google-auth google-auth-oauthlib "
+        "google-auth-httplib2 google-api-python-client"
+    )
 
 # Criptografia
 try:
     from cryptography.fernet import Fernet
+
     CRYPTOGRAPHY_AVAILABLE = True
 except ImportError:
     CRYPTOGRAPHY_AVAILABLE = False
-    print("⚠️ Criptografia não disponível. Instale: pip install cryptography")
+    print("⚠️ Criptografia não disponível. Install: pip install cryptography")
 
 # Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('backup.log'),
-        logging.StreamHandler()
-    ]
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("backup.log"), logging.StreamHandler()],
 )
 logger = logging.getLogger(__name__)
 
@@ -76,16 +77,16 @@ class BackupSystem:
         config_file = Path("backup_config.json")
         if config_file.exists():
             try:
-                with open(config_file, 'r', encoding='utf-8') as f:
+                with open(config_file, encoding="utf-8") as f:
                     self.config = json.load(f)
             except Exception as e:
-                logger.error(f"Erro ao carregar configuração: {e}")
+                logger.error(f"Error ao carregar configuração: {e}")
                 self.config = self.get_default_config()
         else:
             self.config = self.get_default_config()
             self.save_config()
 
-    def get_default_config(self) -> Dict:
+    def get_default_config(self) -> dict:
         """Retorna configuração padrão"""
         return {
             "auto_backup": True,
@@ -97,16 +98,16 @@ class BackupSystem:
             "backup_retention_days": 90,
             "include_logs": True,
             "include_uploads": True,
-            "compression_level": 6
+            "compression_level": 6,
         }
 
     def save_config(self):
         """Salva configurações"""
         try:
-            with open("backup_config.json", 'w', encoding='utf-8') as f:
+            with open("backup_config.json", "w", encoding="utf-8") as f:
                 json.dump(self.config, f, ensure_ascii=False, indent=2)
         except Exception as e:
-            logger.error(f"Erro ao salvar configuração: {e}")
+            logger.error(f"Error ao salvar configuração: {e}")
 
     def setup_encryption(self):
         """Configura criptografia"""
@@ -116,10 +117,10 @@ class BackupSystem:
         key_file = Path("backup_key.key")
         if key_file.exists():
             try:
-                with open(key_file, 'rb') as f:
+                with open(key_file, "rb") as f:
                     self.encryption_key = f.read()
             except Exception as e:
-                logger.error(f"Erro ao carregar chave de criptografia: {e}")
+                logger.error(f"Error ao carregar chave de criptografia: {e}")
                 self.generate_encryption_key()
         else:
             self.generate_encryption_key()
@@ -131,11 +132,11 @@ class BackupSystem:
 
         try:
             self.encryption_key = Fernet.generate_key()
-            with open("backup_key.key", 'wb') as f:
+            with open("backup_key.key", "wb") as f:
                 f.write(self.encryption_key)
             logger.info("✅ Nova chave de criptografia gerada")
         except Exception as e:
-            logger.error(f"Erro ao gerar chave de criptografia: {e}")
+            logger.error(f"Error ao gerar chave de criptografia: {e}")
 
     def encrypt_file(self, file_path: Path) -> Path:
         """Criptografa um arquivo"""
@@ -144,19 +145,19 @@ class BackupSystem:
 
         try:
             fernet = Fernet(self.encryption_key)
-            encrypted_path = file_path.with_suffix(file_path.suffix + '.encrypted')
+            encrypted_path = file_path.with_suffix(file_path.suffix + ".encrypted")
 
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 data = f.read()
 
             encrypted_data = fernet.encrypt(data)
 
-            with open(encrypted_path, 'wb') as f:
+            with open(encrypted_path, "wb") as f:
                 f.write(encrypted_data)
 
             return encrypted_path
         except Exception as e:
-            logger.error(f"Erro ao criptografar arquivo: {e}")
+            logger.error(f"Error ao criptografar arquivo: {e}")
             return file_path
 
     def decrypt_file(self, file_path: Path) -> Path:
@@ -166,22 +167,24 @@ class BackupSystem:
 
         try:
             fernet = Fernet(self.encryption_key)
-            decrypted_path = file_path.with_suffix('').with_suffix(file_path.suffix.replace('.encrypted', ''))
+            decrypted_path = file_path.with_suffix("").with_suffix(
+                file_path.suffix.replace(".encrypted", "")
+            )
 
-            with open(file_path, 'rb') as f:
+            with open(file_path, "rb") as f:
                 encrypted_data = f.read()
 
             decrypted_data = fernet.decrypt(encrypted_data)
 
-            with open(decrypted_path, 'wb') as f:
+            with open(decrypted_path, "wb") as f:
                 f.write(decrypted_data)
 
             return decrypted_path
         except Exception as e:
-            logger.error(f"Erro ao descriptografar arquivo: {e}")
+            logger.error(f"Error ao descriptografar arquivo: {e}")
             return file_path
 
-    def create_backup(self, description: str = "") -> Dict:
+    def create_backup(self, description: str = "") -> dict:
         """Cria um novo backup"""
         try:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -193,7 +196,12 @@ class BackupSystem:
                 temp_backup_path = Path(temp_dir) / f"{backup_name}.zip"
 
                 # Criar arquivo ZIP
-                with zipfile.ZipFile(temp_backup_path, 'w', zipfile.ZIP_DEFLATED, compresslevel=self.config["compression_level"]) as zipf:
+                with zipfile.ZipFile(
+                    temp_backup_path,
+                    "w",
+                    zipfile.ZIP_DEFLATED,
+                    compresslevel=self.config["compression_level"],
+                ) as zipf:
                     # Adicionar arquivos de dados
                     for data_file in self.data_dir.glob("*.json"):
                         zipf.write(data_file, f"data/{data_file.name}")
@@ -211,7 +219,10 @@ class BackupSystem:
                         if uploads_dir.exists():
                             for upload_file in uploads_dir.rglob("*"):
                                 if upload_file.is_file():
-                                    zipf.write(upload_file, f"uploads/{upload_file.relative_to(uploads_dir)}")
+                                    zipf.write(
+                                        upload_file,
+                                        f"uploads/{upload_file.relative_to(uploads_dir)}",
+                                    )
 
                 # Mover para diretório de backup
                 shutil.move(str(temp_backup_path), str(backup_path))
@@ -229,7 +240,7 @@ class BackupSystem:
                 "created_at": datetime.now().isoformat(),
                 "description": description,
                 "encrypted": self.config["encrypt_backups"],
-                "compressed": True
+                "compressed": True,
             }
 
             # Salvar informações do backup
@@ -242,44 +253,46 @@ class BackupSystem:
             # Limpar backups antigos
             self.cleanup_old_backups()
 
-            logger.info(f"✅ Backup criado: {backup_path.name} ({backup_info['size']} bytes)")
+            logger.info(
+                f"✅ Backup criado: {backup_path.name} ({backup_info['size']} bytes)"
+            )
             return backup_info
 
         except Exception as e:
-            logger.error(f"❌ Erro ao criar backup: {e}")
+            logger.error(f"❌ Error ao criar backup: {e}")
             return {"error": str(e)}
 
-    def save_backup_info(self, backup_info: Dict):
+    def save_backup_info(self, backup_info: dict):
         """Salva informações do backup"""
         backups_file = Path("backups/backups_info.json")
         try:
             if backups_file.exists():
-                with open(backups_file, 'r', encoding='utf-8') as f:
+                with open(backups_file, encoding="utf-8") as f:
                     backups = json.load(f)
             else:
                 backups = []
 
             backups.append(backup_info)
 
-            with open(backups_file, 'w', encoding='utf-8') as f:
+            with open(backups_file, "w", encoding="utf-8") as f:
                 json.dump(backups, f, ensure_ascii=False, indent=2)
 
         except Exception as e:
-            logger.error(f"Erro ao salvar informações do backup: {e}")
+            logger.error(f"Error ao salvar informações do backup: {e}")
 
-    def get_backups_list(self) -> List[Dict]:
+    def get_backups_list(self) -> list[dict]:
         """Retorna lista de backups"""
         backups_file = Path("backups/backups_info.json")
         try:
             if backups_file.exists():
-                with open(backups_file, 'r', encoding='utf-8') as f:
+                with open(backups_file, encoding="utf-8") as f:
                     return json.load(f)
             return []
         except Exception as e:
-            logger.error(f"Erro ao carregar lista de backups: {e}")
+            logger.error(f"Error ao carregar lista de backups: {e}")
             return []
 
-    def restore_backup(self, backup_id: str) -> Dict:
+    def restore_backup(self, backup_id: str) -> dict:
         """Restaura um backup"""
         try:
             backups = self.get_backups_list()
@@ -298,14 +311,16 @@ class BackupSystem:
                 backup_file = self.decrypt_file(backup_file)
 
             # Criar backup do estado atual antes da restauração
-            current_backup = self.create_backup("Backup automático antes da restauração")
+            current_backup = self.create_backup(
+                "Backup automático antes da restauração"
+            )
 
             # Restaurar dados
-            with zipfile.ZipFile(backup_file, 'r') as zipf:
+            with zipfile.ZipFile(backup_file, "r") as zipf:
                 # Restaurar arquivos de dados
                 for file_info in zipf.infolist():
-                    if file_info.filename.startswith('data/'):
-                        zipf.extract(file_info, '.')
+                    if file_info.filename.startswith("data/"):
+                        zipf.extract(file_info, ".")
                         logger.info(f"Restaurado: {file_info.filename}")
 
             logger.info(f"✅ Backup restaurado: {backup_info['name']}")
@@ -313,14 +328,14 @@ class BackupSystem:
                 "success": True,
                 "message": f"Backup '{backup_info['name']}' restaurado com sucesso",
                 "backup_info": backup_info,
-                "current_backup": current_backup
+                "current_backup": current_backup,
             }
 
         except Exception as e:
-            logger.error(f"❌ Erro ao restaurar backup: {e}")
+            logger.error(f"❌ Error ao restaurar backup: {e}")
             return {"error": str(e)}
 
-    def delete_backup(self, backup_id: str) -> Dict:
+    def delete_backup(self, backup_id: str) -> dict:
         """Remove um backup"""
         try:
             backups = self.get_backups_list()
@@ -340,14 +355,14 @@ class BackupSystem:
 
             # Remover das informações
             backups = [b for b in backups if b["id"] != backup_id]
-            with open("backups/backups_info.json", 'w', encoding='utf-8') as f:
+            with open("backups/backups_info.json", "w", encoding="utf-8") as f:
                 json.dump(backups, f, ensure_ascii=False, indent=2)
 
             logger.info(f"✅ Backup removido: {backup_info['name']}")
             return {"success": True, "message": "Backup removido com sucesso"}
 
         except Exception as e:
-            logger.error(f"❌ Erro ao remover backup: {e}")
+            logger.error(f"❌ Error ao remover backup: {e}")
             return {"error": str(e)}
 
     def cleanup_old_backups(self):
@@ -373,7 +388,7 @@ class BackupSystem:
                     self.delete_backup(backup["id"])
 
         except Exception as e:
-            logger.error(f"Erro ao limpar backups antigos: {e}")
+            logger.error(f"Error ao limpar backups antigos: {e}")
 
     def setup_google_drive(self, credentials_file: str = "credentials.json") -> bool:
         """Configura integração com Google Drive"""
@@ -382,7 +397,7 @@ class BackupSystem:
             return False
 
         try:
-            SCOPES = ['https://www.googleapis.com/auth/drive.file']
+            SCOPES = ["https://www.googleapis.com/auth/drive.file"]
 
             creds = None
             token_file = Path("token.json")
@@ -395,16 +410,20 @@ class BackupSystem:
                     creds.refresh(Request())
                 else:
                     if not Path(credentials_file).exists():
-                        logger.error(f"Arquivo de credenciais não encontrado: {credentials_file}")
+                        logger.error(
+                            f"Arquivo de credenciais não encontrado: {credentials_file}"
+                        )
                         return False
 
-                    flow = InstalledAppFlow.from_client_secrets_file(credentials_file, SCOPES)
+                    flow = InstalledAppFlow.from_client_secrets_file(
+                        credentials_file, SCOPES
+                    )
                     creds = flow.run_local_server(port=0)
 
-                with open(token_file, 'w') as token:
+                with open(token_file, "w") as token:
                     token.write(creds.to_json())
 
-            self.google_drive_service = build('drive', 'v3', credentials=creds)
+            self.google_drive_service = build("drive", "v3", credentials=creds)
 
             # Criar ou encontrar pasta de backup
             self.backup_folder_id = self.get_or_create_backup_folder()
@@ -416,67 +435,69 @@ class BackupSystem:
             return True
 
         except Exception as e:
-            logger.error(f"❌ Erro ao configurar Google Drive: {e}")
+            logger.error(f"❌ Error ao configurar Google Drive: {e}")
             return False
 
     def get_or_create_backup_folder(self) -> str:
         """Cria ou encontra a pasta de backup no Google Drive"""
         try:
             # Buscar pasta existente
-            results = self.google_drive_service.files().list(
-                q=f"name='{self.config['google_drive_folder']}' and mimeType='application/vnd.google-apps.folder' and trashed=false",
-                spaces='drive',
-                fields='files(id, name)'
-            ).execute()
+            results = (
+                self.google_drive_service.files()
+                .list(
+                    q=f"name='{self.config['google_drive_folder']}' and mimeType='application/vnd.google-apps.folder' and trashed=false",
+                    spaces="drive",
+                    fields="files(id, name)",
+                )
+                .execute()
+            )
 
-            if results['files']:
-                return results['files'][0]['id']
+            if results["files"]:
+                return results["files"][0]["id"]
 
             # Criar nova pasta
             file_metadata = {
-                'name': self.config['google_drive_folder'],
-                'mimeType': 'application/vnd.google-apps.folder'
+                "name": self.config["google_drive_folder"],
+                "mimeType": "application/vnd.google-apps.folder",
             }
 
-            folder = self.google_drive_service.files().create(
-                body=file_metadata,
-                fields='id'
-            ).execute()
+            folder = (
+                self.google_drive_service.files()
+                .create(body=file_metadata, fields="id")
+                .execute()
+            )
 
-            return folder['id']
+            return folder["id"]
 
         except Exception as e:
-            logger.error(f"Erro ao criar pasta no Google Drive: {e}")
+            logger.error(f"Error ao criar pasta no Google Drive: {e}")
             return None
 
-    def upload_to_google_drive(self, file_path: Path, backup_info: Dict) -> bool:
+    def upload_to_google_drive(self, file_path: Path, backup_info: dict) -> bool:
         """Faz upload do backup para o Google Drive"""
         if not self.google_drive_service or not self.backup_folder_id:
             return False
 
         try:
-            file_metadata = {
-                'name': file_path.name,
-                'parents': [self.backup_folder_id]
-            }
+            file_metadata = {"name": file_path.name, "parents": [self.backup_folder_id]}
 
             media = MediaFileUpload(str(file_path), resumable=True)
 
-            file = self.google_drive_service.files().create(
-                body=file_metadata,
-                media_body=media,
-                fields='id'
-            ).execute()
+            file = (
+                self.google_drive_service.files()
+                .create(body=file_metadata, media_body=media, fields="id")
+                .execute()
+            )
 
             # Atualizar informações do backup
-            backup_info["google_drive_id"] = file['id']
+            backup_info["google_drive_id"] = file["id"]
             self.update_backup_info(backup_info)
 
             logger.info(f"✅ Backup enviado para Google Drive: {file_path.name}")
             return True
 
         except Exception as e:
-            logger.error(f"❌ Erro ao enviar para Google Drive: {e}")
+            logger.error(f"❌ Error ao enviar para Google Drive: {e}")
             return False
 
     def download_from_google_drive(self, file_id: str, destination_path: Path) -> bool:
@@ -486,7 +507,7 @@ class BackupSystem:
 
         try:
             request = self.google_drive_service.files().get_media(fileId=file_id)
-            with open(destination_path, 'wb') as f:
+            with open(destination_path, "wb") as f:
                 downloader = MediaIoBaseDownload(f, request)
                 done = False
                 while done is False:
@@ -495,7 +516,7 @@ class BackupSystem:
             return True
 
         except Exception as e:
-            logger.error(f"❌ Erro ao baixar do Google Drive: {e}")
+            logger.error(f"❌ Error ao baixar do Google Drive: {e}")
             return False
 
     def delete_from_google_drive(self, file_id: str) -> bool:
@@ -509,10 +530,10 @@ class BackupSystem:
             return True
 
         except Exception as e:
-            logger.error(f"❌ Erro ao remover do Google Drive: {e}")
+            logger.error(f"❌ Error ao remover do Google Drive: {e}")
             return False
 
-    def update_backup_info(self, backup_info: Dict):
+    def update_backup_info(self, backup_info: dict):
         """Atualiza informações de um backup"""
         backups = self.get_backups_list()
         for i, backup in enumerate(backups):
@@ -520,7 +541,7 @@ class BackupSystem:
                 backups[i] = backup_info
                 break
 
-        with open("backups/backups_info.json", 'w', encoding='utf-8') as f:
+        with open("backups/backups_info.json", "w", encoding="utf-8") as f:
             json.dump(backups, f, ensure_ascii=False, indent=2)
 
     def start_auto_backup(self):
@@ -534,14 +555,14 @@ class BackupSystem:
                     self.create_backup("Backup automático")
                     time.sleep(self.config["backup_interval_hours"] * 3600)
                 except Exception as e:
-                    logger.error(f"Erro no backup automático: {e}")
+                    logger.error(f"Error no backup automático: {e}")
                     time.sleep(3600)  # Esperar 1 hora antes de tentar novamente
 
         thread = threading.Thread(target=run_backup, daemon=True)
         thread.start()
         logger.info("✅ Backup automático iniciado")
 
-    def get_backup_stats(self) -> Dict:
+    def get_backup_stats(self) -> dict:
         """Retorna estatísticas dos backups"""
         backups = self.get_backups_list()
 
@@ -552,7 +573,7 @@ class BackupSystem:
                 "oldest_backup": None,
                 "newest_backup": None,
                 "encrypted_backups": 0,
-                "google_drive_backups": 0
+                "google_drive_backups": 0,
             }
 
         total_size = sum(b.get("size", 0) for b in backups)
@@ -567,11 +588,13 @@ class BackupSystem:
             "oldest_backup": min(dates).isoformat() if dates else None,
             "newest_backup": max(dates).isoformat() if dates else None,
             "encrypted_backups": encrypted_count,
-            "google_drive_backups": google_drive_count
+            "google_drive_backups": google_drive_count,
         }
+
 
 # Instância global do sistema de backup
 backup_system = BackupSystem()
+
 
 def init_backup_system():
     """Inicializa o sistema de backup"""
@@ -586,7 +609,8 @@ def init_backup_system():
         logger.info("✅ Sistema de backup inicializado")
 
     except Exception as e:
-        logger.error(f"❌ Erro ao inicializar sistema de backup: {e}")
+        logger.error(f"❌ Error ao inicializar sistema de backup: {e}")
+
 
 if __name__ == "__main__":
     # Teste do sistema
@@ -599,4 +623,3 @@ if __name__ == "__main__":
     # Mostrar estatísticas
     stats = backup_system.get_backup_stats()
     print(f"Estatísticas: {stats}")
- 

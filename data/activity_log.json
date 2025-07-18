@@ -173,5 +173,12 @@
     "details": "Deletou usuário: Usuário Teste (teste.user)",
     "timestamp": "2025-07-17T08:50:25.066691",
     "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-18T15:13:59.195296",
+    "ip_address": "127.0.0.1"
   }
 ]

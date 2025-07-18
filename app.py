@@ -93,10 +93,10 @@ def create_default_admin():
     if not admin_exists:
         admin_user = {
             "id": "admin-001",
-            "username": "matheus.gallina",
+            "username": "admin",
             "name": "Matheus Gallina",
             "email": "matheus@velozfibra.com",
-            "password_hash": generate_password_hash("B@rcelona1998"),
+            "password_hash": generate_password_hash("Matheus Gallina"),
             "role": "admin",
             "created_at": datetime.now().isoformat(),
             "last_login": None,
@@ -108,7 +108,7 @@ def create_default_admin():
     else:
         # Apenas atualizar a senha se for o usuário específico
         for user in users:
-            if user["role"] == "admin" and user["username"] == "matheus.gallina":
+            if user["role"] == "admin" and user["username"] == "admin":
                 # Só atualizar se a senha for diferente
                 if not check_password_hash(user["password_hash"], "Matheus Gallina"):
                     user["password_hash"] = generate_password_hash("Matheus Gallina")
@@ -1126,7 +1126,9 @@ def get_page_analytics():
         size_category = (
             "Pequena"
             if content_length < 1000
-            else "Média" if content_length < 5000 else "Grande"
+            else "Média"
+            if content_length < 5000
+            else "Grande"
         )
         pages_by_size.append(
             {

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -119,7 +119,7 @@
                 <option value="info">Informação</option>
                 <option value="success">Sucesso</option>
                 <option value="warning">Aviso</option>
-                <option value="error">Erro</option>
+                <option value="error">Error</option>
               </select>
             </div>
 
@@ -372,7 +372,7 @@
               const response = await fetch('/api/users');
               this.users = await response.json();
             } catch (error) {
-              console.error('Erro ao carregar usuários:', error);
+              console.error('Error ao carregar usuários:', error);
             }
           },
 
@@ -384,7 +384,7 @@
               const data = await response.json();
               this.notifications = data.notifications;
             } catch (error) {
-              console.error('Erro ao carregar notificações:', error);
+              console.error('Error ao carregar notificações:', error);
             }
           },
 
@@ -405,11 +405,11 @@
                 alert('Notificação criada com sucesso!');
               } else {
                 const error = await response.json();
-                alert('Erro ao criar notificação: ' + error.error);
+                alert('Error ao criar notificação: ' + error.error);
               }
             } catch (error) {
-              console.error('Erro ao criar notificação:', error);
-              alert('Erro ao criar notificação');
+              console.error('Error ao criar notificação:', error);
+              alert('Error ao criar notificação');
             }
           },
 
@@ -429,11 +429,11 @@
                 );
                 alert('Notificação deletada com sucesso!');
               } else {
-                alert('Erro ao deletar notificação');
+                alert('Error ao deletar notificação');
               }
             } catch (error) {
-              console.error('Erro ao deletar notificação:', error);
-              alert('Erro ao deletar notificação');
+              console.error('Error ao deletar notificação:', error);
+              alert('Error ao deletar notificação');
             }
           },
 
