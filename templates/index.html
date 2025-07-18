@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -14,7 +14,10 @@
       };
     </script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
       .sidebar-transition {
@@ -74,12 +77,18 @@
             </button>
             <div class="flex items-center ml-4 lg:ml-0">
               <a href="/" class="flex items-center">
-                <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <div
+                  class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"
+                >
                   <i class="fas fa-wifi text-white text-sm"></i>
                 </div>
                 <div class="ml-3">
-                  <h1 class="text-xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">Central de Conhecimento</p>
+                  <h1 class="text-xl font-bold text-gray-900 dark:text-white">
+                    VELOZ FIBRA
+                  </h1>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">
+                    Central de Conhecimento
+                  </p>
                 </div>
               </a>
             </div>
@@ -95,7 +104,9 @@
                 x-model="searchQuery"
                 @input="searchPages()"
               />
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
                 <i class="fas fa-search text-gray-400"></i>
               </div>
             </div>
@@ -137,7 +148,9 @@
                 <!-- Notifications Header -->
                 <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                   <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Notificações</h3>
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
+                      Notificações
+                    </h3>
                     <button
                       @click="markAllAsRead()"
                       class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
@@ -151,7 +164,9 @@
                 <!-- Notifications List -->
                 <div x-show="notifications.length === 0" class="px-4 py-8 text-center">
                   <i class="fas fa-bell text-gray-400 text-2xl mb-2"></i>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">Nenhuma notificação</p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Nenhuma notificação
+                  </p>
                 </div>
 
                 <template x-for="notification in notifications" :key="notification.id">
@@ -215,11 +230,20 @@
                             </button>
                           </div>
                         </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 mt-1" x-text="notification.message"></p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2" x-text="formatDate(notification.created_at)"></p>
+                        <p
+                          class="text-sm text-gray-600 dark:text-gray-300 mt-1"
+                          x-text="notification.message"
+                        ></p>
+                        <p
+                          class="text-xs text-gray-500 dark:text-gray-400 mt-2"
+                          x-text="formatDate(notification.created_at)"
+                        ></p>
 
                         <!-- Action Button -->
-                        <div x-show="notification.action_url && notification.action_text" class="mt-2">
+                        <div
+                          x-show="notification.action_url && notification.action_text"
+                          class="mt-2"
+                        >
                           <a
                             :href="notification.action_url"
                             class="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
@@ -234,7 +258,10 @@
                 </template>
 
                 <!-- Load More Button -->
-                <div x-show="notifications.length > 0" class="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
+                <div
+                  x-show="notifications.length > 0"
+                  class="px-4 py-2 border-t border-gray-200 dark:border-gray-700"
+                >
                   <button
                     @click="loadMoreNotifications()"
                     class="w-full text-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
@@ -247,84 +274,89 @@
 
             <!-- User Info -->
             <div class="text-right hidden sm:block">
-                <p class="text-sm font-medium text-gray-900 dark:text-white">{{ current_user.name }}</p>
-                <p class="text-xs text-gray-500 dark:text-gray-400">{{ current_user.role.title() }}</p>
-              </div>
-              <div
-                class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center"
-              >
-                <i class="fas fa-user text-white text-sm"></i>
-              </div>
-
-              <!-- Admin Menu -->
-              {% if current_user.role == 'admin' %}
-              <div class="relative" x-data="{ adminMenuOpen: false }">
-                <button
-                  @click="adminMenuOpen = !adminMenuOpen"
-                  class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
-                  title="Administração"
-                >
-                  <i class="fas fa-cog text-lg"></i>
-                </button>
-
-                <div
-                  x-show="adminMenuOpen"
-                  @click.away="adminMenuOpen = false"
-                  class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-700"
-                >
-                  <a
-                    href="/admin/analytics"
-                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <i class="fas fa-chart-line mr-2"></i>
-                    Analytics
-                  </a>
-                  <a
-                    href="/admin/users"
-                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <i class="fas fa-users mr-2"></i>
-                    Gerenciar Usuários
-                  </a>
-                  <a
-                    href="/admin/activity"
-                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <i class="fas fa-history mr-2"></i>
-                    Logs de Atividade
-                  </a>
-                  <a
-                    href="/admin/backup"
-                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <i class="fas fa-database mr-2"></i>
-                    Sistema de Backup
-                  </a>
-                  <a
-                    href="/admin/pdfs"
-                    class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  >
-                    <i class="fas fa-file-pdf mr-2"></i>
-                    Gerenciar PDFs
-                  </a>
-                </div>
-              </div>
-              {% endif %}
-
-              <a
-                href="/logout"
-                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
-                title="Sair"
-              >
-                <i class="fas fa-sign-out-alt text-lg"></i>
-              </a>
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
+                {{ current_user.name }}
+              </p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ current_user.role.title() }}
+              </p>
             </div>
+            <div
+              class="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center"
+            >
+              <i class="fas fa-user text-white text-sm"></i>
+            </div>
+
+            <!-- Admin Menu -->
+            {% if current_user.role == 'admin' %}
+            <div class="relative" x-data="{ adminMenuOpen: false }">
+              <button
+                @click="adminMenuOpen = !adminMenuOpen"
+                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                title="Administração"
+              >
+                <i class="fas fa-cog text-lg"></i>
+              </button>
+
+              <div
+                x-show="adminMenuOpen"
+                @click.away="adminMenuOpen = false"
+                class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50 border border-gray-200 dark:border-gray-700"
+              >
+                <a
+                  href="/admin/analytics"
+                  class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <i class="fas fa-chart-line mr-2"></i>
+                  Analytics
+                </a>
+                <a
+                  href="/admin/users"
+                  class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <i class="fas fa-users mr-2"></i>
+                  Gerenciar Usuários
+                </a>
+                <a
+                  href="/admin/activity"
+                  class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <i class="fas fa-history mr-2"></i>
+                  Logs de Atividade
+                </a>
+                <a
+                  href="/admin/backup"
+                  class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <i class="fas fa-database mr-2"></i>
+                  Sistema de Backup
+                </a>
+                <a
+                  href="/admin/pdfs"
+                  class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <i class="fas fa-file-pdf mr-2"></i>
+                  Gerenciar PDFs
+                </a>
+              </div>
+            </div>
+            {% endif %}
+
+            <a
+              href="/logout"
+              class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+              title="Sair"
+            >
+              <i class="fas fa-sign-out-alt text-lg"></i>
+            </a>
           </div>
         </div>
       </div>
     </header>
 
-    <div class="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <div
+      class="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200"
+    >
       <!-- Sidebar -->
       <div
         class="sidebar-transition fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg dark:bg-gray-800 transform lg:translate-x-0 lg:static lg:inset-0 transition-colors duration-200"
@@ -388,7 +420,9 @@
       <!-- Main Content -->
       <div class="flex-1 flex flex-col overflow-hidden">
         <!-- Mobile Search -->
-        <div class="lg:hidden p-4 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
+        <div
+          class="lg:hidden p-4 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200"
+        >
           <div class="relative">
             <input
               type="text"
@@ -397,7 +431,9 @@
               x-model="searchQuery"
               @input="searchPages()"
             />
-            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div
+              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+            >
               <i class="fas fa-search text-gray-400"></i>
             </div>
           </div>
@@ -416,15 +452,24 @@
                     <i class="fas fa-wifi text-2xl text-white"></i>
                   </div>
                   <div class="text-left">
-                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
-                    <p class="text-lg text-gray-600 dark:text-gray-300">Internet de Ultra Velocidade</p>
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">
+                      VELOZ FIBRA
+                    </h1>
+                    <p class="text-lg text-gray-600 dark:text-gray-300">
+                      Internet de Ultra Velocidade
+                    </p>
                   </div>
                 </div>
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Central de Conhecimento</h2>
-                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                  Bem-vindo à nossa Central de Conhecimento. Aqui você encontra tudo sobre processos, ferramentas,
-                  procedimentos e informações essenciais para oferecer a melhor internet de ultra velocidade para nossos
-                  clientes.
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                  Central de Conhecimento
+                </h2>
+                <p
+                  class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed"
+                >
+                  Bem-vindo à nossa Central de Conhecimento. Aqui você encontra tudo
+                  sobre processors, ferramentas, procedimentos e informações essenciais
+                  para oferecer a melhor internet de ultra velocidade para nossos
+                  clients.
                 </p>
               </div>
 
@@ -438,8 +483,12 @@
                   >
                     <i class="fas fa-wifi text-blue-600 dark:text-blue-400 text-xl"></i>
                   </div>
-                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Ultra Velocidade</h3>
-                  <p class="text-gray-600 dark:text-gray-300">Internet de alta performance</p>
+                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    Ultra Velocidade
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-300">
+                    Internet de alta performance
+                  </p>
                 </div>
                 <div
                   class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center"
@@ -447,10 +496,16 @@
                   <div
                     class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mx-auto mb-4"
                   >
-                    <i class="fas fa-headset text-green-600 dark:text-green-400 text-xl"></i>
+                    <i
+                      class="fas fa-headset text-green-600 dark:text-green-400 text-xl"
+                    ></i>
                   </div>
-                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Suporte 24/7</h3>
-                  <p class="text-gray-600 dark:text-gray-300">Atendimento sempre disponível</p>
+                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    Suporte 24/7
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-300">
+                    Atendimento sempre disponível
+                  </p>
                 </div>
                 <div
                   class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center"
@@ -458,16 +513,24 @@
                   <div
                     class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mx-auto mb-4"
                   >
-                    <i class="fas fa-shield-alt text-purple-600 dark:text-purple-400 text-xl"></i>
+                    <i
+                      class="fas fa-shield-alt text-purple-600 dark:text-purple-400 text-xl"
+                    ></i>
                   </div>
-                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Fibra Óptica</h3>
+                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    Fibra Óptica
+                  </h3>
                   <p class="text-gray-600 dark:text-gray-300">Tecnologia de ponta</p>
                 </div>
               </div>
 
               <!-- Categories Grid -->
               <div class="mb-8">
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Explore Nossas Seções</h3>
+                <h3
+                  class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center"
+                >
+                  Explore Nossas Seções
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   <template x-for="category in categories" :key="category">
                     <div
@@ -485,7 +548,10 @@
                           x-text="getCategoryName(category)"
                         ></h4>
                       </div>
-                      <p class="text-gray-600 dark:text-gray-300 mb-4" x-text="getCategoryDescription(category)"></p>
+                      <p
+                        class="text-gray-600 dark:text-gray-300 mb-4"
+                        x-text="getCategoryDescription(category)"
+                      ></p>
                       <div
                         class="flex items-center text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors"
                       >
@@ -501,7 +567,11 @@
               <div
                 class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900 p-8 rounded-xl"
               >
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 text-center">Ações Rápidas</h3>
+                <h3
+                  class="text-2xl font-bold text-gray-900 dark:text-white mb-4 text-center"
+                >
+                  Ações Rápidas
+                </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <button
                     @click="showCreateModal = true"
@@ -514,8 +584,12 @@
                         <i class="fas fa-plus text-green-600 dark:text-green-400"></i>
                       </div>
                       <div>
-                        <h4 class="font-semibold text-gray-900 dark:text-white">Nova Página</h4>
-                        <p class="text-sm text-gray-600 dark:text-gray-300">Criar novo conteúdo</p>
+                        <h4 class="font-semibold text-gray-900 dark:text-white">
+                          Nova Página
+                        </h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                          Criar novo conteúdo
+                        </p>
                       </div>
                     </div>
                   </button>
@@ -530,8 +604,12 @@
                         <i class="fas fa-search text-blue-600 dark:text-blue-400"></i>
                       </div>
                       <div>
-                        <h4 class="font-semibold text-gray-900 dark:text-white">Pesquisar</h4>
-                        <p class="text-sm text-gray-600 dark:text-gray-300">Encontrar conteúdo</p>
+                        <h4 class="font-semibold text-gray-900 dark:text-white">
+                          Pesquisar
+                        </h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                          Encontrar conteúdo
+                        </p>
                       </div>
                     </div>
                   </button>
@@ -544,12 +622,18 @@
               class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-200"
             >
               <!-- Page Header -->
-              <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
+              <div
+                class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200"
+              >
                 <div class="flex items-center justify-between">
                   <div>
-                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white" x-text="selectedPage.title"></h1>
+                    <h1
+                      class="text-2xl font-bold text-gray-900 dark:text-white"
+                      x-text="selectedPage.title"
+                    ></h1>
                     <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      Última atualização: <span x-text="formatDate(selectedPage.updated_at)"></span>
+                      Última atualização:
+                      <span x-text="formatDate(selectedPage.updated_at)"></span>
                     </p>
                   </div>
                   <div class="flex items-center space-x-2">
@@ -573,27 +657,152 @@
 
               <!-- Page Content -->
               <div class="p-6">
-                <div x-show="!editMode" class="markdown-content" x-html="renderMarkdown(selectedPage.content)"></div>
+                <div
+                  x-show="!editMode"
+                  class="markdown-content"
+                  x-html="renderMarkdown(selectedPage.content)"
+                ></div>
 
                 <div x-show="editMode">
+                  <!-- Upload Area -->
+                  <div class="mb-4">
+                    <div
+                      class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-400 dark:hover:border-blue-500 transition-colors cursor-pointer"
+                      @click="$refs.fileInput.click()"
+                      @dragover.prevent
+                      @drop.prevent="handleFileDrop($event)"
+                      x-data="{ isDragOver: false }"
+                      @dragenter="isDragOver = true"
+                      @dragleave="isDragOver = false"
+                      :class="isDragOver ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20' : ''"
+                    >
+                      <input
+                        type="file"
+                        x-ref="fileInput"
+                        @change="handleFileSelect($event)"
+                        class="hidden"
+                        accept="image/*,.pdf,.doc,.docx,.txt,.md,.mp4,.avi,.mov,.wmv,.mp3,.wav,.ogg"
+                        multiple
+                      />
+                      <div class="space-y-2">
+                        <i
+                          class="fas fa-cloud-upload-alt text-3xl text-gray-400 dark:text-gray-500"
+                        ></i>
+                        <div>
+                          <p
+                            class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                          >
+                            Arraste arquivos aqui ou clique para selecionar
+                          </p>
+                          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Imagens, PDFs, documentos, vídeos e áudios são suportados
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Upload Progress -->
+                    <div x-show="uploadingFiles.length > 0" class="mt-4 space-y-2">
+                      <template x-for="file in uploadingFiles" :key="file.id">
+                        <div
+                          class="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                        >
+                          <div class="flex-shrink-0">
+                            <i class="fas fa-file text-gray-400"></i>
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <p
+                              class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                              x-text="file.name"
+                            ></p>
+                            <div
+                              class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-1"
+                            >
+                              <div
+                                class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                :style="`width: ${file.progress}%`"
+                              ></div>
+                            </div>
+                          </div>
+                          <div class="flex-shrink-0">
+                            <span
+                              class="text-xs text-gray-500 dark:text-gray-400"
+                              x-text="file.progress + '%'"
+                            ></span>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <!-- Editor Textarea -->
                   <textarea
                     x-model="selectedPage.content"
                     class="w-full h-96 p-4 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm text-gray-900 dark:text-white transition-colors"
-                    placeholder="Digite o conteúdo em Markdown..."
+                    placeholder="Digite o conteúdo em Markdown...&#10;&#10;Dica: Use ![descrição](url) para imagens&#10;Use [texto](url) para links"
                   ></textarea>
-                  <div class="mt-4 flex justify-end space-x-2">
-                    <button
-                      @click="editMode = false"
-                      class="px-4 py-2 text-gray-700 bg-gray-100 dark:text-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      @click="savePage()"
-                      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      Salvar
-                    </button>
+
+                  <!-- Editor Toolbar -->
+                  <div class="mt-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <button
+                        @click="insertMarkdown('**', '**')"
+                        class="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
+                        title="Negrito"
+                      >
+                        <i class="fas fa-bold"></i>
+                      </button>
+                      <button
+                        @click="insertMarkdown('*', '*')"
+                        class="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
+                        title="Itálico"
+                      >
+                        <i class="fas fa-italic"></i>
+                      </button>
+                      <button
+                        @click="insertMarkdown('### ', '')"
+                        class="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
+                        title="Título"
+                      >
+                        <i class="fas fa-heading"></i>
+                      </button>
+                      <button
+                        @click="insertMarkdown('- ', '')"
+                        class="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
+                        title="Lista"
+                      >
+                        <i class="fas fa-list-ul"></i>
+                      </button>
+                      <button
+                        @click="insertMarkdown('[', '](url)')"
+                        class="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
+                        title="Link"
+                      >
+                        <i class="fas fa-link"></i>
+                      </button>
+                      <button
+                        @click="insertMarkdown('![', '](url)')"
+                        class="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 rounded transition-colors"
+                        title="Imagem"
+                      >
+                        <i class="fas fa-image"></i>
+                      </button>
+                    </div>
+
+                    <div class="flex space-x-2">
+                      <button
+                        @click="editMode = false"
+                        class="px-4 py-2 text-gray-700 bg-gray-100 dark:text-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        @click="savePage()"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        Salvar
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -604,18 +813,29 @@
     </div>
 
     <!-- Create Page Modal -->
-    <div x-show="showCreateModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div
+      x-show="showCreateModal"
+      class="fixed inset-0 z-50 overflow-y-auto"
+      style="display: none"
+    >
+      <div
+        class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      >
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
         <div
           class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
         >
           <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Nova Página</h3>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+              Nova Página
+            </h3>
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Título</label>
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >Título</label
+                >
                 <input
                   type="text"
                   x-model="newPage.title"
@@ -623,15 +843,18 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Categoria</label>
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >Categoria</label
+                >
                 <select
                   x-model="newPage.category"
                   class="w-full px-3 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-colors"
                 >
                   <option value="visao-empresa">Visão da Empresa</option>
-                  <option value="processos">Processos Internos</option>
+                  <option value="processors">Processors Internos</option>
                   <option value="ferramentas">Ferramentas Utilizadas</option>
-                  <option value="operacional">Operacional</option>
+                  <option value="operational">Operational</option>
                   <option value="comercial">Comercial</option>
                   <option value="suporte">Suporte Técnico</option>
                   <option value="instalacao">Instalação e Manutenção</option>
@@ -642,7 +865,10 @@
                 </select>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Conteúdo</label>
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >Conteúdo</label
+                >
                 <textarea
                   x-model="newPage.content"
                   class="w-full h-32 px-3 py-2 bg-white border border-gray-300 dark:bg-gray-700 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white transition-colors"
@@ -651,7 +877,9 @@
               </div>
             </div>
           </div>
-          <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <div
+            class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
+          >
             <button
               @click="createPage()"
               class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
@@ -670,18 +898,29 @@
     </div>
 
     <!-- Login Modal -->
-    <div x-show="showLoginModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none">
-      <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div
+      x-show="showLoginModal"
+      class="fixed inset-0 z-50 overflow-y-auto"
+      style="display: none"
+    >
+      <div
+        class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      >
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
         <div
           class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full"
         >
           <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Acesso à Wiki</h3>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+              Acesso à Wiki
+            </h3>
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Usuário</label>
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >Usuário</label
+                >
                 <input
                   type="text"
                   x-model="loginForm.username"
@@ -689,7 +928,10 @@
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Senha</label>
+                <label
+                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >Senha</label
+                >
                 <input
                   type="password"
                   x-model="loginForm.password"
@@ -698,7 +940,9 @@
               </div>
             </div>
           </div>
-          <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+          <div
+            class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
+          >
             <button
               @click="login()"
               class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
@@ -743,6 +987,10 @@
           unreadCount: 0,
           notificationsLoaded: false,
 
+          // Editor upload properties
+          uploadingFiles: [],
+          uploadCounter: 0,
+
           init() {
             this.loadPages();
             this.loadCategories();
@@ -755,7 +1003,7 @@
               const response = await fetch('/api/pages');
               this.pages = await response.json();
             } catch (error) {
-              console.error('Erro ao carregar páginas:', error);
+              console.error('Error ao carregar páginas:', error);
             }
           },
 
@@ -764,7 +1012,7 @@
               const response = await fetch('/api/categories');
               this.categories = await response.json();
             } catch (error) {
-              console.error('Erro ao carregar categorias:', error);
+              console.error('Error ao carregar categorias:', error);
             }
           },
 
@@ -785,11 +1033,11 @@
           getCategoryName(category) {
             const names = {
               'visao-empresa': 'Visão da Empresa',
-              processos: 'Processos Internos',
+              processors: 'Processors Internos',
               ferramentas: 'Ferramentas Utilizadas',
               onboarding: 'Onboarding',
               historico: 'Histórico de Mudanças',
-              operacional: 'Operacional',
+              operational: 'Operational',
               comercial: 'Comercial',
               suporte: 'Suporte Técnico',
               instalacao: 'Instalação e Manutenção',
@@ -802,14 +1050,14 @@
           getCategoryDescription(category) {
             const descriptions = {
               'visao-empresa': 'Missão, valores e objetivos da Veloz Fibra',
-              processos: 'Fluxos de trabalho e procedimentos internos',
+              processors: 'Fluxos de trabalho e procedimentos internos',
               ferramentas: 'Sistemas, apps e ferramentas utilizadas',
               onboarding: 'Processo de integração de novos colaboradores',
               historico: 'Mudanças, decisões e evolução da empresa',
-              operacional: 'Processos técnicos e operacionais',
+              operational: 'Processors técnicos e operacionais',
               comercial: 'Estratégias comerciais e vendas',
               suporte: 'Procedimentos de suporte ao cliente',
-              instalacao: 'Processos de instalação e manutenção',
+              instalacao: 'Processors de instalação e manutenção',
               planos: 'Planos de internet e produtos oferecidos',
               geral: 'Outros assuntos e informações gerais',
             };
@@ -823,15 +1071,40 @@
             }
 
             try {
-              const response = await fetch(`/api/search?q=${encodeURIComponent(this.searchQuery)}`);
+              const response = await fetch(
+                `/api/search?q=${encodeURIComponent(this.searchQuery)}`
+              );
               this.pages = await response.json();
             } catch (error) {
-              console.error('Erro na pesquisa:', error);
+              console.error('Error na pesquisa:', error);
             }
           },
 
           renderMarkdown(content) {
-            return marked.parse(content || '');
+            if (!content) return '';
+
+            // Configurar marked para renderizar links externos
+            marked.setOptions({
+              breaks: true,
+              gfm: true,
+            });
+
+            // Renderizar markdown
+            let html = marked.parse(content);
+
+            // Melhorar exibição de imagens
+            html = html.replace(
+              /<img([^>]+)>/g,
+              '<img$1 class="max-w-full h-auto rounded-lg shadow-md my-4" loading="lazy">'
+            );
+
+            // Melhorar exibição de links
+            html = html.replace(
+              /<a([^>]+)>/g,
+              '<a$1 class="text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">'
+            );
+
+            return html;
           },
 
           formatDate(dateString) {
@@ -864,7 +1137,7 @@
                 await this.loadCategories();
               }
             } catch (error) {
-              console.error('Erro ao criar página:', error);
+              console.error('Error ao criar página:', error);
             }
           },
 
@@ -887,7 +1160,7 @@
                 this.editMode = false;
               }
             } catch (error) {
-              console.error('Erro ao salvar página:', error);
+              console.error('Error ao salvar página:', error);
             }
           },
 
@@ -907,7 +1180,7 @@
                 await this.loadCategories();
               }
             } catch (error) {
-              console.error('Erro ao excluir página:', error);
+              console.error('Error ao excluir página:', error);
             }
           },
 
@@ -952,7 +1225,7 @@
               const data = await response.json();
               this.unreadCount = data.unread_count;
             } catch (error) {
-              console.error('Erro ao carregar contador de notificações:', error);
+              console.error('Error ao carregar contador de notificações:', error);
             }
           },
 
@@ -966,24 +1239,29 @@
               this.unreadCount = data.unread_count;
               this.notificationsLoaded = true;
             } catch (error) {
-              console.error('Erro ao carregar notificações:', error);
+              console.error('Error ao carregar notificações:', error);
             }
           },
 
           async markAsRead(notificationId) {
             try {
-              const response = await fetch(`/api/notifications/${notificationId}/read`, {
-                method: 'POST',
-              });
+              const response = await fetch(
+                `/api/notifications/${notificationId}/read`,
+                {
+                  method: 'POST',
+                }
+              );
               if (response.ok) {
-                const notification = this.notifications.find(n => n.id === notificationId);
+                const notification = this.notifications.find(
+                  n => n.id === notificationId
+                );
                 if (notification) {
                   notification.is_read = true;
                   this.unreadCount = Math.max(0, this.unreadCount - 1);
                 }
               }
             } catch (error) {
-              console.error('Erro ao marcar notificação como lida:', error);
+              console.error('Error ao marcar notificação como lida:', error);
             }
           },
 
@@ -993,11 +1271,14 @@
                 method: 'POST',
               });
               if (response.ok) {
-                this.notifications = this.notifications.map(n => ({ ...n, is_read: true }));
+                this.notifications = this.notifications.map(n => ({
+                  ...n,
+                  is_read: true,
+                }));
                 this.unreadCount = 0;
               }
             } catch (error) {
-              console.error('Erro ao marcar todas como lidas:', error);
+              console.error('Error ao marcar todas como lidas:', error);
             }
           },
 
@@ -1010,26 +1291,153 @@
                 method: 'DELETE',
               });
               if (response.ok) {
-                const notification = this.notifications.find(n => n.id === notificationId);
+                const notification = this.notifications.find(
+                  n => n.id === notificationId
+                );
                 if (notification && !notification.is_read) {
                   this.unreadCount = Math.max(0, this.unreadCount - 1);
                 }
-                this.notifications = this.notifications.filter(n => n.id !== notificationId);
+                this.notifications = this.notifications.filter(
+                  n => n.id !== notificationId
+                );
               }
             } catch (error) {
-              console.error('Erro ao excluir notificação:', error);
+              console.error('Error ao excluir notificação:', error);
             }
           },
 
           async loadMoreNotifications() {
             try {
-              const response = await fetch(`/api/notifications?limit=${this.notifications.length + 10}`);
+              const response = await fetch(
+                `/api/notifications?limit=${this.notifications.length + 10}`
+              );
               const data = await response.json();
               this.notifications = data.notifications;
               this.unreadCount = data.unread_count;
             } catch (error) {
-              console.error('Erro ao carregar mais notificações:', error);
+              console.error('Error ao carregar mais notificações:', error);
             }
+          },
+
+          // Editor upload functions
+          handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => this.uploadFile(file));
+          },
+
+          handleFileDrop(event) {
+            const files = Array.from(event.dataTransfer.files);
+            files.forEach(file => this.uploadFile(file));
+          },
+
+          async uploadFile(file) {
+            const fileId = ++this.uploadCounter;
+            const uploadFile = {
+              id: fileId,
+              name: file.name,
+              size: file.size,
+              progress: 0,
+            };
+
+            this.uploadingFiles.push(uploadFile);
+
+            try {
+              const formData = new FormData();
+              formData.append('file', file);
+
+              const response = await fetch('/api/editor/upload', {
+                method: 'POST',
+                body: formData,
+              });
+
+              if (response.ok) {
+                const fileInfo = await response.json();
+                uploadFile.progress = 100;
+
+                // Inserir link no editor baseado no tipo de arquivo
+                this.insertFileLink(fileInfo);
+
+                // Remover da lista após 2 segundos
+                setTimeout(() => {
+                  this.uploadingFiles = this.uploadingFiles.filter(
+                    f => f.id !== fileId
+                  );
+                }, 2000);
+              } else {
+                const error = await response.json();
+                alert(`Error no upload: ${error.error}`);
+                this.uploadingFiles = this.uploadingFiles.filter(f => f.id !== fileId);
+              }
+            } catch (error) {
+              console.error('Error no upload:', error);
+              alert('Error ao fazer upload do arquivo');
+              this.uploadingFiles = this.uploadingFiles.filter(f => f.id !== fileId);
+            }
+          },
+
+          insertFileLink(fileInfo) {
+            const textarea = document.querySelector(
+              'textarea[x-model="selectedPage.content"]'
+            );
+            if (!textarea) return;
+
+            const cursorPos = textarea.selectionStart;
+            const textBefore = this.selectedPage.content.substring(0, cursorPos);
+            const textAfter = this.selectedPage.content.substring(cursorPos);
+
+            let markdownLink = '';
+            const fileExt = fileInfo.type.toLowerCase();
+
+            if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(fileExt)) {
+              // Imagem
+              markdownLink = `![${fileInfo.original_name}](${fileInfo.url})`;
+            } else if (['mp4', 'avi', 'mov', 'wmv'].includes(fileExt)) {
+              // Vídeo
+              markdownLink = `[🎥 ${fileInfo.original_name}](${fileInfo.url})`;
+            } else if (['mp3', 'wav', 'ogg'].includes(fileExt)) {
+              // Áudio
+              markdownLink = `[🎵 ${fileInfo.original_name}](${fileInfo.url})`;
+            } else if (fileExt === 'pdf') {
+              // PDF
+              markdownLink = `[📄 ${fileInfo.original_name}](${fileInfo.url})`;
+            } else {
+              // Outros documentos
+              markdownLink = `[📋 ${fileInfo.original_name}](${fileInfo.url})`;
+            }
+
+            this.selectedPage.content = textBefore + markdownLink + '\n' + textAfter;
+
+            // Atualizar cursor
+            setTimeout(() => {
+              const newPos = cursorPos + markdownLink.length + 1;
+              textarea.setSelectionRange(newPos, newPos);
+              textarea.focus();
+            }, 100);
+          },
+
+          insertMarkdown(before, after) {
+            const textarea = document.querySelector(
+              'textarea[x-model="selectedPage.content"]'
+            );
+            if (!textarea) return;
+
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = this.selectedPage.content.substring(start, end);
+
+            const textBefore = this.selectedPage.content.substring(0, start);
+            const textAfter = this.selectedPage.content.substring(end);
+
+            this.selectedPage.content =
+              textBefore + before + selectedText + after + textAfter;
+
+            // Atualizar cursor
+            setTimeout(() => {
+              const newStart = start + before.length;
+              const newEnd = end + before.length;
+              textarea.setSelectionRange(newStart, newEnd);
+              textarea.focus();
+            }, 100);
           },
         };
       }

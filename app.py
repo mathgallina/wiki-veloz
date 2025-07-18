@@ -70,7 +70,7 @@ class User(UserMixin):
 def load_users():
     """Carrega usuários do arquivo JSON"""
     try:
-        with open("data/users.json", "r", encoding="utf-8") as f:
+        with open("data/users.json", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         return []
@@ -113,8 +113,8 @@ def create_default_admin():
                 if not check_password_hash(user["password_hash"], "Matheus Gallina"):
                     user["password_hash"] = generate_password_hash("Matheus Gallina")
                     user["updated_at"] = datetime.now().isoformat()
-                    save_users(users)
-                    print("✅ Senha do administrador atualizada: Matheus Gallina")
+                save_users(users)
+                print("✅ Senha do administrador atualizada: Matheus Gallina")
                 break
 
 
@@ -129,7 +129,7 @@ def log_activity(user_id, action, details=None):
     }
 
     try:
-        with open("data/activity_log.json", "r", encoding="utf-8") as f:
+        with open("data/activity_log.json", encoding="utf-8") as f:
             logs = json.load(f)
     except FileNotFoundError:
         logs = []
@@ -164,7 +164,7 @@ def load_user(user_id):
 def load_pages():
     """Carrega páginas do arquivo JSON"""
     try:
-        with open("data/pages.json", "r", encoding="utf-8") as f:
+        with open("data/pages.json", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         return []
@@ -181,7 +181,7 @@ def save_pages(pages):
 def load_notifications():
     """Carrega notificações do arquivo JSON"""
     try:
-        with open("data/notifications.json", "r", encoding="utf-8") as f:
+        with open("data/notifications.json", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         return []
@@ -306,7 +306,7 @@ def create_sample_data():
     """Cria dados de exemplo se não existirem"""
     # Criar setores padrão
     create_default_sectors()
-    
+
     pages = load_pages()
     if not pages:
         sample_pages = [
@@ -314,7 +314,7 @@ def create_sample_data():
                 "id": "visao-empresa",
                 "title": "Visão da Empresa",
                 "category": "visao-empresa",
-                "content": "# Visão da Veloz Fibra\n\n## Nossa Missão\nFornecer internet de alta velocidade e qualidade para conectar pessoas e transformar comunidades.\n\n## Nossos Valores\n- **Qualidade**: Sempre entregar o melhor serviço possível\n- **Inovação**: Buscar constantemente novas tecnologias e soluções\n- **Confiança**: Construir relacionamentos duradouros com nossos clientes\n- **Comunidade**: Contribuir para o desenvolvimento das regiões onde atuamos\n\n## Objetivos Estratégicos\n1. Expandir nossa cobertura de fibra óptica\n2. Manter a qualidade do atendimento ao cliente\n3. Investir em tecnologia e inovação\n4. Crescer de forma sustentável",
+                "content": "# Visão da Veloz Fibra\n\n## Nossa Missão\nFornecer internet de alta velocidade e qualidade para conectar pessoas e transformar comunidades.\n\n## Nossos Valores\n- **Qualidade**: Sempre entregar o melhor serviço possível\n- **Inovação**: Buscar constantemente novas tecnologias e soluções\n- **Confiança**: Construir relacionamentos duradouros com nossos clients\n- **Comunidade**: Contribuir para o desenvolvimento das regiões onde atuamos\n\n## Objetivos Estratégicos\n1. Expandir nossa cobertura de fibra óptica\n2. Manter a qualidade do atendimento ao cliente\n3. Investir em tecnologia e inovação\n4. Crescer de forma sustentável",
                 "created_at": "2024-01-15T10:00:00",
                 "updated_at": "2024-01-15T10:00:00",
             },
@@ -322,15 +322,15 @@ def create_sample_data():
                 "id": "ferramentas-utilizadas",
                 "title": "Ferramentas Utilizadas",
                 "category": "ferramentas",
-                "content": "# Ferramentas da Veloz Fibra\n\n## Gestão de Clientes\n- **CRM**: Sistema próprio para gestão de clientes\n- **WhatsApp Business**: Comunicação com clientes\n- **Google Workspace**: Email e colaboração\n\n## Operacional\n- **Sistema de Monitoramento**: Acompanhamento de rede\n- **App de Campo**: Para técnicos em campo\n- **Planilhas Google**: Controle de processos\n\n## Financeiro\n- **Sistema de Cobrança**: Integrado com CRM\n- **Controle de Caixa**: Gestão financeira\n- **Relatórios**: Análise de performance\n\n## Marketing\n- **Redes Sociais**: Instagram, Facebook\n- **Google Ads**: Publicidade online\n- **Site Institucional**: WordPress",
+                "content": "# Ferramentas da Veloz Fibra\n\n## Gestão de Clients\n- **CRM**: Sistema próprio para gestão de clients\n- **WhatsApp Business**: Comunicação com clients\n- **Google Workspace**: Email e colaboração\n\n## Operational\n- **Sistema de Monitoramento**: Acompanhamento de rede\n- **App de Campo**: Para técnicos em campo\n- **Planilhas Google**: Controle de processors\n\n## Financeiro\n- **Sistema de Cobrança**: Integrado com CRM\n- **Controle de Caixa**: Gestão financeira\n- **Relatórios**: Análise de performance\n\n## Marketing\n- **Redes Sociais**: Instagram, Facebook\n- **Google Ads**: Publicidade online\n- **Site Institucional**: WordPress",
                 "created_at": "2024-01-15T10:00:00",
                 "updated_at": "2024-01-15T10:00:00",
             },
             {
-                "id": "processos-internos",
-                "title": "Processos Internos",
-                "category": "processos",
-                "content": "# Processos Internos\n\n## Atendimento ao Cliente\n1. **Recebimento da Solicitação**: Via WhatsApp, telefone ou presencial\n2. **Análise de Viabilidade**: Verificar cobertura na região\n3. **Agendamento**: Marcar instalação ou visita técnica\n4. **Execução**: Técnico realiza instalação\n5. **Acompanhamento**: Monitorar qualidade do serviço\n\n## Instalação de Novos Clientes\n1. **Cadastro no Sistema**: Dados completos do cliente\n2. **Verificação de Cobertura**: Confirmar disponibilidade\n3. **Agendamento**: Definir data e horário\n4. **Instalação**: Técnico realiza conexão\n5. **Teste**: Verificar velocidade e estabilidade\n6. **Ativação**: Liberar acesso à internet\n\n## Manutenção\n1. **Identificação do Problema**: Cliente reporta ou sistema detecta\n2. **Análise**: Verificar se é problema de rede ou equipamento\n3. **Agendamento**: Marcar visita técnica se necessário\n4. **Resolução**: Técnico resolve o problema\n5. **Teste**: Confirmar funcionamento\n6. **Fechamento**: Registrar solução no sistema",
+                "id": "processors-internos",
+                "title": "Processors Internos",
+                "category": "processors",
+                "content": "# Processors Internos\n\n## Atendimento ao Cliente\n1. **Recebimento da Solicitação**: Via WhatsApp, telefone ou presencial\n2. **Análise de Viabilidade**: Verificar cobertura na região\n3. **Agendamento**: Marcar instalação ou visita técnica\n4. **Execução**: Técnico realiza instalação\n5. **Acompanhamento**: Monitorar qualidade do serviço\n\n## Instalação de Novos Clients\n1. **Cadastro no Sistema**: Dados completos do cliente\n2. **Verificação de Cobertura**: Confirmar disponibilidade\n3. **Agendamento**: Definir data e horário\n4. **Instalação**: Técnico realiza conexão\n5. **Teste**: Verificar velocidade e estabilidade\n6. **Ativação**: Liberar acesso à internet\n\n## Manutenção\n1. **Identificação do Problema**: Cliente reporta ou sistema detecta\n2. **Análise**: Verificar se é problema de rede ou equipamento\n3. **Agendamento**: Marcar visita técnica se necessário\n4. **Resolução**: Técnico resolve o problema\n5. **Teste**: Confirmar funcionamento\n6. **Fechamento**: Registrar solução no sistema",
                 "created_at": "2024-01-15T10:00:00",
                 "updated_at": "2024-01-15T10:00:00",
             },
@@ -338,7 +338,7 @@ def create_sample_data():
                 "id": "onboarding",
                 "title": "Onboarding de Novos Colaboradores",
                 "category": "onboarding",
-                "content": "# Onboarding - Bem-vindo à Veloz Fibra!\n\n## Primeiro Dia\n1. **Apresentação**: Conhecer a equipe e a empresa\n2. **Acesso aos Sistemas**: Configurar logins e senhas\n3. **Tour pela Empresa**: Conhecer as instalações\n4. **Documentação**: Receber manual de procedimentos\n\n## Primeira Semana\n1. **Treinamento Técnico**: Aprender sobre produtos e serviços\n2. **Processos**: Entender fluxos de trabalho\n3. **Ferramentas**: Dominar sistemas utilizados\n4. **Expectativas**: Alinhar objetivos e metas\n\n## Primeiro Mês\n1. **Acompanhamento**: Mentor designado para dúvidas\n2. **Feedback**: Avaliação de desempenho\n3. **Integração**: Participar de reuniões e eventos\n4. **Independência**: Assumir responsabilidades\n\n## Recursos Disponíveis\n- Esta wiki para consulta\n- Manual de procedimentos\n- Contatos da equipe\n- Treinamentos online",
+                "content": "# Onboarding - Bem-vindo à Veloz Fibra!\n\n## Primeiro Dia\n1. **Apresentação**: Conhecer a equipe e a empresa\n2. **Acesso aos Sistemas**: Configurar logins e senhas\n3. **Tour pela Empresa**: Conhecer as instalações\n4. **Documentação**: Receber manual de procedimentos\n\n## Primeira Semana\n1. **Treinamento Técnico**: Aprender sobre produtos e serviços\n2. **Processors**: Entender fluxos de trabalho\n3. **Ferramentas**: Dominar sistemas utilizados\n4. **Expectativas**: Alinhar objetivos e metas\n\n## Primeiro Mês\n1. **Acompanhamento**: Mentor designado para dúvidas\n2. **Feedback**: Avaliação de desempenho\n3. **Integração**: Participar de reuniões e eventos\n4. **Independência**: Assumir responsabilidades\n\n## Recursos Disponíveis\n- Esta wiki para consulta\n- Manual de procedimentos\n- Contatos da equipe\n- Treinamentos online",
                 "created_at": "2024-01-15T10:00:00",
                 "updated_at": "2024-01-15T10:00:00",
             },
@@ -354,7 +354,7 @@ def create_sample_data():
                 "id": "novas-regras-comerciais",
                 "title": "Novas Regras Comerciais",
                 "category": "comercial",
-                "content": "# Novas Regras Comerciais - Veloz Fibra\n\n## Vigência\n**A partir de 16/07/2025**\n\n## Equipe Responsável\nEquipe Comercial Veloz Fibra\n\n## Índice\n1. [Tipo de Consulta de CPF](#tipo-de-consulta-de-cpf)\n2. [Pontuação, Desconto e Elegibilidade](#pontuacao-desconto-e-elegibilidade)\n3. [Custo Comercial](#custo-comercial)\n4. [Prazo para Compromisso](#prazo-para-compromisso)\n5. [Tabela com Quantidade Desconto](#tabela-com-quantidade-desconto)\n6. [Novas Regras Base Pessoal](#novas-regras-base-pessoal)\n\n---\n\n### Tipo de Consulta de CPF\n*[Conteúdo a ser adicionado]*\n\n### Pontuação, Desconto e Elegibilidade\n*[Conteúdo a ser adicionado]*\n\n### Custo Comercial\n*[Conteúdo a ser adicionado]*\n\n### Prazo para Compromisso\n*[Conteúdo a ser adicionado]*\n\n### Tabela com Quantidade Desconto\n*[Conteúdo a ser adicionado]*\n\n### Novas Regras Base Pessoal\n*[Conteúdo a ser adicionado]*\n\n---\n\n> **Nota**: Esta página será atualizada conforme o conteúdo da apresentação for disponibilizado.\n\n**Última atualização**: 15/01/2024",
+                "content": "# Novas Regras Comerciais - Veloz Fibra\n\n## Vigência\n**A partir de 16/07/2025**\n\n## Equipe Responsável\nEquipe Comercial Veloz Fibra\n\n## Índice\n1. [Tipo de Consulta de CPF](#tipo-de-consulta-de-cpf)\n2. [Pontuação, Desconto e Elegibilidade](#pontuacao-desconto-e-elegibilidade)\n3. [Custo Comercial](#custo-comercial)\n4. [Prazo para Compromises](#prazo-para-compromises)\n5. [Tabela com Quantidade Desconto](#tabela-com-quantidade-desconto)\n6. [Novas Regras Base Pessoal](#novas-regras-base-pessoal)\n\n---\n\n### Tipo de Consulta de CPF\n*[Conteúdo a set adicionado]*\n\n### Pontuação, Desconto e Elegibilidade\n*[Conteúdo a set adicionado]*\n\n### Custo Comercial\n*[Conteúdo a set adicionado]*\n\n### Prazo para Compromises\n*[Conteúdo a set adicionado]*\n\n### Tabela com Quantidade Desconto\n*[Conteúdo a set adicionado]*\n\n### Novas Regras Base Pessoal\n*[Conteúdo a set adicionado]*\n\n---\n\n> **Nota**: Esta página será atualizada conforme o conteúdo da apresentação for disponibilizado.\n\n**Última atualização**: 15/01/2024",
                 "created_at": "2024-01-15T10:00:00",
                 "updated_at": "2024-01-15T10:00:00",
             },
@@ -373,7 +373,7 @@ def allowed_file(filename):
 def load_pdfs():
     """Carrega PDFs do arquivo JSON"""
     try:
-        with open("data/pdfs.json", "r", encoding="utf-8") as f:
+        with open("data/pdfs.json", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         return []
@@ -390,7 +390,7 @@ def save_pdfs(pdfs):
 def load_sectors():
     """Carrega setores do arquivo JSON"""
     try:
-        with open("data/sectors.json", "r", encoding="utf-8") as f:
+        with open("data/sectors.json", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         return []
@@ -406,16 +406,16 @@ def save_sectors(sectors):
 def create_default_sectors():
     """Cria setores padrão da empresa"""
     sectors = load_sectors()
-    
+
     if not sectors:
         default_sectors = [
             {
                 "id": "comercial",
                 "name": "Comercial",
-                "description": "Setor responsável por vendas e relacionamento com clientes",
+                "description": "Setor responsável por vendas e relacionamento com clients",
                 "color": "blue",
                 "icon": "fas fa-handshake",
-                "created_at": datetime.now().isoformat()
+                "created_at": datetime.now().isoformat(),
             },
             {
                 "id": "tecnico",
@@ -423,7 +423,7 @@ def create_default_sectors():
                 "description": "Setor responsável por instalação e manutenção técnica",
                 "color": "green",
                 "icon": "fas fa-tools",
-                "created_at": datetime.now().isoformat()
+                "created_at": datetime.now().isoformat(),
             },
             {
                 "id": "financeiro",
@@ -431,7 +431,7 @@ def create_default_sectors():
                 "description": "Setor responsável por contabilidade e finanças",
                 "color": "yellow",
                 "icon": "fas fa-calculator",
-                "created_at": datetime.now().isoformat()
+                "created_at": datetime.now().isoformat(),
             },
             {
                 "id": "rh",
@@ -439,15 +439,15 @@ def create_default_sectors():
                 "description": "Setor responsável por gestão de pessoas",
                 "color": "purple",
                 "icon": "fas fa-users",
-                "created_at": datetime.now().isoformat()
+                "created_at": datetime.now().isoformat(),
             },
             {
-                "id": "administrativo",
-                "name": "Administrativo",
+                "id": "administration",
+                "name": "Administration",
                 "description": "Setor responsável por administração geral",
                 "color": "gray",
                 "icon": "fas fa-building",
-                "created_at": datetime.now().isoformat()
+                "created_at": datetime.now().isoformat(),
             },
             {
                 "id": "marketing",
@@ -455,7 +455,7 @@ def create_default_sectors():
                 "description": "Setor responsável por marketing e comunicação",
                 "color": "pink",
                 "icon": "fas fa-bullhorn",
-                "created_at": datetime.now().isoformat()
+                "created_at": datetime.now().isoformat(),
             },
             {
                 "id": "ti",
@@ -463,16 +463,24 @@ def create_default_sectors():
                 "description": "Setor responsável por sistemas e tecnologia",
                 "color": "indigo",
                 "icon": "fas fa-laptop-code",
-                "created_at": datetime.now().isoformat()
-            }
+                "created_at": datetime.now().isoformat(),
+            },
         ]
-        
+
         sectors = default_sectors
         save_sectors(sectors)
         print("✅ Setores padrão criados")
 
 
-def create_pdf_entry(filename, original_filename, sector_id=None, page_id=None, description="", training_date=None, trainer=""):
+def create_pdf_entry(
+    filename,
+    original_filename,
+    sector_id=None,
+    page_id=None,
+    description="",
+    training_date=None,
+    trainer="",
+):
     """Cria uma entrada de PDF com informações de setor e treinamento"""
     return {
         "id": str(uuid.uuid4()),
@@ -791,7 +799,7 @@ def admin_activity():
         return redirect(url_for("index"))
 
     try:
-        with open("data/activity_log.json", "r", encoding="utf-8") as f:
+        with open("data/activity_log.json", encoding="utf-8") as f:
             activities = json.load(f)
     except FileNotFoundError:
         activities = []
@@ -920,7 +928,7 @@ def delete_page(page_id):
 @app.route("/api/search")
 @login_required
 def search_pages():
-    """Pesquisa páginas por termo (protegida)"""
+    """Pesquisa páginas por thermo (protegida)"""
     query = request.args.get("q", "").lower()
     pages = load_pages()
 
@@ -945,7 +953,7 @@ def search_pages():
 def get_categories():
     """Retorna todas as categorias (protegida)"""
     pages = load_pages()
-    categories = list(set(page["category"] for page in pages))
+    categories = list({page["category"] for page in pages})
     return jsonify(categories)
 
 
@@ -989,7 +997,7 @@ def get_analytics_overview():
 
         # Tentar carregar logs de atividade
         try:
-            with open("data/activity_log.json", "r", encoding="utf-8") as f:
+            with open("data/activity_log.json", encoding="utf-8") as f:
                 activities = json.load(f)
         except FileNotFoundError:
             activities = []
@@ -1033,7 +1041,7 @@ def get_analytics_overview():
             user_id = activity["user_id"]
             user_activity[user_id] = user_activity.get(user_id, 0) + 1
 
-        # Encontrar nomes dos usuários mais ativos
+        # Encontrar gnomes dos usuários mais ativos
         top_users = []
         for user_id, count in sorted(
             user_activity.items(), key=lambda x: x[1], reverse=True
@@ -1147,7 +1155,7 @@ def get_user_analytics():
     users = load_users()
 
     try:
-        with open("data/activity_log.json", "r", encoding="utf-8") as f:
+        with open("data/activity_log.json", encoding="utf-8") as f:
             activities = json.load(f)
     except FileNotFoundError:
         activities = []
@@ -1221,7 +1229,7 @@ def export_analytics():
         pages = load_pages()
         users = load_users()
 
-        with open("data/activity_log.json", "r", encoding="utf-8") as f:
+        with open("data/activity_log.json", encoding="utf-8") as f:
             activities = json.load(f)
     except FileNotFoundError:
         activities = []
@@ -1623,14 +1631,14 @@ def setup_google_drive_route():
             return jsonify({"success": True, "message": success_msg})
         else:
             error_msg = (
-                "Erro ao configurar Google Drive. "
+                "Error ao configurar Google Drive. "
                 "Verifique se o arquivo credentials.json está correto e se a "
                 "Google Drive API está ativada."
             )
             return jsonify({"error": error_msg}), 500
 
     except Exception as e:
-        return jsonify({"error": f"Erro ao configurar Google Drive: {str(e)}"}), 500
+        return jsonify({"error": f"Error ao configurar Google Drive: {str(e)}"}), 500
 
 
 # Rotas para gerenciamento de setores
@@ -1659,7 +1667,7 @@ def create_sector():
         return jsonify({"error": "Nome do setor é obrigatório"}), 400
 
     sectors = load_sectors()
-    
+
     # Verificar se já existe um setor com este nome
     if any(s["name"].lower() == name.lower() for s in sectors):
         return jsonify({"error": "Setor já existe"}), 400
@@ -1672,7 +1680,7 @@ def create_sector():
         "color": color,
         "icon": icon,
         "created_at": datetime.now().isoformat(),
-        "created_by": current_user.id
+        "created_by": current_user.id,
     }
 
     sectors.append(new_sector)
@@ -1680,11 +1688,16 @@ def create_sector():
 
     log_activity(current_user.id, "create_sector", f"Criou setor: {name}")
 
-    return jsonify({
-        "success": True,
-        "message": "Setor criado com sucesso",
-        "sector": new_sector
-    }), 201
+    return (
+        jsonify(
+            {
+                "success": True,
+                "message": "Setor criado com sucesso",
+                "sector": new_sector,
+            }
+        ),
+        201,
+    )
 
 
 @app.route("/api/sectors/<sector_id>", methods=["PUT"])
@@ -1718,11 +1731,9 @@ def update_sector(sector_id):
 
     log_activity(current_user.id, "update_sector", f"Atualizou setor: {sector['name']}")
 
-    return jsonify({
-        "success": True,
-        "message": "Setor atualizado com sucesso",
-        "sector": sector
-    })
+    return jsonify(
+        {"success": True, "message": "Setor atualizado com sucesso", "sector": sector}
+    )
 
 
 @app.route("/api/sectors/<sector_id>", methods=["DELETE"])
@@ -1734,28 +1745,30 @@ def delete_sector(sector_id):
 
     sectors = load_sectors()
     sector = next((s for s in sectors if s["id"] == sector_id), None)
-    
+
     if not sector:
         return jsonify({"error": "Setor não encontrado"}), 404
 
     # Verificar se há PDFs associados a este setor
     pdfs = load_pdfs()
     sector_pdfs = [pdf for pdf in pdfs if pdf.get("sector_id") == sector_id]
-    
+
     if sector_pdfs:
-        return jsonify({
-            "error": f"Não é possível excluir o setor. Existem {len(sector_pdfs)} PDFs associados."
-        }), 400
+        return (
+            jsonify(
+                {
+                    "error": f"Não é possível excluir o setor. Existem {len(sector_pdfs)} PDFs associados."
+                }
+            ),
+            400,
+        )
 
     sectors.remove(sector)
     save_sectors(sectors)
 
     log_activity(current_user.id, "delete_sector", f"Removeu setor: {sector['name']}")
 
-    return jsonify({
-        "success": True,
-        "message": "Setor removido com sucesso"
-    })
+    return jsonify({"success": True, "message": "Setor removido com sucesso"})
 
 
 # Rotas para gerenciamento de PDFs (modificadas para incluir setores)
@@ -1769,7 +1782,7 @@ def get_pdfs():
 
     if sector_id:
         pdfs = [pdf for pdf in pdfs if pdf.get("sector_id") == sector_id]
-    
+
     if page_id:
         pdfs = [pdf for pdf in pdfs if pdf.get("page_id") == page_id]
 
@@ -1814,13 +1827,13 @@ def upload_pdf():
 
     # Criar entrada no banco
     pdf_entry = create_pdf_entry(
-        unique_filename, 
-        filename, 
-        sector_id, 
-        page_id, 
+        unique_filename,
+        filename,
+        sector_id,
+        page_id,
         description,
         training_date,
-        trainer
+        trainer,
     )
 
     pdfs = load_pdfs()
@@ -1836,16 +1849,14 @@ def upload_pdf():
             sector_name = sector["name"]
 
     log_activity(
-        current_user.id, 
-        "pdf_uploaded", 
-        f"PDF enviado: {filename} para setor: {sector_name}"
+        current_user.id,
+        "pdf_uploaded",
+        f"PDF enviado: {filename} para setor: {sector_name}",
     )
 
-    return jsonify({
-        "success": True, 
-        "message": "PDF enviado com sucesso", 
-        "pdf": pdf_entry
-    })
+    return jsonify(
+        {"success": True, "message": "PDF enviado com sucesso", "pdf": pdf_entry}
+    )
 
 
 @app.route("/api/pdfs/<pdf_id>", methods=["DELETE"])
@@ -1908,6 +1919,85 @@ def view_pdf(pdf_id):
     return send_from_directory(
         app.config["UPLOAD_FOLDER"], pdf["filename"], mimetype="application/pdf"
     )
+
+
+@app.route("/api/editor/upload", methods=["POST"])
+@login_required
+def upload_editor_file():
+    """Faz upload de arquivos para o editor de páginas"""
+    try:
+        if "file" not in request.files:
+            return jsonify({"error": "Nenhum arquivo enviado"}), 400
+
+        file = request.files["file"]
+        if file.filename == "":
+            return jsonify({"error": "Nenhum arquivo selecionado"}), 400
+
+        # Verificar extensão do arquivo
+        allowed_extensions = {
+            "png",
+            "jpg",
+            "jpeg",
+            "gif",
+            "webp",  # Imagens
+            "pdf",
+            "doc",
+            "docx",
+            "txt",
+            "md",  # Documentos
+            "mp4",
+            "avi",
+            "mov",
+            "wmv",  # Vídeos
+            "mp3",
+            "wav",
+            "ogg",  # Áudios
+        }
+
+        file_ext = (
+            file.filename.rsplit(".", 1)[1].lower() if "." in file.filename else ""
+        )
+        if file_ext not in allowed_extensions:
+            return (
+                jsonify(
+                    {
+                        "error": f"Tipo de arquivo não permitido. Permitidos: {', '.join(allowed_extensions)}"
+                    }
+                ),
+                400,
+            )
+
+        # Gerar nome único para o arquivo
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        unique_filename = f"editor_{timestamp}_{secure_filename(file.filename)}"
+
+        # Salvar arquivo
+        file_path = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
+        file.save(file_path)
+
+        # Retornar informações do arquivo
+        file_info = {
+            "filename": unique_filename,
+            "original_name": file.filename,
+            "url": f"/uploads/{unique_filename}",
+            "size": os.path.getsize(file_path),
+            "type": file_ext,
+            "uploaded_at": datetime.now().isoformat(),
+        }
+
+        # Log da atividade
+        log_activity(
+            current_user.id,
+            "file_uploaded",
+            f"Arquivo enviado via editor: {file.filename}",
+            {"filename": unique_filename, "type": file_ext},
+        )
+
+        return jsonify(file_info), 200
+
+    except Exception as e:
+        app.logger.error(f"Error no upload do editor: {str(e)}")
+        return jsonify({"error": "Error interno do servidor"}), 500
 
 
 if __name__ == "__main__":

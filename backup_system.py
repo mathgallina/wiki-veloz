@@ -7,15 +7,15 @@ com suporte ao Google Drive, compressão e criptografia.
 """
 
 import json
-import zipfile
+import logging
 import shutil
 import tempfile
 import threading
 import time
+import zipfile
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List
-import logging
 
 # Google Drive API
 try:
@@ -599,3 +599,4 @@ if __name__ == "__main__":
     # Mostrar estatísticas
     stats = backup_system.get_backup_stats()
     print(f"Estatísticas: {stats}")
+ 
