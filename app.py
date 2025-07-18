@@ -96,7 +96,7 @@ def create_default_admin():
             "username": "admin",
             "name": "Matheus Gallina",
             "email": "matheus@velozfibra.com",
-            "password_hash": generate_password_hash("Matheus Gallina"),
+            "password_hash": generate_password_hash("B@rcelona1998"),
             "role": "admin",
             "created_at": datetime.now().isoformat(),
             "last_login": None,
@@ -110,11 +110,11 @@ def create_default_admin():
         for user in users:
             if user["role"] == "admin" and user["username"] == "admin":
                 # Só atualizar se a senha for diferente
-                if not check_password_hash(user["password_hash"], "Matheus Gallina"):
-                    user["password_hash"] = generate_password_hash("Matheus Gallina")
+                if not check_password_hash(user["password_hash"], "B@rcelona1998"):
+                    user["password_hash"] = generate_password_hash("B@rcelona1998")
                     user["updated_at"] = datetime.now().isoformat()
                 save_users(users)
-                print("✅ Senha do administrador atualizada: Matheus Gallina")
+                print("✅ Senha do administrador atualizada: B@rcelona1998")
                 break
 
 
