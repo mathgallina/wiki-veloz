@@ -1928,12 +1928,22 @@ def view_pdf(pdf_id):
 def upload_editor_file():
     """Faz upload de arquivos para o editor de páginas"""
     try:
+        # Verificar se a pasta de uploads existe
+        upload_folder = app.config["UPLOAD_FOLDER"]
+        if not os.path.exists(upload_folder):
+            os.makedirs(upload_folder, exist_ok=True)
+            app.logger.info(f"Pasta de uploads criada: {upload_folder}")
+
         if "file" not in request.files:
+            app.logger.error("Nenhum arquivo enviado na requisição")
             return jsonify({"error": "Nenhum arquivo enviado"}), 400
 
         file = request.files["file"]
         if file.filename == "":
+            app.logger.error("Nome do arquivo está vazio")
             return jsonify({"error": "Nenhum arquivo selecionado"}), 400
+
+        app.logger.info(f"Recebendo arquivo: {file.filename}")
 
         # Verificar extensão do arquivo
         allowed_extensions = {
@@ -1956,10 +1966,14 @@ def upload_editor_file():
             "ogg",  # Áudios
         }
 
-        file_ext = (
-            file.filename.rsplit(".", 1)[1].lower() if "." in file.filename else ""
-        )
+        file_ext = ""
+        if file.filename and "." in file.filename:
+            file_ext = file.filename.rsplit(".", 1)[1].lower()
+        
+        app.logger.info(f"Extensão do arquivo: {file_ext}")
+        
         if file_ext not in allowed_extensions:
+            app.logger.error(f"Extensão não permitida: {file_ext}")
             return (
                 jsonify(
                     {
@@ -1971,35 +1985,54 @@ def upload_editor_file():
 
         # Gerar nome único para o arquivo
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        unique_filename = f"editor_{timestamp}_{secure_filename(file.filename)}"
+        safe_filename = secure_filename(file.filename) if file.filename else "arquivo"
+        unique_filename = f"editor_{timestamp}_{safe_filename}"
+        
+        app.logger.info(f"Nome único gerado: {unique_filename}")
 
         # Salvar arquivo
-        file_path = os.path.join(app.config["UPLOAD_FOLDER"], unique_filename)
+        file_path = os.path.join(upload_folder, unique_filename)
+        
+        app.logger.info(f"Salvando arquivo em: {file_path}")
         file.save(file_path)
+        
+        # Verificar se o arquivo foi salvo
+        if not os.path.exists(file_path):
+            app.logger.error(f"Arquivo não foi salvo corretamente: {file_path}")
+            return jsonify({"error": "Erro ao salvar arquivo"}), 500
+
+        file_size = os.path.getsize(file_path)
+        app.logger.info(f"Arquivo salvo com sucesso. Tamanho: {file_size} bytes")
 
         # Retornar informações do arquivo
         file_info = {
             "filename": unique_filename,
             "original_name": file.filename,
             "url": f"/uploads/{unique_filename}",
-            "size": os.path.getsize(file_path),
+            "size": file_size,
             "type": file_ext,
             "uploaded_at": datetime.now().isoformat(),
         }
 
-        # Log da atividade
-        log_activity(
-            current_user.id,
-            "file_uploaded",
-            f"Arquivo enviado via editor: {file.filename}",
-            {"filename": unique_filename, "type": file_ext},
-        )
+        # Log da atividade (simplificado)
+        try:
+            log_activity(
+                current_user.id,
+                "file_uploaded",
+                f"Arquivo enviado via editor: {file.filename}",
+            )
+        except Exception as log_error:
+            app.logger.error(f"Erro no log de atividade: {log_error}")
 
+        app.logger.info(f"Upload concluído com sucesso: {file.filename}")
         return jsonify(file_info), 200
 
     except Exception as e:
-        app.logger.error(f"Error no upload do editor: {str(e)}")
-        return jsonify({"error": "Error interno do servidor"}), 500
+        app.logger.error(f"Erro no upload do editor: {str(e)}")
+        app.logger.error(f"Tipo de erro: {type(e).__name__}")
+        import traceback
+        app.logger.error(f"Traceback: {traceback.format_exc()}")
+        return jsonify({"error": "Erro interno do servidor"}), 500
 
 
 if __name__ == "__main__":
