@@ -878,6 +878,23 @@
                       >
                         <i class="fas fa-image"></i>
                       </button>
+                      <div
+                        class="border-l border-gray-300 dark:border-gray-500 h-6 mx-2"
+                      ></div>
+                      <button
+                        @click="captureScreenshot()"
+                        class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900 rounded transition-colors"
+                        title="Capturar Print de Tela"
+                      >
+                        <i class="fas fa-camera"></i>
+                      </button>
+                      <button
+                        @click="showScreenshotModal = true"
+                        class="p-2 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900 rounded transition-colors"
+                        title="Gerenciar Prints"
+                      >
+                        <i class="fas fa-images"></i>
+                      </button>
                     </div>
 
                     <div class="flex space-x-2">
@@ -1086,6 +1103,11 @@
           searchResults: { pages: [], files: [], total_results: 0 },
           selectedFile: null,
           showFileViewer: false,
+
+          // Screenshot capture properties
+          showScreenshotModal: false,
+          screenshots: [],
+          capturingScreenshot: false,
 
           init() {
             this.loadPages();
@@ -1563,6 +1585,94 @@
               textarea.focus();
             }, 100);
           },
+
+          // Screenshot capture functions
+          async captureScreenshot() {
+            try {
+              this.capturingScreenshot = true;
+
+              // Verificar se a API de captura de tela está disponível
+              if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                alert(
+                  'Captura de tela não suportada neste navegador. Use Ctrl+Shift+I para capturar manualmente.'
+                );
+                this.capturingScreenshot = false;
+                return;
+              }
+
+              // Capturar a tela
+              const stream = await navigator.mediaDevices.getDisplayMedia({
+                video: { mediaSource: 'screen' },
+              });
+
+              // Criar canvas para capturar o frame
+              const video = document.createElement('video');
+              video.srcObject = stream;
+
+              await new Promise(resolve => {
+                video.onloadedmetadata = () => {
+                  video.play();
+                  resolve();
+                };
+              });
+
+              const canvas = document.createElement('canvas');
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(video, 0, 0);
+
+              // Parar a captura
+              stream.getTracks().forEach(track => track.stop());
+
+              // Converter para blob
+              canvas.toBlob(async blob => {
+                await this.uploadScreenshot(blob);
+                this.capturingScreenshot = false;
+              }, 'image/png');
+            } catch (error) {
+              console.error('Erro ao capturar screenshot:', error);
+              alert('Erro ao capturar screenshot. Tente novamente.');
+              this.capturingScreenshot = false;
+            }
+          },
+
+          async uploadScreenshot(blob) {
+            try {
+              const formData = new FormData();
+              formData.append('file', blob, `screenshot_${Date.now()}.png`);
+
+              const response = await fetch('/api/editor/upload', {
+                method: 'POST',
+                body: formData,
+              });
+
+              if (response.ok) {
+                const result = await response.json();
+
+                // Inserir a imagem no editor
+                const imageMarkdown = `![Screenshot](${result.url})`;
+                this.insertMarkdown(imageMarkdown, '');
+
+                alert('Screenshot capturado e inserido com sucesso!');
+              } else {
+                throw new Error('Erro no upload');
+              }
+            } catch (error) {
+              console.error('Erro ao fazer upload do screenshot:', error);
+              alert('Erro ao fazer upload do screenshot. Tente novamente.');
+            }
+          },
+
+          async loadScreenshots() {
+            try {
+              const response = await fetch('/api/screenshots');
+              this.screenshots = await response.json();
+            } catch (error) {
+              console.error('Erro ao carregar screenshots:', error);
+            }
+          },
         };
       }
     </script>
@@ -1724,6 +1834,118 @@
                         <i class="fas fa-download mr-2"></i>
                         Baixar Arquivo
                       </button>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screenshot Management Modal -->
+    <div
+      x-show="showScreenshotModal"
+      @click.away="showScreenshotModal = false"
+      class="fixed inset-0 z-50 overflow-y-auto"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+    >
+      <div
+        class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+        <div
+          class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full"
+        >
+          <!-- Header -->
+          <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                📸 Gerenciar Prints de Tela
+              </h3>
+              <button
+                @click="showScreenshotModal = false"
+                class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm leading-4 font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              >
+                <i class="fas fa-times mr-2"></i>
+                Fechar
+              </button>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="px-4 py-5 sm:p-6">
+            <div class="space-y-4">
+              <!-- Instructions -->
+              <div
+                class="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-4"
+              >
+                <div class="flex">
+                  <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-blue-400"></i>
+                  </div>
+                  <div class="ml-3">
+                    <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">
+                      Como usar os Prints de Tela
+                    </h3>
+                    <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                      <ul class="list-disc list-inside space-y-1">
+                        <li>Clique no botão 📸 para capturar a tela atual</li>
+                        <li>Selecione a área da tela que deseja capturar</li>
+                        <li>A imagem será automaticamente inserida no editor</li>
+                        <li>Use para ensinar procedimentos passo a passo</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recent Screenshots -->
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                  Screenshots Recentes
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <template x-for="screenshot in screenshots" :key="screenshot.id">
+                    <div
+                      class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 overflow-hidden"
+                    >
+                      <img
+                        :src="screenshot.url"
+                        :alt="screenshot.filename"
+                        class="w-full h-32 object-cover"
+                      />
+                      <div class="p-3">
+                        <p
+                          class="text-sm font-medium text-gray-900 dark:text-white truncate"
+                          x-text="screenshot.filename"
+                        ></p>
+                        <p
+                          class="text-xs text-gray-500 dark:text-gray-400"
+                          x-text="screenshot.created_at"
+                        ></p>
+                        <div class="mt-2 flex space-x-2">
+                          <button
+                            @click="insertMarkdown('![' + screenshot.filename + '](' + screenshot.url + ')', '')"
+                            class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition-colors"
+                          >
+                            Inserir
+                          </button>
+                          <button
+                            @click="window.open(screenshot.url, '_blank')"
+                            class="text-xs bg-gray-600 text-white px-2 py-1 rounded hover:bg-gray-700 transition-colors"
+                          >
+                            Ver
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </template>
                 </div>
