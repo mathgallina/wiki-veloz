@@ -928,24 +928,54 @@ def delete_page(page_id):
 @app.route("/api/search")
 @login_required
 def search_pages():
-    """Pesquisa páginas por thermo (protegida)"""
+    """Pesquisa páginas e arquivos por termo (protegida)"""
     query = request.args.get("q", "").lower()
     pages = load_pages()
+    pdfs = load_pdfs()
 
     if not query:
-        return jsonify(pages)
+        return jsonify({
+            "pages": pages,
+            "files": [],
+            "total_results": len(pages)
+        })
 
-    results = []
+    # Buscar em páginas
+    page_results = []
     for page in pages:
         if (
             query in page["title"].lower()
             or query in page["content"].lower()
             or query in page["category"].lower()
         ):
-            results.append(page)
+            page_results.append({
+                **page,
+                "type": "page"
+            })
 
-    log_activity(current_user.id, "search", f"Pesquisou por: {query}")
-    return jsonify(results)
+    # Buscar em arquivos
+    file_results = []
+    for pdf in pdfs:
+        if (
+            query in pdf["original_filename"].lower()
+            or query in pdf.get("description", "").lower()
+            or query in pdf.get("sector_name", "").lower()
+            or query in pdf.get("trainer", "").lower()
+        ):
+            file_results.append({
+                **pdf,
+                "type": "file"
+            })
+
+    total_results = len(page_results) + len(file_results)
+    
+    log_activity(current_user.id, "search", f"Pesquisou por: {query} ({total_results} resultados)")
+    
+    return jsonify({
+        "pages": page_results,
+        "files": file_results,
+        "total_results": total_results
+    })
 
 
 @app.route("/api/categories")
@@ -1907,7 +1937,7 @@ def download_file(filename):
 @app.route("/api/pdfs/<pdf_id>/view")
 @login_required
 def view_pdf(pdf_id):
-    """Visualiza um PDF"""
+    """Visualiza um PDF na tela"""
     pdfs = load_pdfs()
     pdf = next((p for p in pdfs if p["id"] == pdf_id), None)
 
@@ -1918,8 +1948,36 @@ def view_pdf(pdf_id):
     if not os.path.exists(file_path):
         return jsonify({"error": "Arquivo não encontrado"}), 404
 
+    # Log da visualização
+    log_activity(
+        current_user.id, 
+        "file_viewed", 
+        f"Visualizou arquivo: {pdf['original_filename']}"
+    )
+
     return send_from_directory(
         app.config["UPLOAD_FOLDER"], pdf["filename"], mimetype="application/pdf"
+    )
+
+
+@app.route("/api/files/<filename>/view")
+@login_required
+def view_file(filename):
+    """Visualiza qualquer arquivo na tela"""
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    
+    if not os.path.exists(file_path):
+        return jsonify({"error": "Arquivo não encontrado"}), 404
+
+    # Log da visualização
+    log_activity(
+        current_user.id, 
+        "file_viewed", 
+        f"Visualizou arquivo: {filename}"
+    )
+
+    return send_from_directory(
+        app.config["UPLOAD_FOLDER"], filename, as_attachment=False
     )
 
 
