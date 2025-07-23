@@ -8,6 +8,7 @@ Decoradores para autenticação e autorização compartilhados entre módulos.
 from functools import wraps
 
 from flask import jsonify, redirect, request, session, url_for
+from flask_login import current_user
 
 
 def login_required(f):
@@ -23,7 +24,7 @@ def login_required(f):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get("user_id"):
+        if not current_user.is_authenticated:
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify({"error": "Login necessário"}), 401
             return redirect(url_for("login"))
@@ -45,7 +46,7 @@ def admin_required(f):
 
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get("user_id"):
+        if not current_user.is_authenticated:
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify({"error": "Login necessário"}), 401
             return redirect(url_for("login"))
