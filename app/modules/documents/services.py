@@ -77,6 +77,7 @@ class DocumentService:
             changes="Versão inicial",
             author=document.author,
             created_at=document.created_at,
+            updated_at=document.created_at,
         )
 
         self.repository.create(document)

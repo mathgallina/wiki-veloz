@@ -83,7 +83,6 @@ class Document:
     version: int
     created_at: str
     updated_at: str
-    updated_at: str
 
     def to_dict(self) -> dict[str, Any]:
         """Converte para dicionário"""

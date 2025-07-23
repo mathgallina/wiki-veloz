@@ -140,7 +140,7 @@ class DocumentValidator:
 
         # Validação de categoria
         if "category_id" in data and data["category_id"]:
-            if not isinstance(data["category_id"], int) or data["category_id"] <= 0:
+            if not data["category_id"] or not isinstance(data["category_id"], str):
                 errors.append("ID da categoria deve set um número positivo")
 
         return ValidationResult(
