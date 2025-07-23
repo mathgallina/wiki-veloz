@@ -2093,6 +2093,11 @@ def upload_editor_file():
         return jsonify({"error": "Erro interno do servidor"}), 500
 
 
+# Registrar blueprint de documentos
+from app.modules.documents.routes import documents_bp
+
+app.register_blueprint(documents_bp)
+
 if __name__ == "__main__":
     # Criar dados de exemplo e usuário admin na primeira execução
     create_sample_data()

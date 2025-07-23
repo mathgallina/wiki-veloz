@@ -1,278 +1,260 @@
 #!/usr/bin/env node
 
-/**
- * Task Manager - Gerenciador Principal de Tarefas .kiro
- *
- * Usage:
- *   node task-manager.js scan           # Escaneia todas as tarefas
- *   node task-manager.js status         # Mostra status geral
- *   node task-manager.js complete <id>  # Marca tarefa como concluída
- *   node task-manager.js list [feature] # Lista tarefas por feature
- */
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
 
-const fs = require("fs");
-const path = require("path");
-const { readAllTasks, updateTasksJson } = require("./read-tasks");
-const { updateTaskStatus } = require("./update-task");
-const {
-  loadTasksJson,
-  saveTasksJson,
-  displayTasksTable,
-  readPatternsContext,
-  generatePatternsReport,
-} = require("./utils");
-
-const COMMANDS = {
-  scan: "Escaneia todas as tarefas das features",
-  status: "Mostra resumo do status das tarefas",
-  complete: "Marca uma tarefa como concluída",
-  list: "Lista tarefas (opcionalmente filtrado por feature)",
-  patterns: "Mostra status dos padrões de código",
-  help: "Mostra esta ajuda",
-};
-
-async function main() {
-  const [command, ...args] = process.argv.slice(2);
-
-  try {
-    switch (command) {
-      case "scan":
-        await scanAllTasks();
-        break;
-      case "status":
-        await showStatus();
-        break;
-      case "complete":
-        await completeTask(args[0]);
-        break;
-      case "list":
-        await listTasks(args[0]);
-        break;
-      case "patterns":
-        await showPatternsStatus();
-        break;
-      case "help":
-      default:
-        showHelp();
-        break;
-    }
-  } catch (error) {
-    console.error("❌ Erro:", error.message);
-    process.exit(1);
-  }
-}
-
-async function scanAllTasks() {
-  console.log("🔍 Escaneando todas as tarefas...");
-
-  const tasksData = await readAllTasks();
-  await saveTasksJson(tasksData);
-
-  const totalTasks = Object.values(tasksData.tasks).reduce(
-    (sum, feature) => sum + feature.length,
-    0
-  );
-  const completedTasks = Object.values(tasksData.tasks)
-    .flat()
-    .filter((task) => task.completed).length;
-
-  console.log(`✅ Escaneamento concluído!`);
-  console.log(
-    `📊 Total: ${totalTasks} tarefas | Concluídas: ${completedTasks} | Pendentes: ${
-      totalTasks - completedTasks
-    }`
-  );
-  console.log(`💾 Status salvo em: .kiro/scripts/tasks-status.json`);
-}
-
-async function showStatus() {
-  const tasksData = await loadTasksJson();
-
-  if (!tasksData.tasks || Object.keys(tasksData.tasks).length === 0) {
-    console.log('📝 Nenhuma tarefa encontrada. Execute "scan" primeiro.');
-    return;
+class TaskManager {
+  constructor() {
+    this.specsDir = path.join(__dirname, '../specs');
+    this.statusFile = path.join(__dirname, 'tasks-status.json');
   }
 
-  console.log("\n📊 RESUMO GERAL DAS TAREFAS\n");
+  scan() {
+    console.log('🔍 Scanning for tasks...');
+    const features = this.getFeatures();
+    const allTasks = [];
 
-  let totalTasks = 0;
-  let completedTasks = 0;
-
-  for (const [feature, tasks] of Object.entries(tasksData.tasks)) {
-    const completed = tasks.filter((t) => t.completed).length;
-    const total = tasks.length;
-    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-    console.log(`🎯 ${feature}: ${completed}/${total} (${percentage}%)`);
-    totalTasks += total;
-    completedTasks += completed;
-  }
-
-  const overallPercentage =
-    totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-
-  console.log("\n" + "=".repeat(50));
-  console.log(
-    `📈 TOTAL GERAL: ${completedTasks}/${totalTasks} (${overallPercentage}%)`
-  );
-  console.log("=".repeat(50));
-
-  if (overallPercentage === 100) {
-    console.log("🎉 Parabéns! Todas as tarefas foram concluídas!");
-  }
-}
-
-async function completeTask(taskId) {
-  if (!taskId) {
-    console.error("❌ ID da tarefa é obrigatório. Use: complete <id>");
-    return;
-  }
-
-  console.log(`⏳ Marcando tarefa ${taskId} como concluída...`);
-
-  const result = await updateTaskStatus(taskId, true);
-
-  if (result.success) {
-    console.log(`✅ Tarefa ${taskId} marcada como concluída!`);
-    console.log(`📁 Feature: ${result.feature}`);
-    console.log(`📝 Tarefa: ${result.task.description}`);
-
-    // Atualiza o JSON
-    await scanAllTasks();
-  } else {
-    console.error(`❌ ${result.error}`);
-  }
-}
-
-async function listTasks(featureFilter) {
-  const tasksData = await loadTasksJson();
-
-  if (!tasksData.tasks || Object.keys(tasksData.tasks).length === 0) {
-    console.log('📝 Nenhuma tarefa encontrada. Execute "scan" primeiro.');
-    return;
-  }
-
-  console.log("\n📋 LISTA DE TAREFAS\n");
-
-  for (const [feature, tasks] of Object.entries(tasksData.tasks)) {
-    if (
-      featureFilter &&
-      !feature.toLowerCase().includes(featureFilter.toLowerCase())
-    ) {
-      continue;
-    }
-
-    console.log(`\n🎯 Feature: ${feature}`);
-    console.log("─".repeat(40));
-
-    tasks.forEach((task) => {
-      const status = task.completed ? "✅" : "⏳";
-      const phase = task.phase ? `[${task.phase}]` : "";
-      console.log(`${status} ${task.id} ${phase} ${task.description}`);
+    features.forEach(feature => {
+      const tasks = this.extractTasks(feature);
+      allTasks.push(...tasks);
     });
+
+    this.saveStatus(allTasks);
+    console.log(`✅ Found ${allTasks.length} tasks across ${features.length} features`);
   }
-}
 
-function showHelp() {
-  console.log("\n🛠️  TASK MANAGER - Gerenciador de Tarefas .kiro\n");
+  getFeatures() {
+    return fs
+      .readdirSync(this.specsDir)
+      .filter(dir => dir !== '_template')
+      .filter(dir => fs.statSync(path.join(this.specsDir, dir)).isDirectory());
+  }
 
-  Object.entries(COMMANDS).forEach(([cmd, desc]) => {
-    console.log(`  ${cmd.padEnd(12)} ${desc}`);
-  });
+  extractTasks(featureName) {
+    const tasksFile = path.join(this.specsDir, featureName, 'tasks.md');
+    if (!fs.existsSync(tasksFile)) return [];
 
-  console.log("\n📖 Exemplos:");
-  console.log("  node task-manager.js scan");
-  console.log("  node task-manager.js complete design-system-1.1");
-  console.log("  node task-manager.js list design-system");
-  console.log("  node task-manager.js patterns");
-  console.log("");
-  console.log("📚 Documentação:");
-  console.log("  README.md       - Documentação completa");
-  console.log("  quick-start.md  - Guia de início rápido");
-  console.log("");
-}
+    const content = fs.readFileSync(tasksFile, 'utf8');
+    const tasks = [];
 
-/**
- * Mostra o status dos padrões de código
- */
-async function showPatternsStatus() {
-  console.log("📐 Status dos Padrões de Código .kiro\n");
+    // Extract tasks with pattern: - [ ] X.Y Description
+    const taskRegex = /^-\s\[([x ])\]\s+(\d+\.\d+)\s+(.+)$/gm;
+    let match;
 
-  try {
-    const patternsContext = await readPatternsContext();
+    while ((match = taskRegex.exec(content)) !== null) {
+      const [, status, number, description] = match;
+      const taskId = `${featureName}-${number}`;
 
-    if (!patternsContext.hasPatterns) {
-      console.log("⚠️  Padrões não configurados");
-      console.log("");
-      console.log("🚀 Para configurar patterns:");
-      console.log("1. Execute: docs/patterns-prompt-direto.md");
-      console.log("2. Configure padrões específicos do projeto");
-      console.log("3. Regenere .cursorrules para incluir patterns");
-      console.log("");
+      tasks.push({
+        id: taskId,
+        feature: featureName,
+        number: number,
+        description: description.trim(),
+        completed: status === 'x',
+        file: tasksFile,
+      });
+    }
+
+    return tasks;
+  }
+
+  saveStatus(tasks) {
+    const status = {
+      lastUpdate: new Date().toISOString(),
+      tasks: tasks,
+      summary: {
+        total: tasks.length,
+        completed: tasks.filter(t => t.completed).length,
+        pending: tasks.filter(t => !t.completed).length,
+      },
+    };
+
+    fs.writeFileSync(this.statusFile, JSON.stringify(status, null, 2));
+  }
+
+  list(featureName = null) {
+    const status = this.loadStatus();
+    if (!status) {
+      console.log('❌ No tasks found. Run: npm run scan');
       return;
     }
 
-    console.log("✅ Padrões configurados!\n");
-
-    // Mostrar detalhes dos patterns
-    if (patternsContext.conventions) {
-      console.log("📝 Convenções de nomenclatura: ✅ Configuradas");
-    } else {
-      console.log("📝 Convenções de nomenclatura: ❌ Não encontradas");
+    let tasks = status.tasks;
+    if (featureName) {
+      tasks = tasks.filter(t => t.feature === featureName);
     }
 
-    if (patternsContext.typescript) {
-      console.log("🔷 Padrões TypeScript: ✅ Configurados");
-    } else {
-      console.log("🔷 Padrões TypeScript: ❌ Não encontrados");
-    }
+    console.log(`\n📋 Tasks ${featureName ? `for ${featureName}` : '(all features)'}`);
+    console.log('='.repeat(50));
 
-    if (
-      patternsContext.frontend &&
-      Object.keys(patternsContext.frontend).length > 0
-    ) {
-      const frontendCount = Object.keys(patternsContext.frontend).length;
-      console.log(`⚛️  Padrões Frontend: ✅ ${frontendCount} arquivo(s)`);
-      Object.keys(patternsContext.frontend).forEach((file) => {
-        console.log(`   - ${file}.md`);
+    const features = [...new Set(tasks.map(t => t.feature))];
+
+    features.forEach(feature => {
+      const featureTasks = tasks.filter(t => t.feature === feature);
+      console.log(`\n🎯 ${feature}:`);
+
+      featureTasks.forEach(task => {
+        const status = task.completed ? '✅' : '⏸️';
+        console.log(`  ${status} ${task.id}: ${task.description}`);
       });
-    } else {
-      console.log("⚛️  Padrões Frontend: ❌ Não encontrados");
+    });
+
+    this.showSummary(tasks);
+  }
+
+  complete(taskId) {
+    if (!taskId) {
+      console.log('❌ Usage: npm run complete <task-id>');
+      console.log('   Example: npm run complete user-auth-1.1');
+      return;
     }
 
-    if (
-      patternsContext.backend &&
-      Object.keys(patternsContext.backend).length > 0
-    ) {
-      const backendCount = Object.keys(patternsContext.backend).length;
-      console.log(`🔧 Padrões Backend: ✅ ${backendCount} arquivo(s)`);
-      Object.keys(patternsContext.backend).forEach((file) => {
-        console.log(`   - ${file}.md`);
-      });
-    } else {
-      console.log("🔧 Padrões Backend: ❌ Não encontrados");
+    const status = this.loadStatus();
+    if (!status) {
+      console.log('❌ No tasks found. Run: npm run scan');
+      return;
     }
 
-    if (patternsContext.examples) {
-      console.log(
-        `💡 Exemplos práticos: ✅ ${patternsContext.examples} arquivo(s)`
-      );
-    } else {
-      console.log("💡 Exemplos práticos: ❌ Não encontrados");
+    const task = status.tasks.find(t => t.id === taskId);
+    if (!task) {
+      console.log(`❌ Task not found: ${taskId}`);
+      this.suggestSimilarTasks(taskId, status.tasks);
+      return;
     }
 
-    console.log("");
-    console.log("🎯 Próximos passos:");
-    console.log("- Use os padrões durante desenvolvimento");
-    console.log("- Regenere .cursorrules se atualizar patterns");
-    console.log("- Consulte patterns/README.md para detalhes");
-  } catch (error) {
-    console.error("❌ Erro ao verificar patterns:", error.message);
+    if (task.completed) {
+      console.log(`⚠️  Task already completed: ${taskId}`);
+      return;
+    }
+
+    // Update file
+    this.markTaskComplete(task);
+
+    // Update status
+    task.completed = true;
+    status.lastUpdate = new Date().toISOString();
+    status.summary.completed++;
+    status.summary.pending--;
+
+    this.saveStatus(status.tasks);
+
+    console.log(`✅ Task completed: ${taskId}`);
+    console.log(
+      `📊 Progress: ${status.summary.completed}/${status.summary.total} (${Math.round((status.summary.completed / status.summary.total) * 100)}%)`
+    );
+  }
+
+  markTaskComplete(task) {
+    const content = fs.readFileSync(task.file, 'utf8');
+    const pattern = new RegExp(
+      `^(-\\s\\[)( )(\\]\\s+${task.number.replace('.', '\\.')})`,
+      'gm'
+    );
+    const updated = content.replace(pattern, '$1x$3');
+    fs.writeFileSync(task.file, updated);
+  }
+
+  status() {
+    const status = this.loadStatus();
+    if (!status) {
+      console.log('❌ No tasks found. Run: npm run scan');
+      return;
+    }
+
+    console.log('\n📊 PROJECT STATUS');
+    console.log('='.repeat(30));
+    console.log(`Total Tasks: ${status.summary.total}`);
+    console.log(`Completed: ${status.summary.completed}`);
+    console.log(`Pending: ${status.summary.pending}`);
+    console.log(
+      `Progress: ${Math.round((status.summary.completed / status.summary.total) * 100)}%`
+    );
+    console.log(`Last Update: ${new Date(status.lastUpdate).toLocaleString()}`);
+
+    // Show by feature
+    const features = [...new Set(status.tasks.map(t => t.feature))];
+
+    console.log('\n🎯 By Feature:');
+    features.forEach(feature => {
+      const featureTasks = status.tasks.filter(t => t.feature === feature);
+      const completed = featureTasks.filter(t => t.completed).length;
+      const progress = Math.round((completed / featureTasks.length) * 100);
+      console.log(`  ${feature}: ${completed}/${featureTasks.length} (${progress}%)`);
+    });
+  }
+
+  watch() {
+    console.log('👀 Watching for task file changes...');
+    console.log('Press Ctrl+C to stop');
+
+    const chokidar = require('chokidar');
+    const watcher = chokidar.watch(`${this.specsDir}/**/tasks.md`, {
+      ignored: /node_modules/,
+      persistent: true,
+    });
+
+    watcher.on('change', path => {
+      console.log(`\n📝 File changed: ${path}`);
+      console.log('🔄 Rescanning tasks...');
+      this.scan();
+      this.status();
+    });
+  }
+
+  loadStatus() {
+    if (!fs.existsSync(this.statusFile)) return null;
+    return JSON.parse(fs.readFileSync(this.statusFile, 'utf8'));
+  }
+
+  showSummary(tasks) {
+    const completed = tasks.filter(t => t.completed).length;
+    const progress = Math.round((completed / tasks.length) * 100);
+
+    console.log('\n📊 Summary:');
+    console.log(`Total: ${tasks.length} tasks`);
+    console.log(`Completed: ${completed} tasks`);
+    console.log(`Progress: ${progress}%`);
+  }
+
+  suggestSimilarTasks(taskId, tasks) {
+    const similar = tasks
+      .filter(t => t.id.includes(taskId.split('-')[0]) || taskId.includes(t.feature))
+      .slice(0, 3);
+
+    if (similar.length > 0) {
+      console.log('\n💡 Similar tasks:');
+      similar.forEach(t => console.log(`  - ${t.id}: ${t.description}`));
+    }
   }
 }
 
-if (require.main === module) {
-  main();
-}
+// CLI Interface
+const manager = new TaskManager();
+const command = process.argv[2];
+const arg = process.argv[3];
 
-module.exports = { scanAllTasks, showStatus, completeTask, listTasks };
+switch (command) {
+  case 'scan':
+    manager.scan();
+    break;
+  case 'list':
+    manager.list(arg);
+    break;
+  case 'status':
+    manager.status();
+    break;
+  case 'complete':
+    manager.complete(arg);
+    break;
+  case 'watch':
+    manager.watch();
+    break;
+  default:
+    console.log('Available commands:');
+    console.log('  scan     - Scan for tasks');
+    console.log('  list     - List all tasks');
+    console.log('  status   - Show project status');
+    console.log('  complete - Mark task as complete');
+    console.log('  watch    - Watch for changes');
+}

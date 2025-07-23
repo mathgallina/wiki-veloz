@@ -1,0 +1,779 @@
+{% extends "base.html" %} {% block title %}Documentos Corporativos - Wiki Veloz{% endblock %} {%
+block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+  <!-- Header -->
+  <div class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-6">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">📋 Documentos Corporativos</h1>
+          <p class="text-gray-600 mt-1">
+            Gestão de atas, regras da empresa e documentos importantes
+          </p>
+        </div>
+        <div class="flex space-x-3">
+          <button
+            onclick="openCreateModal()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center space-x-2"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              ></path>
+            </svg>
+            <span>Novo Documento</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters and Search -->
+  <div class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-wrap gap-4 items-center">
+        <!-- Search -->
+        <div class="flex-1 min-w-64">
+          <div class="relative">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Buscar documentos..."
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <svg
+              class="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Category Filter -->
+        <select
+          id="categoryFilter"
+          class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          <option value="">Todas as categorias</option>
+        </select>
+
+        <!-- Type Filter -->
+        <select
+          id="typeFilter"
+          class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          <option value="">Todos os tipos</option>
+          <option value="meeting_minutes">Atas de Reunião</option>
+          <option value="company_rules">Regras da Empresa</option>
+          <option value="policies">Políticas</option>
+          <option value="procedures">Procedimentos</option>
+          <option value="contracts">Contratos</option>
+          <option value="reports">Relatórios</option>
+          <option value="other">Outros</option>
+        </select>
+
+        <!-- Status Filter -->
+        <select
+          id="statusFilter"
+          class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          <option value="">Todos os status</option>
+          <option value="draft">Rascunho</option>
+          <option value="published">Publicado</option>
+          <option value="archived">Arquivado</option>
+          <option value="expired">Expirado</option>
+        </select>
+
+        <!-- Sort -->
+        <select
+          id="sortFilter"
+          class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          <option value="created_at">Mais recentes</option>
+          <option value="title">Título A-Z</option>
+          <option value="updated_at">Última atualização</option>
+          <option value="views">Mais visualizados</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-xl shadow-sm border p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-blue-100 rounded-lg">
+            <svg
+              class="w-6 h-6 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              ></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total de Documentos</p>
+            <p class="text-2xl font-bold text-gray-900" id="totalDocs">-</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-green-100 rounded-lg">
+            <svg
+              class="w-6 h-6 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Publicados</p>
+            <p class="text-2xl font-bold text-gray-900" id="publishedDocs">-</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-yellow-100 rounded-lg">
+            <svg
+              class="w-6 h-6 text-yellow-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              ></path>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              ></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Visualizações</p>
+            <p class="text-2xl font-bold text-gray-900" id="totalViews">-</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-purple-100 rounded-lg">
+            <svg
+              class="w-6 h-6 text-purple-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+              ></path>
+            </svg>
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Downloads</p>
+            <p class="text-2xl font-bold text-gray-900" id="totalDownloads">-</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documents Grid -->
+    <div id="documentsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Documents will be loaded here -->
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="hidden text-center py-12">
+      <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-gray-600">
+        <svg
+          class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-600"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        Carregando documentos...
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-12">
+      <svg
+        class="mx-auto h-12 w-12 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+        ></path>
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">Nenhum documento encontrado</h3>
+      <p class="mt-1 text-sm text-gray-500">Comece criando seu primeiro documento corporativo.</p>
+      <div class="mt-6">
+        <button
+          onclick="openCreateModal()"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+        >
+          Criar Documento
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Document Modal -->
+<div
+  id="createModal"
+  class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50"
+>
+  <div
+    class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white"
+  >
+    <div class="mt-3">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Novo Documento</h3>
+        <button onclick="closeCreateModal()" class="text-gray-400 hover:text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+
+      <form id="createDocumentForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Título</label>
+          <input
+            type="text"
+            id="documentTitle"
+            required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Tipo</label>
+            <select
+              id="documentType"
+              required
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Selecione o tipo</option>
+              <option value="meeting_minutes">Ata de Reunião</option>
+              <option value="company_rules">Regra da Empresa</option>
+              <option value="policies">Política</option>
+              <option value="procedures">Procedimento</option>
+              <option value="contracts">Contrato</option>
+              <option value="reports">Relatório</option>
+              <option value="other">Outro</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Categoria</label>
+            <select
+              id="documentCategory"
+              required
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">Selecione a categoria</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Conteúdo</label>
+          <textarea
+            id="documentContent"
+            rows="8"
+            required
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Digite o conteúdo do documento..."
+          ></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Prioridade</label>
+            <select
+              id="documentPriority"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="low">Baixa</option>
+              <option value="medium" selected>Média</option>
+              <option value="high">Alta</option>
+              <option value="critical">Crítica</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Status</label>
+            <select
+              id="documentStatus"
+              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="draft" selected>Rascunho</option>
+              <option value="published">Publicado</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700"
+            >Tags (separadas por vírgula)</label
+          >
+          <input
+            type="text"
+            id="documentTags"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="ex: reunião, projeto, importante"
+          />
+        </div>
+
+        <div class="flex justify-end space-x-3 pt-4">
+          <button
+            type="button"
+            onclick="closeCreateModal()"
+            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Criar Documento
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Global variables
+  let documents = [];
+  let categories = [];
+
+  // Initialize page
+  document.addEventListener('DOMContentLoaded', function () {
+    loadCategories();
+    loadDocuments();
+    loadStats();
+
+    // Setup event listeners
+    setupEventListeners();
+  });
+
+  function setupEventListeners() {
+    // Search
+    const searchInput = document.getElementById('searchInput');
+    let searchTimeout;
+    searchInput.addEventListener('input', function () {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        loadDocuments();
+      }, 500);
+    });
+
+    // Filters
+    document.getElementById('categoryFilter').addEventListener('change', loadDocuments);
+    document.getElementById('typeFilter').addEventListener('change', loadDocuments);
+    document.getElementById('statusFilter').addEventListener('change', loadDocuments);
+    document.getElementById('sortFilter').addEventListener('change', loadDocuments);
+
+    // Create form
+    document.getElementById('createDocumentForm').addEventListener('submit', createDocument);
+  }
+
+  async function loadCategories() {
+    try {
+      const response = await fetch('/documents/api/categories');
+      const data = await response.json();
+
+      if (data.success) {
+        categories = data.data;
+        populateCategoryFilters();
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    }
+  }
+
+  function populateCategoryFilters() {
+    const categoryFilter = document.getElementById('categoryFilter');
+    const documentCategory = document.getElementById('documentCategory');
+
+    // Clear existing options
+    categoryFilter.innerHTML = '<option value="">Todas as categorias</option>';
+    documentCategory.innerHTML = '<option value="">Selecione a categoria</option>';
+
+    // Add categories
+    categories.forEach(category => {
+      categoryFilter.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+      documentCategory.innerHTML += `<option value="${category.id}">${category.name}</option>`;
+    });
+  }
+
+  async function loadDocuments() {
+    showLoading();
+
+    try {
+      const params = new URLSearchParams();
+
+      // Add filters
+      const categoryFilter = document.getElementById('categoryFilter').value;
+      const typeFilter = document.getElementById('typeFilter').value;
+      const statusFilter = document.getElementById('statusFilter').value;
+      const searchQuery = document.getElementById('searchInput').value;
+      const sortBy = document.getElementById('sortFilter').value;
+
+      if (categoryFilter) params.append('category_id', categoryFilter);
+      if (typeFilter) params.append('document_type', typeFilter);
+      if (statusFilter) params.append('status', statusFilter);
+      if (searchQuery) params.append('q', searchQuery);
+      if (sortBy) params.append('sort_by', sortBy);
+
+      const response = await fetch(`/documents/api/documents?${params}`);
+      const data = await response.json();
+
+      if (data.success) {
+        documents = data.data;
+        renderDocuments();
+      }
+    } catch (error) {
+      console.error('Error loading documents:', error);
+      showError('Erro ao carregar documentos');
+    }
+
+    hideLoading();
+  }
+
+  function renderDocuments() {
+    const grid = document.getElementById('documentsGrid');
+
+    if (documents.length === 0) {
+      showEmptyState();
+      return;
+    }
+
+    hideEmptyState();
+
+    grid.innerHTML = documents
+      .map(
+        doc => `
+        <div class="bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow duration-200">
+            <div class="p-6">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-2xl">${getDocumentIcon(doc.document_type)}</span>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 line-clamp-2">${
+                              doc.title
+                            }</h3>
+                            <p class="text-sm text-gray-500">por ${doc.author_name}</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-1">
+                        ${
+                          doc.is_featured
+                            ? '<span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">⭐ Destaque</span>'
+                            : ''
+                        }
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="px-2 py-1 text-xs ${
+                      doc.status === 'published'
+                        ? 'bg-green-100 text-green-800'
+                        : doc.status === 'draft'
+                        ? 'bg-gray-100 text-gray-800'
+                        : 'bg-yellow-100 text-yellow-800'
+                    } rounded-full">
+                        ${getStatusText(doc.status)}
+                    </span>
+                    <span class="px-2 py-1 text-xs ${getPriorityColor(doc.priority)} rounded-full">
+                        ${getPriorityText(doc.priority)}
+                    </span>
+                </div>
+                
+                <p class="text-gray-600 text-sm line-clamp-3 mb-4">${doc.content.substring(
+                  0,
+                  150
+                )}${doc.content.length > 150 ? '...' : ''}</p>
+                
+                <div class="flex items-center justify-between text-sm text-gray-500">
+                    <div class="flex items-center space-x-4">
+                        <span class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            ${doc.views_count}
+                        </span>
+                        <span class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            ${doc.downloads_count}
+                        </span>
+                    </div>
+                    <span>v${doc.version}</span>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-gray-500">${formatDate(doc.created_at)}</span>
+                        <div class="flex space-x-2">
+                            <button onclick="viewDocument('${doc.id}')" 
+                                    class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                Visualizar
+                            </button>
+                            <button onclick="editDocument('${doc.id}')" 
+                                    class="text-gray-600 hover:text-gray-700 text-sm font-medium">
+                                Editar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `
+      )
+      .join('');
+  }
+
+  function getDocumentIcon(type) {
+    const icons = {
+      meeting_minutes: '📋',
+      company_rules: '📜',
+      policies: '⚖️',
+      procedures: '📖',
+      contracts: '📄',
+      reports: '📊',
+      other: '📝',
+    };
+    return icons[type] || '📝';
+  }
+
+  function getStatusText(status) {
+    const texts = {
+      draft: 'Rascunho',
+      published: 'Publicado',
+      archived: 'Arquivado',
+      expired: 'Expirado',
+    };
+    return texts[status] || status;
+  }
+
+  function getPriorityText(priority) {
+    const texts = {
+      low: 'Baixa',
+      medium: 'Média',
+      high: 'Alta',
+      critical: 'Crítica',
+    };
+    return texts[priority] || priority;
+  }
+
+  function getPriorityColor(priority) {
+    const colors = {
+      low: 'bg-blue-100 text-blue-800',
+      medium: 'bg-yellow-100 text-yellow-800',
+      high: 'bg-orange-100 text-orange-800',
+      critical: 'bg-red-100 text-red-800',
+    };
+    return colors[priority] || 'bg-gray-100 text-gray-800';
+  }
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR');
+  }
+
+  async function loadStats() {
+    try {
+      const response = await fetch('/documents/api/stats');
+      const data = await response.json();
+
+      if (data.success) {
+        const stats = data.data;
+        document.getElementById('totalDocs').textContent = stats.total_documents;
+        document.getElementById('publishedDocs').textContent = stats.published_documents;
+        document.getElementById('totalViews').textContent = stats.total_views;
+        document.getElementById('totalDownloads').textContent = stats.total_downloads;
+      }
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  }
+
+  async function createDocument(event) {
+    event.preventDefault();
+
+    const formData = {
+      title: document.getElementById('documentTitle').value,
+      content: document.getElementById('documentContent').value,
+      document_type: document.getElementById('documentType').value,
+      category_id: document.getElementById('documentCategory').value,
+      priority: document.getElementById('documentPriority').value,
+      status: document.getElementById('documentStatus').value,
+      tags: document
+        .getElementById('documentTags')
+        .value.split(',')
+        .map(tag => tag.trim())
+        .filter(tag => tag),
+    };
+
+    try {
+      const response = await fetch('/documents/api/documents', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        closeCreateModal();
+        loadDocuments();
+        loadStats();
+        showSuccess('Documento criado com sucesso!');
+      } else {
+        showError(data.message || 'Erro ao criar documento');
+      }
+    } catch (error) {
+      console.error('Error creating document:', error);
+      showError('Erro ao criar documento');
+    }
+  }
+
+  function viewDocument(id) {
+    window.location.href = `/documents/${id}`;
+  }
+
+  function editDocument(id) {
+    window.location.href = `/documents/${id}/edit`;
+  }
+
+  function openCreateModal() {
+    document.getElementById('createModal').classList.remove('hidden');
+  }
+
+  function closeCreateModal() {
+    document.getElementById('createModal').classList.add('hidden');
+    document.getElementById('createDocumentForm').reset();
+  }
+
+  function showLoading() {
+    document.getElementById('loadingState').classList.remove('hidden');
+    document.getElementById('documentsGrid').classList.add('hidden');
+    document.getElementById('emptyState').classList.add('hidden');
+  }
+
+  function hideLoading() {
+    document.getElementById('loadingState').classList.add('hidden');
+    document.getElementById('documentsGrid').classList.remove('hidden');
+  }
+
+  function showEmptyState() {
+    document.getElementById('emptyState').classList.remove('hidden');
+    document.getElementById('documentsGrid').classList.add('hidden');
+  }
+
+  function hideEmptyState() {
+    document.getElementById('emptyState').classList.add('hidden');
+    document.getElementById('documentsGrid').classList.remove('hidden');
+  }
+
+  function showSuccess(message) {
+    // Implement toast notification
+    alert(message);
+  }
+
+  function showError(message) {
+    // Implement toast notification
+    alert('Erro: ' + message);
+  }
+</script>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
+{% endblock %}
