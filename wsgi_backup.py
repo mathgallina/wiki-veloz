@@ -16,21 +16,6 @@ login_manager.init_app(app)
 login_manager.login_view = "login"
 login_manager.login_message = "Please login to access this page."
 
-# Register blueprints
-try:
-    from app.modules.documents.routes import documents_bp
-    app.register_blueprint(documents_bp)
-    print("✅ Documents blueprint registered")
-except Exception as e:
-    print(f"❌ Error registering documents blueprint: {e}")
-
-try:
-    from app.modules.users.routes import users_bp
-    app.register_blueprint(users_bp)
-    print("✅ Users blueprint registered")
-except Exception as e:
-    print(f"❌ Error registering users blueprint: {e}")
-
 # User class
 class User(UserMixin):
     def __init__(self, user_id, username, name, role, created_at):

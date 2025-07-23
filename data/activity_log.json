@@ -635,5 +635,12 @@
     "details": "Acesso à API de páginas",
     "timestamp": "2025-07-23T16:05:29.043431",
     "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T16:20:54.441209",
+    "ip_address": "127.0.0.1"
   }
 ]
