@@ -47,9 +47,9 @@ def create_document():
 
         # Validar dados
         validation_result = validator.validate_document_data(data)
-        if not validation_result["valid"]:
+        if not validation_result.is_valid:
             return (
-                jsonify({"success": False, "message": validation_result["errors"]}),
+                jsonify({"success": False, "message": validation_result.errors}),
                 400,
             )
 
@@ -104,9 +104,9 @@ def update_document(document_id):
 
         # Validar dados
         validation_result = validator.validate_document_update(data)
-        if not validation_result["valid"]:
+        if not validation_result.is_valid:
             return (
-                jsonify({"success": False, "message": validation_result["errors"]}),
+                jsonify({"success": False, "message": validation_result.errors}),
                 400,
             )
 
@@ -202,9 +202,9 @@ def create_category():
 
         # Validar dados
         validation_result = validator.validate_category_data(data)
-        if not validation_result["valid"]:
+        if not validation_result.is_valid:
             return (
-                jsonify({"success": False, "message": validation_result["errors"]}),
+                jsonify({"success": False, "message": validation_result.errors}),
                 400,
             )
 

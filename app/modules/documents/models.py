@@ -43,7 +43,9 @@ class DocumentCategory:
     name: str
     description: str
     color: str
+    icon: str
     created_at: str
+    updated_at: str
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -59,6 +61,7 @@ class DocumentVersion:
     changes: str
     author: str
     created_at: str
+    updated_at: str
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -79,6 +82,7 @@ class Document:
     author: str
     version: int
     created_at: str
+    updated_at: str
     updated_at: str
 
     def to_dict(self) -> dict[str, Any]:
