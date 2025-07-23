@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+a#!/usr/bin/env python3
 """
 Teste do Sistema de Upload no Editor - Wiki Veloz Fibra
 

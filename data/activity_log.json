@@ -215,5 +215,12 @@
     "details": "Arquivo enviado via editor: test_upload.txt",
     "timestamp": "2025-07-18T15:29:39.614285",
     "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T10:30:46.484187",
+    "ip_address": "127.0.0.1"
   }
 ]

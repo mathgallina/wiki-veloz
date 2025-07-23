@@ -83,12 +83,8 @@
                   <i class="fas fa-wifi text-white text-sm"></i>
                 </div>
                 <div class="ml-3">
-                  <h1 class="text-xl font-bold text-gray-900 dark:text-white">
-                    VELOZ FIBRA
-                  </h1>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">
-                    Central de Conhecimento
-                  </p>
+                  <h1 class="text-xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Central de Conhecimento</p>
                 </div>
               </a>
             </div>
@@ -104,9 +100,7 @@
                 x-model="searchQuery"
                 @input="searchPages()"
               />
-              <div
-                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-              >
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <i class="fas fa-search text-gray-400"></i>
               </div>
             </div>
@@ -164,9 +158,7 @@
                 <!-- Notifications List -->
                 <div x-show="notifications.length === 0" class="px-4 py-8 text-center">
                   <i class="fas fa-bell text-gray-400 text-2xl mb-2"></i>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
-                    Nenhuma notificação
-                  </p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">Nenhuma notificação</p>
                 </div>
 
                 <template x-for="notification in notifications" :key="notification.id">
@@ -354,9 +346,7 @@
       </div>
     </header>
 
-    <div
-      class="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200"
-    >
+    <div class="flex h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
       <!-- Sidebar -->
       <div
         class="sidebar-transition fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg dark:bg-gray-800 transform lg:translate-x-0 lg:static lg:inset-0 transition-colors duration-200"
@@ -404,6 +394,17 @@
           </div>
         </nav>
 
+        <!-- Documentos Corporativos -->
+        <div class="px-2 py-4 border-t border-gray-200 dark:border-gray-700">
+          <a
+            href="/documents/"
+            class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white rounded-md transition-colors"
+          >
+            <i class="fas fa-file-contract mr-2"></i>
+            Documentos Corporativos
+          </a>
+        </div>
+
         <div
           class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 transition-colors duration-200"
         >
@@ -431,9 +432,7 @@
               x-model="searchQuery"
               @input="searchPages()"
             />
-            <div
-              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-            >
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <i class="fas fa-search text-gray-400"></i>
             </div>
           </div>
@@ -443,10 +442,7 @@
         <div class="flex-1 overflow-auto">
           <div class="max-w-4xl mx-auto p-6">
             <!-- Search Results Section -->
-            <div
-              x-show="searchQuery.trim() && searchResults.total_results > 0"
-              class="mb-8"
-            >
+            <div x-show="searchQuery.trim() && searchResults.total_results > 0" class="mb-8">
               <div
                 class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
               >
@@ -455,16 +451,12 @@
                     Resultados da Pesquisa
                   </h2>
                   <span class="text-sm text-gray-500 dark:text-gray-400">
-                    <span x-text="searchResults.total_results"></span> resultado(s)
-                    encontrado(s)
+                    <span x-text="searchResults.total_results"></span> resultado(s) encontrado(s)
                   </span>
                 </div>
 
                 <!-- Pages Results -->
-                <div
-                  x-show="searchResults.pages && searchResults.pages.length > 0"
-                  class="mb-6"
-                >
+                <div x-show="searchResults.pages && searchResults.pages.length > 0" class="mb-6">
                   <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
                     <i class="fas fa-file-alt mr-2 text-blue-600"></i>
                     Páginas (<span x-text="searchResults.pages.length"></span>)
@@ -543,9 +535,7 @@
                     <i class="fas fa-wifi text-2xl text-white"></i>
                   </div>
                   <div class="text-left">
-                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">
-                      VELOZ FIBRA
-                    </h1>
+                    <h1 class="text-4xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
                     <p class="text-lg text-gray-600 dark:text-gray-300">
                       Internet de Ultra Velocidade
                     </p>
@@ -557,10 +547,9 @@
                 <p
                   class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed"
                 >
-                  Bem-vindo à nossa Central de Conhecimento. Aqui você encontra tudo
-                  sobre processors, ferramentas, procedimentos e informações essenciais
-                  para oferecer a melhor internet de ultra velocidade para nossos
-                  clients.
+                  Bem-vindo à nossa Central de Conhecimento. Aqui você encontra tudo sobre
+                  processors, ferramentas, procedimentos e informações essenciais para oferecer a
+                  melhor internet de ultra velocidade para nossos clients.
                 </p>
               </div>
 
@@ -577,9 +566,7 @@
                   <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                     Ultra Velocidade
                   </h3>
-                  <p class="text-gray-600 dark:text-gray-300">
-                    Internet de alta performance
-                  </p>
+                  <p class="text-gray-600 dark:text-gray-300">Internet de alta performance</p>
                 </div>
                 <div
                   class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center"
@@ -587,16 +574,12 @@
                   <div
                     class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mx-auto mb-4"
                   >
-                    <i
-                      class="fas fa-headset text-green-600 dark:text-green-400 text-xl"
-                    ></i>
+                    <i class="fas fa-headset text-green-600 dark:text-green-400 text-xl"></i>
                   </div>
                   <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                     Suporte 24/7
                   </h3>
-                  <p class="text-gray-600 dark:text-gray-300">
-                    Atendimento sempre disponível
-                  </p>
+                  <p class="text-gray-600 dark:text-gray-300">Atendimento sempre disponível</p>
                 </div>
                 <div
                   class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 text-center"
@@ -604,9 +587,7 @@
                   <div
                     class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mx-auto mb-4"
                   >
-                    <i
-                      class="fas fa-shield-alt text-purple-600 dark:text-purple-400 text-xl"
-                    ></i>
+                    <i class="fas fa-shield-alt text-purple-600 dark:text-purple-400 text-xl"></i>
                   </div>
                   <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
                     Fibra Óptica
@@ -617,9 +598,7 @@
 
               <!-- Categories Grid -->
               <div class="mb-8">
-                <h3
-                  class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center"
-                >
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
                   Explore Nossas Seções
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -658,9 +637,7 @@
               <div
                 class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900 dark:to-purple-900 p-8 rounded-xl"
               >
-                <h3
-                  class="text-2xl font-bold text-gray-900 dark:text-white mb-4 text-center"
-                >
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 text-center">
                   Ações Rápidas
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -675,12 +652,8 @@
                         <i class="fas fa-plus text-green-600 dark:text-green-400"></i>
                       </div>
                       <div>
-                        <h4 class="font-semibold text-gray-900 dark:text-white">
-                          Nova Página
-                        </h4>
-                        <p class="text-sm text-gray-600 dark:text-gray-300">
-                          Criar novo conteúdo
-                        </p>
+                        <h4 class="font-semibold text-gray-900 dark:text-white">Nova Página</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Criar novo conteúdo</p>
                       </div>
                     </div>
                   </button>
@@ -695,12 +668,8 @@
                         <i class="fas fa-search text-blue-600 dark:text-blue-400"></i>
                       </div>
                       <div>
-                        <h4 class="font-semibold text-gray-900 dark:text-white">
-                          Pesquisar
-                        </h4>
-                        <p class="text-sm text-gray-600 dark:text-gray-300">
-                          Encontrar conteúdo
-                        </p>
+                        <h4 class="font-semibold text-gray-900 dark:text-white">Pesquisar</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-300">Encontrar conteúdo</p>
                       </div>
                     </div>
                   </button>
@@ -780,9 +749,7 @@
                           class="fas fa-cloud-upload-alt text-3xl text-gray-400 dark:text-gray-500"
                         ></i>
                         <div>
-                          <p
-                            class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                          >
+                          <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
                             Arraste arquivos aqui ou clique para selecionar
                           </p>
                           <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -806,9 +773,7 @@
                               class="text-sm font-medium text-gray-700 dark:text-gray-300"
                               x-text="file.name"
                             ></p>
-                            <div
-                              class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-1"
-                            >
+                            <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 mt-1">
                               <div
                                 class="bg-blue-600 h-2 rounded-full transition-all duration-300"
                                 :style="`width: ${file.progress}%`"
@@ -878,9 +843,7 @@
                       >
                         <i class="fas fa-image"></i>
                       </button>
-                      <div
-                        class="border-l border-gray-300 dark:border-gray-500 h-6 mx-2"
-                      ></div>
+                      <div class="border-l border-gray-300 dark:border-gray-500 h-6 mx-2"></div>
                       <button
                         @click="captureScreenshot()"
                         class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900 rounded transition-colors"
@@ -921,11 +884,7 @@
     </div>
 
     <!-- Create Page Modal -->
-    <div
-      x-show="showCreateModal"
-      class="fixed inset-0 z-50 overflow-y-auto"
-      style="display: none"
-    >
+    <div x-show="showCreateModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none">
       <div
         class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
       >
@@ -935,13 +894,10 @@
           class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
         >
           <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-              Nova Página
-            </h3>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Nova Página</h3>
             <div class="space-y-4">
               <div>
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >Título</label
                 >
                 <input
@@ -951,8 +907,7 @@
                 />
               </div>
               <div>
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >Categoria</label
                 >
                 <select
@@ -973,8 +928,7 @@
                 </select>
               </div>
               <div>
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >Conteúdo</label
                 >
                 <textarea
@@ -985,9 +939,7 @@
               </div>
             </div>
           </div>
-          <div
-            class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
-          >
+          <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <button
               @click="createPage()"
               class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
@@ -1006,11 +958,7 @@
     </div>
 
     <!-- Login Modal -->
-    <div
-      x-show="showLoginModal"
-      class="fixed inset-0 z-50 overflow-y-auto"
-      style="display: none"
-    >
+    <div x-show="showLoginModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none">
       <div
         class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
       >
@@ -1020,13 +968,10 @@
           class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full"
         >
           <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-              Acesso à Wiki
-            </h3>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Acesso à Wiki</h3>
             <div class="space-y-4">
               <div>
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >Usuário</label
                 >
                 <input
@@ -1036,8 +981,7 @@
                 />
               </div>
               <div>
-                <label
-                  class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >Senha</label
                 >
                 <input
@@ -1048,9 +992,7 @@
               </div>
             </div>
           </div>
-          <div
-            class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse"
-          >
+          <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <button
               @click="login()"
               class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
@@ -1190,9 +1132,7 @@
             }
 
             try {
-              const response = await fetch(
-                `/api/search?q=${encodeURIComponent(this.searchQuery)}`
-              );
+              const response = await fetch(`/api/search?q=${encodeURIComponent(this.searchQuery)}`);
               const data = await response.json();
               this.searchResults = data;
               this.pages = data.pages || [];
@@ -1391,16 +1331,11 @@
 
           async markAsRead(notificationId) {
             try {
-              const response = await fetch(
-                `/api/notifications/${notificationId}/read`,
-                {
-                  method: 'POST',
-                }
-              );
+              const response = await fetch(`/api/notifications/${notificationId}/read`, {
+                method: 'POST',
+              });
               if (response.ok) {
-                const notification = this.notifications.find(
-                  n => n.id === notificationId
-                );
+                const notification = this.notifications.find(n => n.id === notificationId);
                 if (notification) {
                   notification.is_read = true;
                   this.unreadCount = Math.max(0, this.unreadCount - 1);
@@ -1437,15 +1372,11 @@
                 method: 'DELETE',
               });
               if (response.ok) {
-                const notification = this.notifications.find(
-                  n => n.id === notificationId
-                );
+                const notification = this.notifications.find(n => n.id === notificationId);
                 if (notification && !notification.is_read) {
                   this.unreadCount = Math.max(0, this.unreadCount - 1);
                 }
-                this.notifications = this.notifications.filter(
-                  n => n.id !== notificationId
-                );
+                this.notifications = this.notifications.filter(n => n.id !== notificationId);
               }
             } catch (error) {
               console.error('Error ao excluir notificação:', error);
@@ -1505,9 +1436,7 @@
 
                 // Remover da lista após 2 segundos
                 setTimeout(() => {
-                  this.uploadingFiles = this.uploadingFiles.filter(
-                    f => f.id !== fileId
-                  );
+                  this.uploadingFiles = this.uploadingFiles.filter(f => f.id !== fileId);
                 }, 2000);
               } else {
                 const error = await response.json();
@@ -1522,9 +1451,7 @@
           },
 
           insertFileLink(fileInfo) {
-            const textarea = document.querySelector(
-              'textarea[x-model="selectedPage.content"]'
-            );
+            const textarea = document.querySelector('textarea[x-model="selectedPage.content"]');
             if (!textarea) return;
 
             const cursorPos = textarea.selectionStart;
@@ -1562,9 +1489,7 @@
           },
 
           insertMarkdown(before, after) {
-            const textarea = document.querySelector(
-              'textarea[x-model="selectedPage.content"]'
-            );
+            const textarea = document.querySelector('textarea[x-model="selectedPage.content"]');
             if (!textarea) return;
 
             const start = textarea.selectionStart;
@@ -1574,8 +1499,7 @@
             const textBefore = this.selectedPage.content.substring(0, start);
             const textAfter = this.selectedPage.content.substring(end);
 
-            this.selectedPage.content =
-              textBefore + before + selectedText + after + textAfter;
+            this.selectedPage.content = textBefore + before + selectedText + after + textAfter;
 
             // Atualizar cursor
             setTimeout(() => {
@@ -1744,36 +1668,28 @@
                     ></p>
                   </div>
                   <div>
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                      Tamanho
-                    </p>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Tamanho</p>
                     <p
                       class="text-sm text-gray-900 dark:text-white"
                       x-text="selectedFile?.size ? (selectedFile.size / 1024).toFixed(1) + ' KB' : 'N/A'"
                     ></p>
                   </div>
                   <div x-show="selectedFile?.sector_name">
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                      Setor
-                    </p>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Setor</p>
                     <p
                       class="text-sm text-gray-900 dark:text-white"
                       x-text="selectedFile?.sector_name"
                     ></p>
                   </div>
                   <div x-show="selectedFile?.trainer">
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                      Instrutor
-                    </p>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Instrutor</p>
                     <p
                       class="text-sm text-gray-900 dark:text-white"
                       x-text="selectedFile?.trainer"
                     ></p>
                   </div>
                   <div x-show="selectedFile?.description">
-                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
-                      Descrição
-                    </p>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Descrição</p>
                     <p
                       class="text-sm text-gray-900 dark:text-white"
                       x-text="selectedFile?.description"
@@ -1792,15 +1708,11 @@
               </div>
 
               <!-- File Preview -->
-              <div
-                class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden"
-              >
+              <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
                 <div
                   class="bg-gray-100 dark:bg-gray-700 px-4 py-2 border-b border-gray-200 dark:border-gray-600"
                 >
-                  <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Visualização
-                  </p>
+                  <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Visualização</p>
                 </div>
                 <div class="p-4">
                   <template x-if="selectedFile?.filename?.endsWith('.pdf')">
@@ -1810,9 +1722,7 @@
                       frameborder="0"
                     ></iframe>
                   </template>
-                  <template
-                    x-if="selectedFile?.filename?.match(/\.(jpg|jpeg|png|gif|webp)$/i)"
-                  >
+                  <template x-if="selectedFile?.filename?.match(/\.(jpg|jpeg|png|gif|webp)$/i)">
                     <img
                       :src="'/api/files/' + selectedFile?.filename + '/view'"
                       :alt="selectedFile?.original_filename"

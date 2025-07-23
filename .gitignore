@@ -361,3 +361,9 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# CDD v2.0
+.kiro/scripts/node_modules/
+.kiro/scripts/tasks-status.json
+.kiro/backups/
+*.log

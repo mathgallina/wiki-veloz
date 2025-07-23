@@ -1,156 +1,121 @@
 """
 Rotas para documentos corporativos
 """
+import logging
+
 from flask import Blueprint, jsonify, render_template, request
-from flask_login import current_user, login_required
 
-from .models import DocumentPriority, DocumentStatus, DocumentType
-from .services import DocumentService
+from app.modules.documents.services import DocumentService
+from app.modules.documents.validators import DocumentValidator
+from app.shared.decorators import login_required
 
-# Criar blueprint
+logger = logging.getLogger(__name__)
+
 documents_bp = Blueprint('documents', __name__, url_prefix='/documents')
-service = DocumentService()
+documents_service = DocumentService()
+validator = DocumentValidator()
 
-
-@documents_bp.route('/')
+@documents_bp.route('/', methods=['GET'])
 @login_required
-def documents_index():
+def index():
     """Página principal de documentos"""
     return render_template('documents/index.html')
 
-
-@documents_bp.route('/create')
-@login_required
-def documents_create():
-    """Página de criação de documento"""
-    categories = service.get_categories()
-    return render_template('documents/create.html', categories=categories)
-
-
-@documents_bp.route('/<document_id>')
-@login_required
-def documents_view(document_id):
-    """Página de visualização de documento"""
-    document = service.get_document(document_id)
-    if not document:
-        return jsonify({'error': 'Documento não encontrado'}), 404
-    
-    category = service.get_category(document.category_id)
-    versions = service.get_document_versions(document_id)
-    
-    return render_template('documents/view.html', 
-                         document=document, 
-                         category=category,
-                         versions=versions)
-
-
-@documents_bp.route('/<document_id>/edit')
-@login_required
-def documents_edit(document_id):
-    """Página de edição de documento"""
-    document = service.get_document(document_id)
-    if not document:
-        return jsonify({'error': 'Documento não encontrado'}), 404
-    
-    categories = service.get_categories()
-    return render_template('documents/edit.html', 
-                         document=document, 
-                         categories=categories)
-
-
-# API Routes
 @documents_bp.route('/api/documents', methods=['GET'])
 @login_required
 def get_documents():
-    """API: Lista documentos com filtros"""
+    """API para listar documentos"""
     try:
-        filters = {}
-        
-        # Filtros opcionais
-        if request.args.get('category_id'):
-            filters['category_id'] = request.args.get('category_id')
-        
-        if request.args.get('document_type'):
-            filters['document_type'] = request.args.get('document_type')
-        
-        if request.args.get('status'):
-            filters['status'] = request.args.get('status')
-        
-        if request.args.get('priority'):
-            filters['priority'] = request.args.get('priority')
-        
-        if request.args.get('featured'):
-            filters['featured'] = request.args.get('featured') == 'true'
-        
-        if request.args.get('author_id'):
-            filters['author_id'] = request.args.get('author_id')
-        
-        # Ordenação
-        if request.args.get('sort_by'):
-            filters['sort_by'] = request.args.get('sort_by')
-        
-        if request.args.get('reverse'):
-            filters['reverse'] = request.args.get('reverse') == 'true'
-        
-        documents = service.get_all_documents(filters)
-        
+        documents = documents_service.get_all_documents()
         return jsonify({
             'success': True,
             'data': [doc.to_dict() for doc in documents]
-        })
-    
+        }), 200
     except Exception as e:
+        logger.error(f"Erro ao buscar documentos: {e}")
         return jsonify({
             'success': False,
-            'message': str(e)
+            'message': 'Erro interno do servidor'
         }), 500
-
 
 @documents_bp.route('/api/documents', methods=['POST'])
 @login_required
 def create_document():
-    """API: Cria novo documento"""
+    """API para criar documento"""
     try:
         data = request.get_json()
         
-        if not data:
+        # Validar dados
+        validation_result = validator.validate_document_data(data)
+        if not validation_result['valid']:
             return jsonify({
                 'success': False,
-                'message': 'Dados não fornecidos'
+                'message': validation_result['errors']
             }), 400
         
-        document = service.create_document(
-            data=data,
-            author_id=current_user.id,
-            author_name=current_user.name
-        )
+        # Adicionar autor
+        data['author'] = request.session.get('user_name', 'Sistema')
+        
+        document = documents_service.create_document(data)
         
         return jsonify({
             'success': True,
             'data': document.to_dict(),
             'message': 'Documento criado com sucesso'
         }), 201
-    
-    except ValueError as e:
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 400
-    
     except Exception as e:
+        logger.error(f"Erro ao criar documento: {e}")
         return jsonify({
             'success': False,
             'message': 'Erro interno do servidor'
         }), 500
 
-
 @documents_bp.route('/api/documents/<document_id>', methods=['GET'])
 @login_required
 def get_document(document_id):
-    """API: Busca documento por ID"""
+    """API para buscar documento específico"""
     try:
-        document = service.get_document(document_id)
+        document = documents_service.get_document(document_id)
+        if not document:
+            return jsonify({
+                'success': False,
+                'message': 'Documento não encontrado'
+            }), 404
         
+        # Registrar visualização
+        user_id = request.session.get('user_id')
+        documents_service.record_view(document_id, user_id)
+        
+        return jsonify({
+            'success': True,
+            'data': document.to_dict()
+        }), 200
+    except Exception as e:
+        logger.error(f"Erro ao buscar documento: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Erro interno do servidor'
+        }), 500
+
+@documents_bp.route('/api/documents/<document_id>', methods=['PUT'])
+@login_required
+def update_document(document_id):
+    """API para atualizar documento"""
+    try:
+        data = request.get_json()
+        
+        # Validar dados
+        validation_result = validator.validate_document_update(data)
+        if not validation_result['valid']:
+            return jsonify({
+                'success': False,
+                'message': validation_result['errors']
+            }), 400
+        
+        # Adicionar autor
+        data['author'] = request.session.get('user_name', 'Sistema')
+        
+        document = documents_service.update_document(document_id, data)
         if not document:
             return jsonify({
                 'success': False,
@@ -159,61 +124,22 @@ def get_document(document_id):
         
         return jsonify({
             'success': True,
-            'data': document.to_dict()
-        })
-    
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': 'Erro interno do servidor'
-        }), 500
-
-
-@documents_bp.route('/api/documents/<document_id>', methods=['PUT'])
-@login_required
-def update_document(document_id):
-    """API: Atualiza documento"""
-    try:
-        data = request.get_json()
-        
-        if not data:
-            return jsonify({
-                'success': False,
-                'message': 'Dados não fornecidos'
-            }), 400
-        
-        document = service.update_document(
-            document_id=document_id,
-            data=data,
-            user_id=current_user.id
-        )
-        
-        return jsonify({
-            'success': True,
             'data': document.to_dict(),
             'message': 'Documento atualizado com sucesso'
-        })
-    
-    except ValueError as e:
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 400
-    
+        }), 200
     except Exception as e:
+        logger.error(f"Erro ao atualizar documento: {e}")
         return jsonify({
             'success': False,
             'message': 'Erro interno do servidor'
         }), 500
-
 
 @documents_bp.route('/api/documents/<document_id>', methods=['DELETE'])
 @login_required
 def delete_document(document_id):
-    """API: Remove documento"""
+    """API para excluir documento"""
     try:
-        success = service.delete_document(document_id)
-        
+        success = documents_service.delete_document(document_id)
         if not success:
             return jsonify({
                 'success': False,
@@ -222,246 +148,206 @@ def delete_document(document_id):
         
         return jsonify({
             'success': True,
-            'message': 'Documento removido com sucesso'
-        })
-    
+            'message': 'Documento excluído com sucesso'
+        }), 200
     except Exception as e:
+        logger.error(f"Erro ao excluir documento: {e}")
         return jsonify({
             'success': False,
             'message': 'Erro interno do servidor'
         }), 500
-
-
-@documents_bp.route('/api/documents/search', methods=['GET'])
-@login_required
-def search_documents():
-    """API: Busca documentos por texto"""
-    try:
-        query = request.args.get('q', '')
-        
-        if not query:
-            return jsonify({
-                'success': False,
-                'message': 'Query de busca não fornecida'
-            }), 400
-        
-        documents = service.search_documents(query)
-        
-        return jsonify({
-            'success': True,
-            'data': [doc.to_dict() for doc in documents]
-        })
-    
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': 'Erro interno do servidor'
-        }), 500
-
-
-@documents_bp.route('/api/documents/featured', methods=['GET'])
-@login_required
-def get_featured_documents():
-    """API: Busca documentos em destaque"""
-    try:
-        documents = service.get_featured_documents()
-        
-        return jsonify({
-            'success': True,
-            'data': [doc.to_dict() for doc in documents]
-        })
-    
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': 'Erro interno do servidor'
-        }), 500
-
-
-@documents_bp.route('/api/documents/recent', methods=['GET'])
-@login_required
-def get_recent_documents():
-    """API: Busca documentos recentes"""
-    try:
-        limit = int(request.args.get('limit', 10))
-        documents = service.get_recent_documents(limit)
-        
-        return jsonify({
-            'success': True,
-            'data': [doc.to_dict() for doc in documents]
-        })
-    
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': 'Erro interno do servidor'
-        }), 500
-
 
 @documents_bp.route('/api/documents/<document_id>/versions', methods=['GET'])
 @login_required
 def get_document_versions(document_id):
-    """API: Busca versões de um documento"""
+    """API para buscar versões de um documento"""
     try:
-        versions = service.get_document_versions(document_id)
-        
+        versions = documents_service.get_document_versions(document_id)
         return jsonify({
             'success': True,
             'data': [version.to_dict() for version in versions]
-        })
-    
+        }), 200
     except Exception as e:
+        logger.error(f"Erro ao buscar versões: {e}")
         return jsonify({
             'success': False,
             'message': 'Erro interno do servidor'
         }), 500
 
-
-@documents_bp.route('/api/documents/<document_id>/toggle-featured', methods=['POST'])
-@login_required
-def toggle_featured(document_id):
-    """API: Alterna status de destaque"""
-    try:
-        document = service.toggle_featured(document_id)
-        
-        return jsonify({
-            'success': True,
-            'data': document.to_dict(),
-            'message': 'Status de destaque alterado'
-        })
-    
-    except ValueError as e:
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 400
-    
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': 'Erro interno do servidor'
-        }), 500
-
-
-@documents_bp.route('/api/documents/<document_id>/publish', methods=['POST'])
-@login_required
-def publish_document(document_id):
-    """API: Publica documento"""
-    try:
-        document = service.publish_document(document_id)
-        
-        return jsonify({
-            'success': True,
-            'data': document.to_dict(),
-            'message': 'Documento publicado com sucesso'
-        })
-    
-    except ValueError as e:
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 400
-    
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': 'Erro interno do servidor'
-        }), 500
-
-
-@documents_bp.route('/api/documents/<document_id>/archive', methods=['POST'])
-@login_required
-def archive_document(document_id):
-    """API: Arquiva documento"""
-    try:
-        document = service.archive_document(document_id)
-        
-        return jsonify({
-            'success': True,
-            'data': document.to_dict(),
-            'message': 'Documento arquivado com sucesso'
-        })
-    
-    except ValueError as e:
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 400
-    
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'message': 'Erro interno do servidor'
-        }), 500
-
-
-@documents_bp.route('/api/categories', methods=['GET'])
+@documents_bp.route('/api/documents/categories', methods=['GET'])
 @login_required
 def get_categories():
-    """API: Lista categorias"""
+    """API para listar categorias"""
     try:
-        categories = service.get_categories()
-        
+        categories = documents_service.get_all_categories()
         return jsonify({
             'success': True,
-            'data': [cat.to_dict() for cat in categories]
-        })
-    
+            'data': [category.to_dict() for category in categories]
+        }), 200
     except Exception as e:
+        logger.error(f"Erro ao buscar categorias: {e}")
         return jsonify({
             'success': False,
             'message': 'Erro interno do servidor'
         }), 500
 
-
-@documents_bp.route('/api/categories', methods=['POST'])
+@documents_bp.route('/api/documents/categories', methods=['POST'])
 @login_required
 def create_category():
-    """API: Cria nova categoria"""
+    """API para criar categoria"""
     try:
         data = request.get_json()
         
-        if not data:
+        # Validar dados
+        validation_result = validator.validate_category_data(data)
+        if not validation_result['valid']:
             return jsonify({
                 'success': False,
-                'message': 'Dados não fornecidos'
+                'message': validation_result['errors']
             }), 400
         
-        category = service.create_category(data)
+        category = documents_service.create_category(data)
         
         return jsonify({
             'success': True,
             'data': category.to_dict(),
             'message': 'Categoria criada com sucesso'
         }), 201
-    
-    except ValueError as e:
-        return jsonify({
-            'success': False,
-            'message': str(e)
-        }), 400
-    
     except Exception as e:
+        logger.error(f"Erro ao criar categoria: {e}")
         return jsonify({
             'success': False,
             'message': 'Erro interno do servidor'
         }), 500
 
-
-@documents_bp.route('/api/stats', methods=['GET'])
+# Rotas para Analytics e Métricas
+@documents_bp.route('/api/documents/<document_id>/view', methods=['POST'])
 @login_required
-def get_document_stats():
-    """API: Estatísticas dos documentos"""
+def record_view(document_id):
+    """API para registrar visualização de documento"""
     try:
-        stats = service.get_document_stats()
+        user_id = request.session.get('user_id')
+        documents_service.record_view(document_id, user_id)
         
         return jsonify({
             'success': True,
-            'data': stats
-        })
-    
+            'message': 'Visualização registrada'
+        }), 200
     except Exception as e:
+        logger.error(f"Erro ao registrar visualização: {e}")
         return jsonify({
             'success': False,
             'message': 'Erro interno do servidor'
-        }), 500 
+        }), 500
+
+@documents_bp.route('/api/documents/<document_id>/download', methods=['POST'])
+@login_required
+def record_download(document_id):
+    """API para registrar download de documento"""
+    try:
+        user_id = request.session.get('user_id')
+        documents_service.record_download(document_id, user_id)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Download registrado'
+        }), 200
+    except Exception as e:
+        logger.error(f"Erro ao registrar download: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Erro interno do servidor'
+        }), 500
+
+@documents_bp.route('/api/documents/<document_id>/analytics', methods=['GET'])
+@login_required
+def get_document_analytics(document_id):
+    """API para buscar analytics de um documento"""
+    try:
+        analytics = documents_service.get_document_analytics(document_id)
+        return jsonify({
+            'success': True,
+            'data': analytics
+        }), 200
+    except Exception as e:
+        logger.error(f"Erro ao buscar analytics: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Erro interno do servidor'
+        }), 500
+
+@documents_bp.route('/api/documents/dashboard', methods=['GET'])
+@login_required
+def get_dashboard_stats():
+    """API para buscar estatísticas do dashboard"""
+    try:
+        stats = documents_service.get_dashboard_stats()
+        return jsonify({
+            'success': True,
+            'data': stats
+        }), 200
+    except Exception as e:
+        logger.error(f"Erro ao buscar estatísticas: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Erro interno do servidor'
+        }), 500
+
+@documents_bp.route('/api/documents/analytics/user/<user_id>', methods=['GET'])
+@login_required
+def get_user_analytics(user_id):
+    """API para buscar analytics de um usuário"""
+    try:
+        analytics = documents_service.get_user_analytics(user_id)
+        return jsonify({
+            'success': True,
+            'data': analytics
+        }), 200
+    except Exception as e:
+        logger.error(f"Erro ao buscar analytics do usuário: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Erro interno do servidor'
+        }), 500
+
+@documents_bp.route('/api/documents/reports/<report_type>', methods=['GET'])
+@login_required
+def generate_report(report_type):
+    """API para gerar relatórios"""
+    try:
+        filters = request.args.to_dict()
+        
+        # Converter tipos de dados
+        if 'days' in filters:
+            filters['days'] = int(filters['days'])
+        
+        report = documents_service.generate_report(report_type, filters)
+        
+        if 'error' in report:
+            return jsonify({
+                'success': False,
+                'message': report['error']
+            }), 400
+        
+        return jsonify({
+            'success': True,
+            'data': report
+        }), 200
+    except Exception as e:
+        logger.error(f"Erro ao gerar relatório: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Erro interno do servidor'
+        }), 500
+
+@documents_bp.route('/dashboard', methods=['GET'])
+@login_required
+def dashboard():
+    """Página do dashboard de analytics"""
+    return render_template('documents/dashboard.html')
+
+@documents_bp.route('/reports', methods=['GET'])
+@login_required
+def reports():
+    """Página de relatórios"""
+    return render_template('documents/reports.html') 

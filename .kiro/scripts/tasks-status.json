@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2025-07-23T14:01:56.916Z",
+  "lastUpdate": "2025-07-23T16:29:32.638Z",
   "tasks": [
     {
       "id": "architecture-refactor-1.1",
@@ -246,7 +246,7 @@
       "feature": "documents-corporativos",
       "number": "4.1",
       "description": "Implement validations and security",
-      "completed": false,
+      "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
@@ -254,7 +254,7 @@
       "feature": "documents-corporativos",
       "number": "4.2",
       "description": "Advanced UI features",
-      "completed": false,
+      "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
@@ -262,7 +262,7 @@
       "feature": "documents-corporativos",
       "number": "4.3",
       "description": "Metrics and analytics",
-      "completed": false,
+      "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
@@ -270,7 +270,7 @@
       "feature": "documents-corporativos",
       "number": "5.1",
       "description": "Unit testing",
-      "completed": false,
+      "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
@@ -278,7 +278,7 @@
       "feature": "documents-corporativos",
       "number": "5.2",
       "description": "Documentation and deployment",
-      "completed": false,
+      "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
@@ -364,7 +364,7 @@
   ],
   "summary": {
     "total": 45,
-    "completed": 9,
-    "pending": 36
+    "completed": 14,
+    "pending": 31
   }
 }

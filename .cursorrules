@@ -1,0 +1,290 @@
+# CDD v2.0 - Context-Driven Development Rules
+
+## 🎯 Visão Geral do Projeto
+Este é o **Wiki Veloz**, uma plataforma de documentação colaborativa que resolve o problema de documentação fragmentada em organizações. O projeto segue a metodologia **CDD v2.0** (Context-Driven Development).
+
+### Stack Principal
+- **Backend**: Flask 2.3+ (Python 3.11+)
+- **Frontend**: Vanilla JavaScript + Tailwind CSS
+- **Database**: JSON files + Google Drive API
+- **Deployment**: Heroku
+- **Arquitetura**: Monolítica → Microservices (evolução)
+
+## 📋 Padrões CDD v2.0 Obrigatórios
+
+### Task IDs
+- **Formato**: `[feature-name]-X.Y` (ex: `user-auth-1.1`)
+- **Obrigatório**: Todas as tasks devem ter IDs únicos
+- **Tracking**: Use `npm run complete [task-id]` para marcar como concluída
+
+### Estrutura de Arquivos
+```
+wiki-veloz/
+├── app.py                    # Entry point
+├── data/                     # JSON files (database)
+├── templates/                # Flask templates
+├── static/                   # Assets estáticos
+├── tests/                    # Testes automatizados
+└── .kiro/                    # CDD v2.0 structure
+    ├── steering/             # Direcionamento estratégico
+    ├── patterns/             # Padrões de código
+    ├── scripts/              # Automação CDD
+    └── specs/                # Especificações
+```
+
+### Convenções de Nomenclatura
+- **Python**: `snake_case` (módulos, funções, variáveis)
+- **JavaScript**: `camelCase` (funções, variáveis), `PascalCase` (componentes)
+- **Arquivos**: `kebab-case` (diretórios), `snake_case.py` (Python)
+- **Constantes**: `UPPER_SNAKE_CASE`
+
+## 🔧 Padrões Técnicos Específicos
+
+### Python (Flask)
+```python
+# Estrutura de rota obrigatória
+@app.route('/api/endpoint', methods=['GET'])
+@login_required
+def endpoint_name():
+    try:
+        # Business logic
+        result = service.method()
+        return jsonify({
+            'success': True,
+            'data': result
+        }), 200
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Internal server error'
+        }), 500
+
+# Service pattern obrigatório
+class ServiceName:
+    def __init__(self):
+        self.data_file = 'data/filename.json'
+    
+    def method_name(self):
+        with open(self.data_file, 'r') as f:
+            data = json.load(f)
+        return data
+```
+
+### JavaScript (Frontend)
+```javascript
+// API client pattern
+class ApiClient {
+    static async request(endpoint, options = {}) {
+        try {
+            const response = await fetch(`/api/${endpoint}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                },
+                ...options
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Request failed');
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('API request failed:', error);
+            throw error;
+        }
+    }
+}
+```
+
+### HTML/Templates
+```html
+<!-- Estrutura de template obrigatória -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Wiki Veloz{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow">
+        <!-- Navigation -->
+    </nav>
+    
+    <main class="container mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer class="bg-gray-800 text-white py-4">
+        <!-- Footer -->
+    </footer>
+</body>
+</html>
+```
+
+## 🎯 Padrões de Negócio
+
+### User Management
+- **Autenticação**: Session-based com Flask
+- **Roles**: admin, user
+- **Storage**: JSON files em `data/users.json`
+- **Security**: Password hashing obrigatório
+
+### Content Management
+- **Pages**: Markdown content em JSON
+- **Versioning**: Histórico de versões
+- **Storage**: `data/pages.json`
+- **Backup**: Google Drive automático
+
+### File Management
+- **Uploads**: PDFs para Google Drive
+- **Storage**: `data/pdfs.json`
+- **Integration**: Google Drive API
+- **Backup**: Automático via API
+
+### Notification System
+- **Storage**: `data/notifications.json`
+- **Types**: system, user, file
+- **Delivery**: Email + in-app
+- **Archiving**: Auto-archive após 30 dias
+
+## 🚨 Anti-Patterns (Proibidos)
+
+### ❌ NÃO FAÇA
+- **Hardcoded values**: Use environment variables
+- **No error handling**: Sempre use try/catch
+- **No validation**: Valide inputs sempre
+- **No logging**: Log operações importantes
+- **No tests**: Teste funcionalidades críticas
+- **Inline styles**: Use Tailwind classes
+- **Large files**: Máximo 300 linhas por arquivo
+- **Mixed languages**: Separe Python e JavaScript
+
+### ✅ SEMPRE FAÇA
+- **Environment variables**: Para configurações
+- **Error handling**: Try/catch em todas as operações
+- **Input validation**: Valide entrada sempre
+- **Logging**: Log operações importantes
+- **Testing**: Teste funcionalidades críticas
+- **Tailwind CSS**: Use classes utilitárias
+- **Modular code**: Arquivos pequenos e focados
+- **Type hints**: Para Python e TypeScript
+
+## 🔄 Workflow CDD v2.0
+
+### Para Nova Feature
+1. **Criar especificação**: `cd .kiro/scripts && ./new-feature.sh feature-name`
+2. **Preencher docs**: requirements.md, design.md, tasks.md
+3. **Validar formato**: `npm run validate feature-name`
+4. **Implementar**: Seguindo patterns em `.kiro/patterns/`
+5. **Testar**: `python -m pytest tests/`
+6. **Marcar progresso**: `npm run complete feature-name-X.Y`
+
+### Para Bug Fix
+1. **Identificar task**: `npm run list`
+2. **Implementar fix**: Seguindo patterns
+3. **Testar**: `python -m pytest tests/`
+4. **Marcar concluído**: `npm run complete bug-fix-X.Y`
+
+### Para Refatoração
+1. **Criar task**: `npm run scan`
+2. **Refatorar**: Seguindo patterns
+3. **Validar**: `npm run health`
+4. **Marcar concluído**: `npm run complete refactor-X.Y`
+
+## 📊 Comandos CDD Essenciais
+
+```bash
+# Task Management
+npm run scan              # Escanear tasks
+npm run list              # Listar todas as tasks
+npm run status            # Status do projeto
+npm run complete [task-id] # Marcar task como concluída
+npm run watch             # Monitorar mudanças
+
+# Validation & Health
+npm run validate [feature] # Validar formato de tasks
+npm run health            # Dashboard de saúde
+npm run backup            # Backup de tasks
+npm run cleanup           # Limpeza semanal
+
+# Development
+python app.py             # Rodar aplicação
+python -m pytest tests/   # Rodar testes
+npm run lint              # Linting (se configurado)
+```
+
+## 🎯 Métricas de Sucesso
+
+### Funcional
+- [ ] Editor Markdown com preview
+- [ ] Sistema de versionamento
+- [ ] Integração Google Drive
+- [ ] Sistema de notificações
+- [ ] Analytics dashboard
+- [ ] Backup automático
+
+### Técnico
+- [ ] Performance: < 2s carregamento
+- [ ] Uptime: > 99.9%
+- [ ] Segurança: Zero vulnerabilidades críticas
+- [ ] Escalabilidade: 1000+ usuários
+
+### Negócio
+- [ ] 500 documentos/mês
+- [ ] 200 usuários ativos/mês
+- [ ] NPS Score > 70
+- [ ] 30-day retention > 85%
+
+## 🔗 Integrações
+
+### Google Drive API
+- **Escopo**: `https://www.googleapis.com/auth/drive.file`
+- **Funcionalidades**: Upload, backup, versionamento
+- **Configuração**: Service account credentials
+- **Rate limiting**: Implementado
+
+### Heroku Deployment
+- **Buildpack**: Python
+- **Environment**: Production config
+- **Logs**: `heroku logs --tail`
+- **Monitoring**: Heroku metrics
+
+## 📚 Documentação
+
+### Arquivos Importantes
+- `README.md`: Documentação principal
+- `.kiro/steering/product.md`: Visão de produto
+- `.kiro/steering/structure.md`: Organização
+- `.kiro/steering/tech.md`: Stack técnico
+- `.kiro/patterns/`: Padrões de código
+
+### Guias Específicos
+- `CREDENCIAIS_GOOGLE_DRIVE.md`: Configuração Google Drive
+- `SISTEMA_BACKUP.md`: Sistema de backup
+- `SISTEMA_NOTIFICACOES.md`: Sistema de notificações
+- `SISTEMA_PDFS.md`: Sistema de PDFs
+- `ANALYTICS_GUIDE.md`: Guia de analytics
+
+## 🚀 Próximos Passos
+
+### Fase 5: Integração (Atual)
+- [ ] Configuração de linting automático
+- [ ] Integração CI/CD com CDD
+- [ ] Treinamento da equipe
+- [ ] Monitoramento de adoção
+
+### Fase 6: Evolução
+- [ ] Migração para PostgreSQL
+- [ ] Implementação de microservices
+- [ ] Mobile app
+- [ ] Enterprise features
+
+---
+
+**Lembre-se**: Este projeto segue **CDD v2.0** - sempre consulte os patterns em `.kiro/patterns/` antes de implementar novas funcionalidades! 

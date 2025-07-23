@@ -7,7 +7,19 @@
     "password_hash": "pbkdf2:sha256:600000$tkmZPLhSR9H0WOAn$bdd10e7bdecbd6906e44f0e1c59688bd88dae2753b676d2db59d3a2245960051",
     "role": "admin",
     "created_at": "2025-07-18T15:24:53.276699",
-    "last_login": "2025-07-18T15:29:39.598473",
+    "last_login": "2025-07-23T10:30:46.483938",
     "is_active": true
+  },
+  {
+    "id": "bruna-001",
+    "username": "bruna",
+    "name": "Bruna Silva",
+    "email": "bruna@velozfibra.com",
+    "password_hash": "pbkdf2:sha256:600000$qwxZwBftq6cQzX2s$5fff2c4d4efcd6a4df53768151382f06171f882170a40e40cc8a9eaaf9aac24e",
+    "role": "user",
+    "created_at": "2025-07-23T10:36:39.763526",
+    "last_login": null,
+    "is_active": true,
+    "updated_at": "2025-07-23T10:37:43.919764"
   }
 ]
