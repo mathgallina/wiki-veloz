@@ -1,0 +1,3480 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Documentos Corporations - Wiki Veloz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      .fade-in {
+        animation: fadeIn 0.5s ease-in;
+      }
+      .slide-in {
+        animation: slideIn 0.3s ease-out;
+      }
+      .bounce-in {
+        animation: bounceIn 0.6s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateY(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes bounceIn {
+        0% {
+          transform: scale(0.3);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        70% {
+          transform: scale(0.9);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .document-card {
+        transition: all 0.3s ease;
+      }
+
+      .document-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .modal-backdrop {
+        backdrop-filter: blur(5px);
+      }
+
+      .version-timeline {
+        position: relative;
+      }
+
+      .version-timeline::before {
+        content: '';
+        position: absolute;
+        left: 20px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+      }
+
+      .version-item {
+        position: relative;
+        margin-left: 40px;
+      }
+
+      .version-item::before {
+        content: '';
+        position: absolute;
+        left: -30px;
+        top: 8px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #3b82f6;
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px #3b82f6;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50" x-data="documentManager()">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg border-b">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <a href="/" class="text-xl font-bold text-gray-800">
+              <i class="fas fa-book-open mr-2"></i>Wiki Veloz
+            </a>
+          </div>
+          <div class="flex items-center space-x-4">
+            <a href="/admin" class="text-gray-600 hover:text-gray-900">
+              <i class="fas fa-cog mr-1"></i>Admin
+            </a>
+            <a href="/logout" class="text-red-600 hover:text-red-800">
+              <i class="fas fa-sign-out-alt mr-1"></i>Sair
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Header -->
+      <div class="mb-8">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+              <i class="fas fa-file-alt mr-3 text-blue-600"></i>
+              Documentos Corporations
+            </h1>
+            <p class="text-gray-600">Gerencie documentos importantes da empresa</p>
+          </div>
+          <button
+            @click="showCreateModal = true"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center"
+          >
+            <i class="fas fa-plus mr-2"></i>
+            Novo Documento
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters and Search -->
+      <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
+            <input
+              type="text"
+              x-model="filters.search"
+              placeholder="Título, descrição ou author..."
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+            <select
+              x-model="filters.category"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Todas</option>
+              <template x-for="category in categories" :key="category.id">
+                <option :value="category.id" x-text="category.name"></option>
+              </template>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+            <select
+              x-model="filters.type"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Todos</option>
+              <option value="ata">Ata de Reunião</option>
+              <option value="regulamento">Regulamento</option>
+              <option value="politica">Política</option>
+              <option value="procedimento">Procedimento</option>
+              <option value="manual">Manual</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+            <select
+              x-model="filters.status"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">Todos</option>
+              <option value="ativo">Ativo</option>
+              <option value="rascunho">Rascunho</option>
+              <option value="arquivado">Arquivado</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Documents Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <template x-for="document in filteredDocuments" :key="document.id">
+          <div
+            class="document-card bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-lg transition-all duration-300"
+          >
+            <div class="p-6">
+              <div class="flex justify-between items-start mb-4">
+                <div class="flex-1">
+                  <h3 class="text-lg font-semibold text-gray-900 mb-2" x-text="document.title"></h3>
+                  <p class="text-gray-600 text-sm mb-3" x-text="document.description"></p>
+                </div>
+                <div class="flex space-x-2">
+                  <span
+                    class="px-2 py-1 text-xs font-medium rounded-full"
+                    :class="{
+                                          'bg-green-100 text-green-800': document.status === 'ativo',
+                                          'bg-yellow-100 text-yellow-800': document.status === 'rascunho',
+                                          'bg-gray-100 text-gray-800': document.status === 'arquivado'
+                                      }"
+                    x-text="document.status"
+                  ></span>
+                </div>
+              </div>
+
+              <div class="space-y-2 mb-4">
+                <div class="flex items-center text-sm text-gray-500">
+                  <i class="fas fa-tag mr-2"></i>
+                  <span x-text="getCategoryName(document.category_id)"></span>
+                </div>
+                <div class="flex items-center text-sm text-gray-500">
+                  <i class="fas fa-file-alt mr-2"></i>
+                  <span x-text="getTypeName(document.type)"></span>
+                </div>
+                <div class="flex items-center text-sm text-gray-500">
+                  <i class="fas fa-user mr-2"></i>
+                  <span x-text="document.author"></span>
+                </div>
+                <div class="flex items-center text-sm text-gray-500">
+                  <i class="fas fa-calendar mr-2"></i>
+                  <span x-text="formatDate(document.created_at)"></span>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <div class="flex space-x-2">
+                  <button
+                    @click="viewDocument(document)"
+                    class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  >
+                    <i class="fas fa-eye mr-1"></i>Ver
+                  </button>
+                  <button
+                    @click="editDocument(document)"
+                    class="text-green-600 hover:text-green-800 text-sm font-medium"
+                  >
+                    <i class="fas fa-edit mr-1"></i>Editar
+                  </button>
+                  <button
+                    @click="showVersions(document)"
+                    class="text-purple-600 hover:text-purple-800 text-sm font-medium"
+                  >
+                    <i class="fas fa-history mr-1"></i>Versões
+                  </button>
+                </div>
+                <div class="text-xs text-gray-400" x-text="`v${document.version}`"></div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Empty State -->
+      <div x-show="filteredDocuments.length === 0" class="text-center py-12">
+        <i class="fas fa-file-alt text-6xl text-gray-300 mb-4"></i>
+        <h3 class="text-xl font-medium text-gray-900 mb-2">Nenhum documento encontrado</h3>
+        <p class="text-gray-600 mb-6">Tente ajustar os filtros ou criar um novo documento.</p>
+        <button
+          @click="showCreateModal = true"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium"
+        >
+          <i class="fas fa-plus mr-2"></i>Criar Primeiro Documento
+        </button>
+      </div>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div
+      x-show="showCreateModal || showEditModal"
+      class="fixed inset-0 z-50 overflow-y-auto modal-backdrop"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+    >
+      <div
+        class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+
+        <div
+          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full"
+          x-transition:enter="transition ease-out duration-300"
+          x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+          x-transition:leave="transition ease-in duration-200"
+          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        >
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div
+                class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10"
+              >
+                <i class="fas fa-file-alt text-blue-600"></i>
+              </div>
+              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                  <span x-show="!showEditModal">Criar Novo Documento</span>
+                  <span x-show="showEditModal">Editar Documento</span>
+                </h3>
+
+                <form @submit.prevent="saveDocument" class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Título *</label>
+                    <input
+                      type="text"
+                      x-model="form.title"
+                      required
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+                    <textarea
+                      x-model="form.description"
+                      rows="3"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    ></textarea>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1"
+                        >Categoria *</label
+                      >
+                      <select
+                        x-model="form.category_id"
+                        required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Selecione...</option>
+                        <template x-for="category in categories" :key="category.id">
+                          <option :value="category.id" x-text="category.name"></option>
+                        </template>
+                      </select>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
+                      <select
+                        x-model="form.type"
+                        required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Selecione...</option>
+                        <option value="ata">Ata de Reunião</option>
+                        <option value="regulamento">Regulamento</option>
+                        <option value="politica">Política</option>
+                        <option value="procedimento">Procedimento</option>
+                        <option value="manual">Manual</option>
+                        <option value="outro">Outro</option>
+                      </select>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                      <select
+                        x-model="form.status"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="ativo">Ativo</option>
+                        <option value="rascunho">Rascunho</option>
+                        <option value="arquivado">Arquivado</option>
+                      </select>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Prioridade</label>
+                      <select
+                        x-model="form.priority"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="baixa">Baixa</option>
+                        <option value="media">Média</option>
+                        <option value="alta">Alta</option>
+                        <option value="critica">Crítica</option>
+                      </select>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Conteúdo</label>
+                    <textarea
+                      x-model="form.content"
+                      rows="8"
+                      placeholder="Digite o conteúdo do documento..."
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    ></textarea>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              @click="saveDocument"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              <i class="fas fa-save mr-2"></i>
+              <span x-show="!showEditModal">Criar</span>
+              <span x-show="showEditModal">Salvar</span>
+            </button>
+            <button
+              @click="closeModal"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Document Detail Modal -->
+    <div
+      x-show="showDetailModal"
+      class="fixed inset-0 z-50 overflow-y-auto modal-backdrop"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+    >
+      <div
+        class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+
+        <div
+          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full"
+          x-transition:enter="transition ease-out duration-300"
+          x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+          x-transition:leave="transition ease-in duration-200"
+          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        >
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div
+                class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10"
+              >
+                <i class="fas fa-file-alt text-blue-600"></i>
+              </div>
+              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                <div class="flex justify-between items-start mb-4">
+                  <h3
+                    class="text-lg leading-6 font-medium text-gray-900"
+                    x-text="selectedDocument?.title"
+                  ></h3>
+                  <button
+                    @click="showDetailModal = false"
+                    class="text-gray-400 hover:text-gray-600"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+
+                <div x-show="selectedDocument" class="space-y-6">
+                  <!-- Document Info -->
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-lg">
+                    <div>
+                      <span class="text-sm font-medium text-gray-500">Status</span>
+                      <div class="mt-1">
+                        <span
+                          class="px-2 py-1 text-xs font-medium rounded-full"
+                          :class="{
+                                                      'bg-green-100 text-green-800': selectedDocument?.status === 'ativo',
+                                                      'bg-yellow-100 text-yellow-800': selectedDocument?.status === 'rascunho',
+                                                      'bg-gray-100 text-gray-800': selectedDocument?.status === 'arquivado'
+                                                  }"
+                          x-text="selectedDocument?.status"
+                        ></span>
+                      </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                    <div>
+                      <span class="text-sm font-medium text-gray-500">Categoria</span>
+                      <div
+                        class="mt-1 text-sm text-gray-900"
+                        x-text="getCategoryName(selectedDocument?.category_id)"
+                      ></div>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                    <div>
+                      <span class="text-sm font-medium text-gray-500">Tipo</span>
+                      <div
+                        class="mt-1 text-sm text-gray-900"
+                        x-text="getTypeName(selectedDocument?.type)"
+                      ></div>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                    <div>
+                      <span class="text-sm font-medium text-gray-500">Versão</span>
+                      <div
+                        class="mt-1 text-sm text-gray-900"
+                        x-text="`v${selectedDocument?.version}`"
+                      ></div>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <!-- Description -->
+                  <div>
+                    <h4 class="text-sm font-medium text-gray-500 mb-2">Descrição</h4>
+                    <p
+                      class="text-gray-900"
+                      x-text="selectedDocument?.description || 'Sem descrição'"
+                    ></p>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <!-- Content -->
+                  <div>
+                    <h4 class="text-sm font-medium text-gray-500 mb-2">Conteúdo</h4>
+                    <div class="bg-gray-50 p-4 rounded-lg max-h-96 overflow-y-auto">
+                      <pre
+                        class="text-sm text-gray-900 whitespace-pre-wrap"
+                        x-text="selectedDocument?.content || 'Sem conteúdo'"
+                      ></pre>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <!-- Metadata -->
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <span class="font-medium text-gray-500">Author</span>
+                      <div class="mt-1 text-gray-900" x-text="selectedDocument?.author"></div>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                    <div>
+                      <span class="font-medium text-gray-500">Criado em</span>
+                      <div
+                        class="mt-1 text-gray-900"
+                        x-text="formatDate(selectedDocument?.created_at)"
+                      ></div>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                    <div>
+                      <span class="font-medium text-gray-500">Atualizado em</span>
+                      <div
+                        class="mt-1 text-gray-900"
+                        x-text="formatDate(selectedDocument?.updated_at)"
+                      ></div>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                    <div>
+                      <span class="font-medium text-gray-500">Prioridade</span>
+                      <div class="mt-1">
+                        <span
+                          class="px-2 py-1 text-xs font-medium rounded-full"
+                          :class="{
+                                                      'bg-green-100 text-green-800': selectedDocument?.priority === 'baixa',
+                                                      'bg-yellow-100 text-yellow-800': selectedDocument?.priority === 'media',
+                                                      'bg-orange-100 text-orange-800': selectedDocument?.priority === 'alta',
+                                                      'bg-red-100 text-red-800': selectedDocument?.priority === 'critica'
+                                                  }"
+                          x-text="selectedDocument?.priority"
+                        ></span>
+                      </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              @click="editDocument(selectedDocument)"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              <i class="fas fa-edit mr-2"></i>Editar
+            </button>
+            <button
+              @click="showVersions(selectedDocument)"
+              class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              <i class="fas fa-history mr-2"></i>Ver Versões
+            </button>
+            <button
+              @click="showDetailModal = false"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Versions Modal -->
+    <div
+      x-show="showVersionsModal"
+      class="fixed inset-0 z-50 overflow-y-auto modal-backdrop"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+    >
+      <div
+        class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+
+        <div
+          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full"
+          x-transition:enter="transition ease-out duration-300"
+          x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+          x-transition:leave="transition ease-in duration-200"
+          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        >
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div
+                class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-purple-100 sm:mx-0 sm:h-10 sm:w-10"
+              >
+                <i class="fas fa-history text-purple-600"></i>
+              </div>
+              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                <div class="flex justify-between items-start mb-4">
+                  <h3 class="text-lg leading-6 font-medium text-gray-900">Histórico de Versões</h3>
+                  <button
+                    @click="showVersionsModal = false"
+                    class="text-gray-400 hover:text-gray-600"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+
+                <div x-show="selectedDocument" class="space-y-4">
+                  <h4
+                    class="text-md font-medium text-gray-900"
+                    x-text="selectedDocument?.title"
+                  ></h4>
+
+                  <div class="version-timeline">
+                    <template x-for="version in documentVersions" :key="version.id">
+                      <div class="version-item mb-6">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                          <div class="flex justify-between items-start mb-2">
+                            <div>
+                              <span
+                                class="text-sm font-medium text-gray-900"
+                                x-text="`Versão ${version.version}`"
+                              ></span>
+                              <span
+                                class="text-xs text-gray-500 ml-2"
+                                x-text="formatDate(version.created_at)"
+                              ></span>
+                            </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                            <span
+                              class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800"
+                              x-text="version.status"
+                            ></span>
+                          </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                          <p
+                            class="text-sm text-gray-600 mb-2"
+                            x-text="version.changes || 'Sem descrição de mudanças'"
+                          ></p>
+                          <div class="text-xs text-gray-500">
+                            <span x-text="`Por: ${version.author}`"></span>
+                          </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                        </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                      </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                    </template>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <div x-show="documentVersions.length === 0" class="text-center py-8">
+                    <i class="fas fa-history text-4xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-600">Nenhuma versão encontrada</p>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              @click="showVersionsModal = false"
+              class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function documentManager() {
+        return {
+          documents: [],
+          categories: [],
+          filters: {
+            search: '',
+            category: '',
+            type: '',
+            status: '',
+          },
+          form: {
+            title: '',
+            description: '',
+            category_id: '',
+            type: '',
+            status: 'ativo',
+            priority: 'media',
+            content: '',
+          },
+          showCreateModal: false,
+          showEditModal: false,
+          showDetailModal: false,
+          showVersionsModal: false,
+          selectedDocument: null,
+          documentVersions: [],
+          editingDocument: null,
+
+          init() {
+            this.loadDocuments();
+            this.loadCategories();
+          },
+
+          async loadDocuments() {
+            try {
+              const response = await fetch('/documents/api/documents');
+              const data = await response.json();
+              if (data.success) {
+                this.documents = data.data;
+              }
+            } catch (error) {
+              console.error('Error ao carregar documentos:', error);
+            }
+          },
+
+          async loadCategories() {
+            try {
+              const response = await fetch('/documents/api/documents/categories');
+              const data = await response.json();
+              if (data.success) {
+                this.categories = data.data;
+              }
+            } catch (error) {
+              console.error('Error ao carregar categorias:', error);
+            }
+          },
+
+          get filteredDocuments() {
+            return this.documents.filter(doc => {
+              const matchesSearch =
+                !this.filters.search ||
+                doc.title.toLowerCase().includes(this.filters.search.toLowerCase()) ||
+                doc.description.toLowerCase().includes(this.filters.search.toLowerCase()) ||
+                doc.author.toLowerCase().includes(this.filters.search.toLowerCase());
+
+              const matchesCategory =
+                !this.filters.category || doc.category_id === this.filters.category;
+              const matchesType = !this.filters.type || doc.type === this.filters.type;
+              const matchesStatus = !this.filters.status || doc.status === this.filters.status;
+
+              return matchesSearch && matchesCategory && matchesType && matchesStatus;
+            });
+          },
+
+          getCategoryName(categoryId) {
+            const category = this.categories.find(c => c.id === categoryId);
+            return category ? category.name : 'Categoria não encontrada';
+          },
+
+          getTypeName(type) {
+            const typeNames = {
+              ata: 'Ata de Reunião',
+              regulamento: 'Regulamento',
+              politica: 'Política',
+              procedimento: 'Procedimento',
+              manual: 'Manual',
+              outro: 'Outro',
+            };
+            return typeNames[type] || type;
+          },
+
+          formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+          },
+
+          viewDocument(document) {
+            this.selectedDocument = document;
+            this.showDetailModal = true;
+          },
+
+          editDocument(document) {
+            this.editingDocument = document;
+            this.form = {
+              title: document.title,
+              description: document.description,
+              category_id: document.category_id,
+              type: document.type,
+              status: document.status,
+              priority: document.priority,
+              content: document.content,
+            };
+            this.showEditModal = true;
+            this.showDetailModal = false;
+          },
+
+          async showVersions(document) {
+            this.selectedDocument = document;
+            try {
+              const response = await fetch(`/documents/api/documents/${document.id}/versions`);
+              const data = await response.json();
+              if (data.success) {
+                this.documentVersions = data.data;
+              }
+            } catch (error) {
+              console.error('Error ao carregar versões:', error);
+              this.documentVersions = [];
+            }
+            this.showVersionsModal = true;
+            this.showDetailModal = false;
+          },
+
+          async saveDocument() {
+            try {
+              const url = this.showEditModal
+                ? `/documents/api/documents/${this.editingDocument.id}`
+                : '/documents/api/documents';
+
+              const method = this.showEditModal ? 'PUT' : 'POST';
+
+              const response = await fetch(url, {
+                method: method,
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(this.form),
+              });
+
+              const data = await response.json();
+
+              if (data.success) {
+                this.closeModal();
+                this.loadDocuments();
+                this.resetForm();
+              } else {
+                alert('Error ao salvar documento: ' + data.message);
+              }
+            } catch (error) {
+              console.error('Error ao salvar documento:', error);
+              alert('Error ao salvar documento');
+            }
+          },
+
+          closeModal() {
+            this.showCreateModal = false;
+            this.showEditModal = false;
+            this.showDetailModal = false;
+            this.showVersionsModal = false;
+            this.selectedDocument = null;
+            this.editingDocument = null;
+          },
+
+          resetForm() {
+            this.form = {
+              title: '',
+              description: '',
+              category_id: '',
+              type: '',
+              status: 'ativo',
+              priority: 'media',
+              content: '',
+            };
+          },
+        };
+      }
+    </script>
+  </body>
+</html>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                          </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                        </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                      </template>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+    <!-- Upload Attachment Modal -->
+    <div
+      x-show="showUploadModal"
+      class="fixed inset-0 z-50 overflow-y-auto modal-backdrop"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+    >
+      <div
+        class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+        </div>
+
+        <div
+          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+          x-transition:enter="transition ease-out duration-300"
+          x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+          x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+          x-transition:leave="transition ease-in duration-200"
+          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        >
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div
+                class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10"
+              >
+                <i class="fas fa-paperclip text-green-600"></i>
+              </div>
+              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                  Adicionar Anexo
+                </h3>
+
+                <form @submit.prevent="uploadAttachment" class="space-y-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Arquivo</label>
+                    <input
+                      type="file"
+                      x-ref="fileInput"
+                      @change="handleFileSelect"
+                      accept=".pdf,.png,.jpg,.jpeg,.gif,.bmp,.tiff,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                    <p class="text-xs text-gray-500 mt-1">
+                      Formatos permitidos: PDF, imagens, documentos Office (máx. 50MB)
+                    </p>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Descrição (opcional)</label>
+                    <textarea
+                      x-model="uploadForm.description"
+                      rows="3"
+                      placeholder="Descreva o conteúdo do anexo..."
+                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    ></textarea>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <div x-show="selectedFile" class="bg-blue-50 p-3 rounded-lg">
+                    <div class="flex items-center space-x-2">
+                      <i class="fas fa-file text-blue-600"></i>
+                      <span class="text-sm text-blue-800" x-text="selectedFile.name"></span>
+                      <span class="text-xs text-blue-600" x-text="`(${formatFileSize(selectedFile.size)})`"></span>
+                    </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                  </div>
+
+                  <!-- Anexos -->
+                  <div>
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
+                      <button
+                        @click="showUploadModal = true"
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
+                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
+                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
+                      <button
+                        @click="showUploadModal = true"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
+                      </button>
+                    </div>
+                    
+                    <div x-show="documentAttachments.length > 0" class="space-y-3">
+                      <template x-for="attachment in documentAttachments" :key="attachment.id">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div class="flex items-center space-x-3">
+                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
+                            <div>
+                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
+                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
+                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
+                            </div>
+                          </div>
+                          <div class="flex space-x-2">
+                            <button
+                              @click="downloadAttachment(attachment)"
+                              class="text-blue-600 hover:text-blue-800 text-sm"
+                              title="Download"
+                            >
+                              <i class="fas fa-download"></i>
+                            </button>
+                            <button
+                              @click="deleteAttachment(attachment)"
+                              class="text-red-600 hover:text-red-800 text-sm"
+                              title="Deletar"
+                            >
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button
+              @click="uploadAttachment"
+              :disabled="!selectedFile"
+              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              <i class="fas fa-upload mr-2"></i>Enviar
+            </button>
+            <button
+              @click="closeUploadModal"
+              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+          // Anexos
+          documentAttachments: [],
+          showUploadModal: false,
+          selectedFile: null,
+          uploadForm: {
+            description: "",
+          },
+
+          async loadDocumentAttachments(documentId) {
+            try {
+              const response = await fetch(`/documents/api/documents/${documentId}/attachments`);
+              const data = await response.json();
+              if (data.success) {
+                this.documentAttachments = data.data.map(att => ({
+                  ...att,
+                  icon_class: this.getAttachmentIconClass(att),
+                  file_size_mb: this.formatFileSize(att.file_size)
+                }));
+              }
+            } catch (error) {
+              console.error("Error ao carregar anexos:", error);
+              this.documentAttachments = [];
+            }
+          },
+
+          getAttachmentIconClass(attachment) {
+            if (attachment.mime_type === "application/pdf") {
+              return "fas fa-file-pdf text-red-600";
+            } else if (attachment.mime_type.startsWith("image/")) {
+              return "fas fa-file-image text-green-600";
+            } else {
+              return "fas fa-file text-blue-600";
+            }
+          },
+
+          formatFileSize(bytes) {
+            if (bytes === 0) return "0 Bytes";
+            const k = 1024;
+            const sizes = ["Bytes", "KB", "MB", "GB"];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+          },
+
+          handleFileSelect(event) {
+            this.selectedFile = event.target.files[0];
+          },
+
+          async uploadAttachment() {
+            if (!this.selectedFile || !this.selectedDocument) return;
+
+            try {
+              const formData = new FormData();
+              formData.append("file", this.selectedFile);
+              formData.append("description", this.uploadForm.description);
+
+              const response = await fetch(`/documents/api/documents/${this.selectedDocument.id}/attachments`, {
+                method: "POST",
+                body: formData,
+              });
+
+              const data = await response.json();
+
+              if (data.success) {
+                this.closeUploadModal();
+                this.loadDocumentAttachments(this.selectedDocument.id);
+                alert("Anexo enviado com sucesso!");
+              } else {
+                alert("Error ao enviar anexo: " + data.message);
+              }
+            } catch (error) {
+              console.error("Error ao enviar anexo:", error);
+              alert("Error ao enviar anexo");
+            }
+          },
+
+          async deleteAttachment(attachment) {
+            if (!confirm("Tem certeza que deseja deletar este anexo?")) return;
+
+            try {
+              const response = await fetch(`/documents/api/documents/attachments/${attachment.id}`, {
+                method: "DELETE",
+              });
+
+              const data = await response.json();
+
+              if (data.success) {
+                this.loadDocumentAttachments(this.selectedDocument.id);
+                alert("Anexo deletado com sucesso!");
+              } else {
+                alert("Error ao deletar anexo: " + data.message);
+              }
+            } catch (error) {
+              console.error("Error ao deletar anexo:", error);
+              alert("Error ao deletar anexo");
+            }
+          },
+
+          downloadAttachment(attachment) {
+            window.open(`/documents/api/documents/attachments/${attachment.id}/download`, "_blank");
+          },
+
+          closeUploadModal() {
+            this.showUploadModal = false;
+            this.selectedFile = null;
+            this.uploadForm.description = "";
+            if (this.$refs.fileInput) {
+              this.$refs.fileInput.value = "";
+            }
+          },
+
+          viewDocument(document) {
+            this.selectedDocument = document;
+            this.loadDocumentAttachments(document.id);
+            this.showDetailModal = true;
+          },

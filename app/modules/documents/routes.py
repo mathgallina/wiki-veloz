@@ -325,3 +325,179 @@ def dashboard():
 def reports():
     """Página de relatórios"""
     return render_template("documents/reports.html")
+# Rotas para Anexos
+@documents_bp.route("/api/documents/<document_id>/attachments", methods=["GET"])
+@login_required
+def get_document_attachments(document_id):
+    """API para buscar anexos de um documento"""
+    try:
+        from app.modules.documents.attachment_service import AttachmentService
+        attachment_service = AttachmentService()
+        attachments = attachment_service.get_document_attachments(document_id)
+        return jsonify({"success": True, "data": attachments}), 200
+    except Exception as e:
+        logger.error(f"Error ao buscar anexos: {e}")
+        return jsonify({"success": False, "message": "Error interno do servidor"}), 500
+
+
+@documents_bp.route("/api/documents/<document_id>/attachments", methods=["POST"])
+@login_required
+def upload_attachment(document_id):
+    """API para fazer upload de anexo"""
+    try:
+        from app.modules.documents.attachment_service import AttachmentService
+        attachment_service = AttachmentService()
+        
+        if "file" not in request.files:
+            return jsonify({"success": False, "message": "Nenhum arquivo enviado"}), 400
+        
+        file = request.files["file"]
+        description = request.form.get("description", "")
+        uploaded_by = current_user.name if current_user.is_authenticated else "Sistema"
+        
+        attachment = attachment_service.upload_attachment(file, document_id, description, uploaded_by)
+        
+        if not attachment:
+            return jsonify({"success": False, "message": "Erro ao fazer upload do arquivo"}), 400
+        
+        return jsonify({
+            "success": True,
+            "data": attachment,
+            "message": "Anexo enviado com sucesso"
+        }), 201
+    except Exception as e:
+        logger.error(f"Error ao fazer upload de anexo: {e}")
+        return jsonify({"success": False, "message": "Error interno do servidor"}), 500
+
+
+@documents_bp.route("/api/documents/attachments/<attachment_id>", methods=["DELETE"])
+@login_required
+def delete_attachment(attachment_id):
+    """API para deletar anexo"""
+    try:
+        from app.modules.documents.attachment_service import AttachmentService
+        attachment_service = AttachmentService()
+        
+        success = attachment_service.delete_attachment(attachment_id)
+        
+        if not success:
+            return jsonify({"success": False, "message": "Anexo não encontrado"}), 404
+        
+        return jsonify({"success": True, "message": "Anexo deletado com sucesso"}), 200
+    except Exception as e:
+        logger.error(f"Error ao deletar anexo: {e}")
+        return jsonify({"success": False, "message": "Error interno do servidor"}), 500
+
+
+@documents_bp.route("/api/documents/attachments/<attachment_id>", methods=["PUT"])
+@login_required
+def update_attachment_description(attachment_id):
+    """API para atualizar descrição do anexo"""
+    try:
+        from app.modules.documents.attachment_service import AttachmentService
+        attachment_service = AttachmentService()
+        
+        data = request.get_json()
+        description = data.get("description", "")
+        
+        attachment = attachment_service.update_attachment_description(attachment_id, description)
+        
+        if not attachment:
+            return jsonify({"success": False, "message": "Anexo não encontrado"}), 404
+        
+        return jsonify({
+            "success": True,
+            "data": attachment,
+            "message": "Descrição atualizada com sucesso"
+        }), 200
+    except Exception as e:
+        logger.error(f"Error ao atualizar descrição do anexo: {e}")
+        return jsonify({"success": False, "message": "Error interno do servidor"}), 500
+
+
+@documents_bp.route("/api/documents/<document_id>/attachments/stats", methods=["GET"])
+@login_required
+def get_attachment_stats(document_id):
+    """API para buscar estatísticas dos anexos"""
+    try:
+        from app.modules.documents.attachment_service import AttachmentService
+        attachment_service = AttachmentService()
+        
+        stats = attachment_service.get_attachment_stats(document_id)
+        return jsonify({"success": True, "data": stats}), 200
+    except Exception as e:
+        logger.error(f"Error ao buscar estatísticas dos anexos: {e}")
+        return jsonify({"success": False, "message": "Error interno do servidor"}), 500
+
+
+@documents_bp.route("/api/documents/attachments/<attachment_id>/download", methods=["GET"])
+@login_required
+def download_attachment(attachment_id):
+    """API para download de anexo"""
+    try:
+        from app.modules.documents.attachment_service import AttachmentService
+        from flask import send_file
+        import os
+        
+        attachment_service = AttachmentService()
+        attachment = attachment_service.get_attachment(attachment_id)
+        
+        if not attachment:
+            return jsonify({"success": False, "message": "Anexo não encontrado"}), 404
+        
+        if not os.path.exists(attachment["file_path"]):
+            return jsonify({"success": False, "message": "Arquivo não encontrado"}), 404
+        
+        return send_file(
+            attachment["file_path"],
+            as_attachment=True,
+            download_name=attachment["original_filename"],
+            mimetype=attachment["mime_type"]
+        )
+    except Exception as e:
+        logger.error(f"Error ao fazer download do anexo: {e}")
+        return jsonify({"success": False, "message": "Error interno do servidor"}), 500
+
+@documents_bp.route("/api/documents/attachments/<attachment_id>/view", methods=["GET"])
+@login_required
+def view_attachment(attachment_id):
+    """API para visualizar anexo (sem download)"""
+    try:
+        from app.modules.documents.attachment_service import AttachmentService
+        from flask import send_file
+        import os
+        
+        attachment_service = AttachmentService()
+        attachment = attachment_service.get_attachment(attachment_id)
+        
+        if not attachment:
+            return jsonify({"success": False, "message": "Anexo não encontrado"}), 404
+        
+        if not os.path.exists(attachment['file_path']):
+            return jsonify({"success": False, "message": "Arquivo não encontrado"}), 404
+        
+        # Para PDFs, mostrar no navegador
+        if attachment['mime_type'] == 'application/pdf':
+            return send_file(
+                attachment['file_path'],
+                mimetype='application/pdf'
+            )
+        
+        # Para imagens, mostrar no navegador
+        elif attachment['mime_type'].startswith('image/'):
+            return send_file(
+                attachment['file_path'],
+                mimetype=attachment['mime_type']
+            )
+        
+        # Para outros tipos, forçar download
+        else:
+            return send_file(
+                attachment['file_path'],
+                as_attachment=True,
+                download_name=attachment['original_filename'],
+                mimetype=attachment['mime_type']
+            )
+    except Exception as e:
+        logger.error(f"Error ao visualizar anexo: {e}")
+        return jsonify({"success": False, "message": "Error interno do servidor"}), 500

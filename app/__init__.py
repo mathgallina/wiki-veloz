@@ -65,6 +65,7 @@ def register_blueprints(app):
     # Registrar módulos usando factory pattern
     from app.modules.analytics import create_module as create_analytics_module
     from app.modules.backup import create_module as create_backup_module
+    from app.modules.documents import create_module as create_documents_module
     from app.modules.notifications import create_module as create_notifications_module
     from app.modules.pages import create_module as create_pages_module
     from app.modules.pdfs import create_module as create_pdfs_module
@@ -74,6 +75,7 @@ def register_blueprints(app):
     create_users_module(app)
     create_pages_module(app)
     create_pdfs_module(app)
+    create_documents_module(app)
     create_notifications_module(app)
     create_analytics_module(app)
     create_backup_module(app)

@@ -15,4 +15,9 @@ __all__ = [
     'DocumentRepository',
     'DocumentService',
     'DocumentValidator'
-] 
+]
+
+def create_module(app):
+    """Registra o módulo de documentos na aplicação Flask."""
+    from .routes import documents_bp
+    app.register_blueprint(documents_bp)

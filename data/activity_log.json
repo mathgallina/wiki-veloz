@@ -222,5 +222,418 @@
     "details": "Login realizado por Matheus Gallina",
     "timestamp": "2025-07-23T10:30:46.484187",
     "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T13:45:40.267119",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T13:45:40.550148",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:01:05.882372",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:01:14.519059",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:01:14.615052",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:01:24.091808",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:01:24.201937",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:01:54.795794",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:01:54.905854",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:02:10.536975",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:02:10.779603",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:02:59.801151",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:06:37.994450",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:19:51.899955",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:30:31.484823",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:31:52.986818",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:31:53.715718",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:31:55.023359",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "logout",
+    "details": "Logout realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:35:02.031561",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:35:07.364768",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:35:07.522994",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:35:37.693126",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "logout",
+    "details": "Logout realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:39:25.346237",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:39:33.456567",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:39:33.622309",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:49:28.087701",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:49:48.283000",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:50:23.253877",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:51:57.373888",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T14:56:08.003504",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:57:35.126039",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T14:59:32.584496",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:15:31.216909",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "logout",
+    "details": "Logout realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T15:29:33.411253",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T15:29:46.250843",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:29:46.398475",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:33:25.426853",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:33:29.045381",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:38:34.705259",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:38:40.154827",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:41:56.298121",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T15:43:15.457139",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:43:15.790538",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-23T15:45:24.513484",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:47:15.342988",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "page_delete",
+    "details": "Deletou página: Novas Regras Comerciais",
+    "timestamp": "2025-07-23T15:47:28.711224",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:47:31.511639",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "update_user",
+    "details": "Atualizou usuário: Bruna Silva (bruna)",
+    "timestamp": "2025-07-23T15:47:43.594187",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:47:50.971669",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:47:55.413106",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "file_viewed",
+    "details": "Visualizou arquivo: test_document.txt",
+    "timestamp": "2025-07-23T15:48:06.809469",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:48:09.463707",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "file_viewed",
+    "details": "Visualizou arquivo: test_document.txt",
+    "timestamp": "2025-07-23T15:48:11.661269",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:48:12.994790",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:48:16.778261",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:51:07.883496",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:55:13.249074",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T15:55:16.785154",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "api_access",
+    "details": "Acesso à API de páginas",
+    "timestamp": "2025-07-23T16:05:29.043431",
+    "ip_address": "127.0.0.1"
   }
 ]

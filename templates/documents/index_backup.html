@@ -5,39 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Documentos Corporations - Wiki Veloz</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {},
-        },
-      };
-    </script>    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   </head>
-  <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200" x-data="documentManager()">
+  <body class="bg-gray-50" x-data="documentManager()">
     <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-800 shadow-lg border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
+    <nav class="bg-white shadow-lg border-b">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
           <div class="flex items-center">
-            <a href="/" class="text-xl font-bold text-gray-800 dark:text-white transition-colors">
+            <a href="/" class="text-xl font-bold text-gray-800">
               <i class="fas fa-book-open mr-2"></i>Wiki Veloz
             </a>
           </div>
           <div class="flex items-center space-x-4">
-            <!-- Theme Toggle -->
-            <button
-              @click="toggleTheme()"
-              class="p-2 rounded-md text-gray-400 hover:text-gray-300 transition-colors"
-              :title="isDarkMode ? 'Mudar para modo claro' : 'Mudar para modo escuro'"
-            >
-              <i class="fas fa-sun" x-show="isDarkMode"></i>
-              <i class="fas fa-moon" x-show="!isDarkMode"></i>
-            </button>            <a href="/admin" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+            <a href="/admin" class="text-gray-600 hover:text-gray-900">
               <i class="fas fa-cog mr-1"></i>Admin
             </a>
-            <a href="/logout" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors">
+            <a href="/logout" class="text-red-600 hover:text-red-800">
               <i class="fas fa-sign-out-alt mr-1"></i>Sair
             </a>
           </div>
@@ -711,7 +696,6 @@
           
           // Métodos
           async init() {
-            this.detectTheme();
             await this.loadDocuments();
             await this.loadCategories();
           },
@@ -952,77 +936,7 @@
           },
           
           formatDate(dateString) {
-          },
-          
-          // Detectar tema do sistema
-          isDarkMode: false,
-          
-          detectTheme() {
-            // Verificar se o usuário tem preferência salva
-            const savedTheme = localStorage.getItem('wiki-theme');
-            if (savedTheme) {
-              this.isDarkMode = savedTheme === 'dark';
-              if (this.isDarkMode) {
-                document.documentElement.classList.add('dark');
-              } else {
-                document.documentElement.classList.remove('dark');
-              }
-            } else {
-              // Detectar preferência do sistema
-              this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-              if (this.isDarkMode) {
-                document.documentElement.classList.add('dark');
-              }
-            }
-          },
-          
-          toggleTheme() {
-            this.isDarkMode = !this.isDarkMode;
-            if (this.isDarkMode) {
-              document.documentElement.classList.add('dark');
-              localStorage.setItem('wiki-theme', 'dark');
-            } else {
-              document.documentElement.classList.remove('dark');
-              localStorage.setItem('wiki-theme', 'light');
-            }
-          },
-          
-          // Preview de PDF antes do download
-          async previewAttachment(attachment) {
-            if (attachment.mime_type === 'application/pdf') {
-              // Abrir PDF em nova aba para preview
-              window.open(`/documents/api/documents/attachments/${attachment.id}/view`, '_blank');
-            } else {
-              // Para outros tipos, fazer download direto
-              this.downloadAttachment(attachment);
-            }
-          },
-          
-          showNotification(message, type = 'info') {
-            // Criar notificação temporária
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ${
-              type === 'success' ? 'bg-green-500 text-white' :
-              type === 'error' ? 'bg-red-500 text-white' :
-              'bg-blue-500 text-white'
-            }`;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            // Animar entrada
-            setTimeout(() => {
-              notification.classList.remove('translate-x-full');
-            }, 100);
-            
-            // Remover após 3 segundos
-            setTimeout(() => {
-              notification.classList.add('translate-x-full');
-              setTimeout(() => {
-                document.body.removeChild(notification);
-              }, 300);
-            }, 3000);
-          }            if (!dateString) return '';
+            if (!dateString) return '';
             const date = new Date(dateString);
             return date.toLocaleDateString('pt-BR');
           }
