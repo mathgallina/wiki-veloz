@@ -194,88 +194,88 @@
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
     },
     {
-      "id": "documents-corporativos-1.0",
-      "feature": "documents-corporativos",
+      "id": "documents-corporations-1.0",
+      "feature": "documents-corporations",
       "number": "1.0",
       "description": "Setup base structure",
       "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
-      "id": "documents-corporativos-1.1",
-      "feature": "documents-corporativos",
+      "id": "documents-corporations-1.1",
+      "feature": "documents-corporations",
       "number": "1.1",
       "description": "Implement data models",
       "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
-      "id": "documents-corporativos-1.2",
-      "feature": "documents-corporativos",
+      "id": "documents-corporations-1.2",
+      "feature": "documents-corporations",
       "number": "1.2",
       "description": "Implement repository pattern",
       "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
-      "id": "documents-corporativos-1.3",
-      "feature": "documents-corporativos",
+      "id": "documents-corporations-1.3",
+      "feature": "documents-corporations",
       "number": "1.3",
       "description": "Implement business logic",
       "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
-      "id": "documents-corporativos-2.1",
-      "feature": "documents-corporativos",
+      "id": "documents-corporations-2.1",
+      "feature": "documents-corporations",
       "number": "2.1",
       "description": "Create API endpoints",
       "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
-      "id": "documents-corporativos-3.1",
-      "feature": "documents-corporativos",
+      "id": "documents-corporations-3.1",
+      "feature": "documents-corporations",
       "number": "3.1",
       "description": "Create base UI components",
       "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
-      "id": "documents-corporativos-4.1",
-      "feature": "documents-corporativos",
+      "id": "documents-corporations-4.1",
+      "feature": "documents-corporations",
       "number": "4.1",
       "description": "Implement validations and security",
       "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
-      "id": "documents-corporativos-4.2",
-      "feature": "documents-corporativos",
+      "id": "documents-corporations-4.2",
+      "feature": "documents-corporations",
       "number": "4.2",
       "description": "Advanced UI features",
       "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
-      "id": "documents-corporativos-4.3",
-      "feature": "documents-corporativos",
+      "id": "documents-corporations-4.3",
+      "feature": "documents-corporations",
       "number": "4.3",
       "description": "Metrics and analytics",
       "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
-      "id": "documents-corporativos-5.1",
-      "feature": "documents-corporativos",
+      "id": "documents-corporations-5.1",
+      "feature": "documents-corporations",
       "number": "5.1",
       "description": "Unit testing",
       "completed": true,
       "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
     },
     {
-      "id": "documents-corporativos-5.2",
-      "feature": "documents-corporativos",
+      "id": "documents-corporations-5.2",
+      "feature": "documents-corporations",
       "number": "5.2",
       "description": "Documentation and deployment",
       "completed": true,

@@ -1,4 +1,4 @@
-# 🔐 Guia de Solução de Problemas - Login Wiki Veloz
+# 🔐 Guia de Solução de Problems - Login Wiki Veloz
 
 ## ✅ Status Atual: SISTEMA FUNCIONANDO
 
@@ -14,7 +14,7 @@ O sistema de login da Wiki Veloz está **funcionando corretamente**. As credenci
 3. **Use as credenciais acima**
 4. **Clique em "Entrar"**
 
-## 🔧 Se Você Está Tendo Problemas
+## 🔧 Se Você Está Tendo Problems
 
 ### 1. Verificar se o Servidor Está Rodando
 
@@ -46,7 +46,7 @@ Execute o script de teste HTTP:
 python3 test_http_login.py
 ```
 
-## 🚨 Problemas Comuns e Soluções
+## 🚨 Problems Comuns e Soluções
 
 ### Problema: "Usuário ou senha incorretos"
 
@@ -79,7 +79,7 @@ curl http://localhost:8000
 python3 app.py
 ```
 
-### Problema: "Erro de conexão"
+### Problema: "Error de conexão"
 
 **Solução:**
 
@@ -111,7 +111,7 @@ python3 app.py
 
 ## 🔍 Diagnóstico Automático
 
-Execute este comando para verificar tudo:
+Execute este commando para verificar tudo:
 
 ```bash
 python3 test_login.py && python3 test_http_login.py
@@ -119,11 +119,11 @@ python3 test_login.py && python3 test_http_login.py
 
 ## 📞 Suporte
 
-Se ainda estiver com problemas:
+Se ainda estiver com problems:
 
-1. **Verifique os logs do servidor** - procure por erros no terminal onde `app.py` está rodando
+1. **Verifique os logs do servidor** - procure por errors no terminal onde `app.py` está rodando
 
-2. **Teste em navegador diferente** - às vezes cache pode causar problemas
+2. **Teste em navegador diferente** - às vezes cache pode causar problems
 
 3. **Limpe cache do navegador** - Ctrl+F5 (Windows) ou Cmd+Shift+R (Mac)
 
@@ -157,6 +157,6 @@ O sistema foi testado e está funcionando. Se você ainda não consegue acessar,
 
 ---
 
-**Última atualização**: 23/07/2025  
-**Status**: ✅ Funcionando  
+**Última atualização**: 23/07/2025
+**Status**: ✅ Funcionando
 **Testado por**: Sistema automatizado

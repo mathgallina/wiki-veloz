@@ -15,7 +15,7 @@
 1. **GIVEN** [contexto/estado inicial] **WHEN** [ação do usuário] **THEN** o sistema **SHALL** [comportamento esperado específico]
 2. **GIVEN** [situação específica] **WHEN** [evento/trigger] **THEN** o sistema **SHALL** [resposta do sistema]
 3. **GIVEN** [condição especial] **WHEN** [interação] **THEN** o sistema **SHALL** [tratamento especial]
-4. **GIVEN** [cenário de erro] **WHEN** [falha ocorre] **THEN** o sistema **SHALL** [recuperação/fallback com UX]
+4. **GIVEN** [cenário de error] **WHEN** [falha ocorre] **THEN** o sistema **SHALL** [recuperação/fallback com UX]
 
 #### Business Rules
 

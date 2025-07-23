@@ -12,7 +12,7 @@ Transformar a aplicação monolítica do Wiki Veloz (2107 linhas em `app.py`) em
 - **Acoplamento alto**: Todas as funcionalidades misturadas
 - **Manutenibilidade baixa**: Difícil localizar e modificar código
 - **Testabilidade limitada**: Testes dependem de toda aplicação
-- **Escalabilidade limitada**: Não permite escalar componentes independentemente
+- **Escalabilidade limitada**: Não permite escalar components independentemente
 
 ### 🏗️ Solução Proposta
 
@@ -84,7 +84,7 @@ wiki-veloz/
 #### Performance
 
 - Cache por módulo
-- Lazy loading de componentes
+- Lazy loading de components
 - Otimização específica por domínio
 
 ### 🚨 Riscos e Mitigações
@@ -193,7 +193,7 @@ wiki-veloz/
 1. **Aprovação**: Revisar e aprovar a demanda
 2. **Planejamento**: Definir equipe e recursos
 3. **Início**: Começar com Fase 1 - Estrutura Base
-4. **Monitoramento**: Acompanhar progresso semanal
+4. **Monitoramento**: Acompanhar progression semanal
 5. **Validação**: Testes rigorosos por fase
 
 ### 📞 Contato
@@ -206,4 +206,4 @@ wiki-veloz/
 
 ---
 
-**Nota**: Esta refatoração é essencial para a evolução do Wiki Veloz e preparação para microservices. Seguirá rigorosamente os padrões CDD v2.0 estabelecidos no projeto.
+**Nota**: Esta refatoração é essential para a evolução do Wiki Veloz e preparação para microservices. Seguirá rigorosamente os padrões CDD v2.0 estabelecidos no projeto.

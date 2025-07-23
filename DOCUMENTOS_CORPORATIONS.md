@@ -1,8 +1,8 @@
-# Sistema de Documentos Corporativos - Wiki Veloz
+# Sistema de Documentos Corporations - Wiki Veloz
 
 ## 📋 Visão Geral
 
-O Sistema de Documentos Corporativos é um módulo completo do Wiki Veloz que permite o gerenciamento de documentos importantes da empresa, incluindo atas de reunião, regulamentos, políticas e procedimentos.
+O Sistema de Documentos Corporations é um módulo completo do Wiki Veloz que permite o gerenciamento de documentos importantes da empresa, incluindo atas de reunião, regulamentos, políticas e procedimentos.
 
 ## 🏗️ Arquitetura
 
@@ -41,7 +41,7 @@ class Document:
     status: str               # Status (ativo, rascunho, arquivado)
     priority: str             # Prioridade (baixa, média, alta, crítica)
     content: str              # Conteúdo do documento
-    author: str               # Autor
+    author: str               # Author
     version: int              # Versão atual
     created_at: str           # Data de criação
     updated_at: str           # Data de atualização
@@ -68,7 +68,7 @@ class DocumentVersion:
     document_id: str          # ID do documento
     version: int              # Número da versão
     changes: str              # Descrição das mudanças
-    author: str               # Autor da versão
+    author: str               # Author da versão
     created_at: str           # Data de criação
 ```
 
@@ -259,7 +259,7 @@ python-3.9.6
 
 ## 📊 Métricas de Sucesso
 
-### Funcional
+### Functional
 
 - [x] Sistema de documentos completo
 - [x] Versionamento automático
@@ -319,7 +319,7 @@ python-3.9.6
 
 ## 📞 Suporte
 
-Para dúvidas ou problemas:
+Para dúvidas ou problems:
 
 - **Email**: matheus@velozfibra.com
 - **Documentação**: Este arquivo
@@ -327,7 +327,7 @@ Para dúvidas ou problemas:
 
 ---
 
-**Versão**: 1.0.0  
-**Última Atualização**: 2024-01-23  
-**Autor**: Matheus Gallina  
+**Versão**: 1.0.0
+**Última Atualização**: 2024-01-23
+**Author**: Matheus Gallina
 **Status**: ✅ Produção

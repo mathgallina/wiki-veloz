@@ -10,11 +10,11 @@ from .exceptions import NotFoundError, ValidationError
 from .utils import format_date, generate_id, validate_email
 
 __all__ = [
-    'format_date',
-    'validate_email', 
-    'generate_id',
-    'login_required',
-    'admin_required',
-    'ValidationError',
-    'NotFoundError'
+    "format_date",
+    "validate_email",
+    "generate_id",
+    "login_required",
+    "admin_required",
+    "ValidationError",
+    "NotFoundError",
 ]

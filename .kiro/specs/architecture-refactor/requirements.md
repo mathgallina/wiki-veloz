@@ -2,7 +2,7 @@
 
 ## Introduction
 
-O Wiki Veloz atualmente possui uma arquitetura monolítica com 2107 linhas em um único arquivo `app.py`, causando problemas de manutenibilidade, testabilidade e escalabilidade. Esta refatoração transformará a aplicação em uma arquitetura modular usando Flask Blueprints, preparando para evolução futura para microservices.
+O Wiki Veloz atualmente possui uma arquitetura monolítica com 2107 linhas em um único arquivo `app.py`, causando problems de manutenibilidade, testabilidade e escalabilidade. Esta refatoração transformará a aplicação em uma arquitetura modular usando Flask Blueprints, preparando para evolução futura para microservices.
 
 ## Requirements
 
@@ -15,11 +15,11 @@ O Wiki Veloz atualmente possui uma arquitetura monolítica com 2107 linhas em um
 1. **GIVEN** a aplicação monolítica atual **WHEN** implementar a nova estrutura **THEN** o sistema **SHALL** ter diretórios organizados por domínio (users, pages, pdfs, notifications, analytics, backup)
 2. **GIVEN** a estrutura modular **WHEN** acessar qualquer funcionalidade **THEN** o sistema **SHALL** ter separação clara de responsabilidades por módulo
 3. **GIVEN** um módulo específico **WHEN** fazer modificações **THEN** o sistema **SHALL** não afetar outros módulos
-4. **GIVEN** um erro em um módulo **WHEN** ocorrer falha **THEN** o sistema **SHALL** isolar o problema sem afetar toda a aplicação
+4. **GIVEN** um error em um módulo **WHEN** ocorrer falha **THEN** o sistema **SHALL** isolar o problema sem afetar toda a aplicação
 
 #### Business Rules
 
-- **BR1**: Cada módulo deve ser independente e seguir o padrão Repository-Service-Controller
+- **BR1**: Cada módulo deve set independence e seguir o padrão Repository-Service-Controller
 - **BR2**: A estrutura deve permitir evolução futura para microservices sem refatoração completa
 
 #### Dependencies
@@ -34,18 +34,18 @@ O Wiki Veloz atualmente possui uma arquitetura monolítica com 2107 linhas em um
 
 ### Requirement 2: Módulo de Usuários
 
-**User Story:** Como administrador, eu quero um módulo de usuários independente, para que possa gerenciar autenticação e autorização de forma isolada e segura.
+**User Story:** Como administrador, eu quero um módulo de usuários independence, para que possa gerenciar autenticação e autorização de forma isolada e segura.
 
 #### Acceptance Criteria
 
 1. **GIVEN** o módulo de usuários **WHEN** fazer login **THEN** o sistema **SHALL** autenticar usando session-based auth
 2. **GIVEN** um usuário autenticado **WHEN** acessar recursos **THEN** o sistema **SHALL** verificar permissões baseadas em roles
 3. **GIVEN** um usuário admin **WHEN** gerenciar usuários **THEN** o sistema **SHALL** permitir CRUD completo
-4. **GIVEN** dados inválidos **WHEN** criar usuário **THEN** o sistema **SHALL** validar e retornar erros apropriados
+4. **GIVEN** dados inválidos **WHEN** criar usuário **THEN** o sistema **SHALL** validar e retornar errors apropriados
 
 #### Business Rules
 
-- **BR1**: Senhas devem ser hasheadas usando werkzeug.security
+- **BR1**: Senhas devem set hasheadas usando werkzeug.security
 - **BR2**: Apenas admins podem criar/editar/deletar usuários
 
 #### Dependencies
@@ -93,7 +93,7 @@ O Wiki Veloz atualmente possui uma arquitetura monolítica com 2107 linhas em um
 1. **GIVEN** um arquivo PDF **WHEN** fazer upload **THEN** o sistema **SHALL** validar tipo e tamanho
 2. **GIVEN** um PDF válido **WHEN** fazer upload **THEN** o sistema **SHALL** salvar no Google Drive
 3. **GIVEN** um PDF no sistema **WHEN** fazer download **THEN** o sistema **SHALL** permitir acesso autorizado
-4. **GIVEN** um PDF inválido **WHEN** tentar upload **THEN** o sistema **SHALL** rejeitar e informar erro
+4. **GIVEN** um PDF inválido **WHEN** tentar upload **THEN** o sistema **SHALL** rejeitar e informar error
 
 #### Business Rules
 
@@ -123,7 +123,7 @@ O Wiki Veloz atualmente possui uma arquitetura monolítica com 2107 linhas em um
 
 #### Business Rules
 
-- **BR1**: Notificações devem ser entregues via WebSocket
+- **BR1**: Notificações devem set entregues via WebSocket
 - **BR2**: Auto-archive após 30 dias de inatividade
 
 #### Dependencies
@@ -186,7 +186,7 @@ O Wiki Veloz atualmente possui uma arquitetura monolítica com 2107 linhas em um
 #### Success Metrics
 
 - **Primary KPI**: Backup diário executado - Target: 100%
-- **Secondary KPI**: Restore funcional - Target: 100%
+- **Secondary KPI**: Restore functional - Target: 100%
 
 ### Requirement 8: Performance e Otimização
 
@@ -201,8 +201,8 @@ O Wiki Veloz atualmente possui uma arquitetura monolítica com 2107 linhas em um
 
 #### Business Rules
 
-- **BR1**: Cache deve ser invalidado quando dados mudarem
-- **BR2**: Compressão deve ser aplicada em todas as responses
+- **BR1**: Cache deve set invalidado quando dados mudarem
+- **BR2**: Compressão deve set aplicada em todas as responses
 
 #### Dependencies
 

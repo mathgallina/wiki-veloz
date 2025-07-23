@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -394,14 +394,14 @@
           </div>
         </nav>
 
-        <!-- Documentos Corporativos -->
+        <!-- Documentos Corporations -->
         <div class="px-2 py-4 border-t border-gray-200 dark:border-gray-700">
           <a
             href="/documents/"
             class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white rounded-md transition-colors"
           >
             <i class="fas fa-file-contract mr-2"></i>
-            Documentos Corporativos
+            Documentos Corporations
           </a>
         </div>
 
@@ -1556,8 +1556,8 @@
                 this.capturingScreenshot = false;
               }, 'image/png');
             } catch (error) {
-              console.error('Erro ao capturar screenshot:', error);
-              alert('Erro ao capturar screenshot. Tente novamente.');
+              console.error('Error ao capturar screenshot:', error);
+              alert('Error ao capturar screenshot. Tente novamente.');
               this.capturingScreenshot = false;
             }
           },
@@ -1581,11 +1581,11 @@
 
                 alert('Screenshot capturado e inserido com sucesso!');
               } else {
-                throw new Error('Erro no upload');
+                throw new Error('Error no upload');
               }
             } catch (error) {
-              console.error('Erro ao fazer upload do screenshot:', error);
-              alert('Erro ao fazer upload do screenshot. Tente novamente.');
+              console.error('Error ao fazer upload do screenshot:', error);
+              alert('Error ao fazer upload do screenshot. Tente novamente.');
             }
           },
 
@@ -1594,7 +1594,7 @@
               const response = await fetch('/api/screenshots');
               this.screenshots = await response.json();
             } catch (error) {
-              console.error('Erro ao carregar screenshots:', error);
+              console.error('Error ao carregar screenshots:', error);
             }
           },
         };

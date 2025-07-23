@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Documentos Corporativos - Wiki Veloz</title>
+    <title>Documentos Corporations - Wiki Veloz</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link
@@ -133,7 +133,7 @@
           <div>
             <h1 class="text-3xl font-bold text-gray-900 mb-2">
               <i class="fas fa-file-alt mr-3 text-blue-600"></i>
-              Documentos Corporativos
+              Documentos Corporations
             </h1>
             <p class="text-gray-600">Gerencie documentos importantes da empresa</p>
           </div>
@@ -155,7 +155,7 @@
             <input
               type="text"
               x-model="filters.search"
-              placeholder="Título, descrição ou autor..."
+              placeholder="Título, descrição ou author..."
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -554,7 +554,7 @@
                   <!-- Metadata -->
                   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <span class="font-medium text-gray-500">Autor</span>
+                      <span class="font-medium text-gray-500">Author</span>
                       <div class="mt-1 text-gray-900" x-text="selectedDocument?.author"></div>
                     </div>
                     <div>
@@ -761,7 +761,7 @@
                 this.documents = data.data;
               }
             } catch (error) {
-              console.error('Erro ao carregar documentos:', error);
+              console.error('Error ao carregar documentos:', error);
             }
           },
 
@@ -773,7 +773,7 @@
                 this.categories = data.data;
               }
             } catch (error) {
-              console.error('Erro ao carregar categorias:', error);
+              console.error('Error ao carregar categorias:', error);
             }
           },
 
@@ -852,7 +852,7 @@
                 this.documentVersions = data.data;
               }
             } catch (error) {
-              console.error('Erro ao carregar versões:', error);
+              console.error('Error ao carregar versões:', error);
               this.documentVersions = [];
             }
             this.showVersionsModal = true;
@@ -882,11 +882,11 @@
                 this.loadDocuments();
                 this.resetForm();
               } else {
-                alert('Erro ao salvar documento: ' + data.message);
+                alert('Error ao salvar documento: ' + data.message);
               }
             } catch (error) {
-              console.error('Erro ao salvar documento:', error);
-              alert('Erro ao salvar documento');
+              console.error('Error ao salvar documento:', error);
+              alert('Error ao salvar documento');
             }
           },
 

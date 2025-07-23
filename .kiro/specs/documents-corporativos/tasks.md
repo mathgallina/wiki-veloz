@@ -1,8 +1,8 @@
-# documents-corporativos - Implementation Plan
+# documents-corporations - Implementation Plan
 
 ## Overview
 
-Sistema completo para gestão de documentos corporativos importantes como atas de reuniões, regras da empresa, políticas e procedimentos. Interface moderna e profissional para administradores registrarem e gerenciarem documentos com rastreabilidade completa.
+Sistema completo para gestão de documentos corporations importantes como atas de reuniões, regras da empresa, políticas e procedimentos. Interface moderna e professional para administradores registrarem e gerenciarem documentos com rastreabilidade completa.
 
 ## 🎯 Success Criteria
 
@@ -25,7 +25,7 @@ Sistema completo para gestão de documentos corporativos importantes como atas d
   - _Requirements: [1.1, 1.2]_
   - _Estimated: 2h_
   - _Dependencies: none_
-  - **Task ID**: `documents-corporativos-1.1`
+  - **Task ID**: `documents-corporations-1.1`
 
 - [x] 1.2 Implement data models
 
@@ -36,7 +36,7 @@ Sistema completo para gestão de documentos corporativos importantes como atas d
   - _Requirements: [2.1, 2.2]_
   - _Estimated: 3h_
   - _Dependencies: [1.1]_
-  - **Task ID**: `documents-corporativos-1.2`
+  - **Task ID**: `documents-corporations-1.2`
 
 - [x] 1.3 Implement repository pattern
 
@@ -47,7 +47,7 @@ Sistema completo para gestão de documentos corporativos importantes como atas d
   - _Requirements: [3.1, 3.2]_
   - _Estimated: 4h_
   - _Dependencies: [1.2]_
-  - **Task ID**: `documents-corporativos-1.3`
+  - **Task ID**: `documents-corporations-1.3`
 
 - [x] 1.4 Implement business logic
   - [x] DocumentService class
@@ -57,7 +57,7 @@ Sistema completo para gestão de documentos corporativos importantes como atas d
   - _Requirements: [4.1, 4.2]_
   - _Estimated: 3h_
   - _Dependencies: [1.3]_
-  - **Task ID**: `documents-corporativos-1.4`
+  - **Task ID**: `documents-corporations-1.4`
 
 ### Phase 2: API Development
 
@@ -69,7 +69,7 @@ Sistema completo para gestão de documentos corporativos importantes como atas d
   - _Requirements: [5.1, 5.2]_
   - _Estimated: 4h_
   - _Dependencies: [1.4]_
-  - **Task ID**: `documents-corporativos-2.1`
+  - **Task ID**: `documents-corporations-2.1`
 
 ### Phase 3: User Interface
 
@@ -81,7 +81,7 @@ Sistema completo para gestão de documentos corporativos importantes como atas d
   - _Requirements: [6.1, 6.2]_
   - _Estimated: 6h_
   - _Dependencies: [2.1]_
-  - **Task ID**: `documents-corporativos-3.1`
+  - **Task ID**: `documents-corporations-3.1`
 
 ### Phase 4: Advanced Features
 
@@ -94,7 +94,7 @@ Sistema completo para gestão de documentos corporativos importantes como atas d
   - _Requirements: [7.1, 7.2]_
   - _Estimated: 2h_
   - _Dependencies: [3.1]_
-  - **Task ID**: `documents-corporativos-4.1`
+  - **Task ID**: `documents-corporations-4.1`
 
 - [x] 4.2 Advanced UI features
 
@@ -105,7 +105,7 @@ Sistema completo para gestão de documentos corporativos importantes como atas d
   - _Requirements: [8.1, 8.2]_
   - _Estimated: 4h_
   - _Dependencies: [4.1]_
-  - **Task ID**: `documents-corporativos-4.2`
+  - **Task ID**: `documents-corporations-4.2`
 
 - [x] 4.3 Metrics and analytics
   - [ ] View counters
@@ -115,7 +115,7 @@ Sistema completo para gestão de documentos corporativos importantes como atas d
   - _Requirements: [9.1, 9.2]_
   - _Estimated: 3h_
   - _Dependencies: [4.2]_
-  - **Task ID**: `documents-corporativos-4.3`
+  - **Task ID**: `documents-corporations-4.3`
 
 ### Phase 5: Testing & Documentation
 
@@ -128,7 +128,7 @@ Sistema completo para gestão de documentos corporativos importantes como atas d
   - _Requirements: All_
   - _Estimated: 4h_
   - _Dependencies: [4.3]_
-  - **Task ID**: `documents-corporativos-5.1`
+  - **Task ID**: `documents-corporations-5.1`
 
 - [x] 5.2 Documentation and deployment
   - [ ] API documentation
@@ -138,7 +138,7 @@ Sistema completo para gestão de documentos corporativos importantes como atas d
   - _Requirements: All_
   - _Estimated: 2h_
   - _Dependencies: [5.1]_
-  - **Task ID**: `documents-corporativos-5.2`
+  - **Task ID**: `documents-corporations-5.2`
 
 ## 🤖 Tracking Commands (Obrigatórios)
 
@@ -146,15 +146,15 @@ Sistema completo para gestão de documentos corporativos importantes como atas d
 
 ```bash
 # Ver tasks disponíveis
-npm run list documents-corporativos
+npm run list documents-corporations
 
 # Marcar task como concluída (OBRIGATÓRIO)
-npm run complete documents-corporativos-1.1
-npm run complete documents-corporativos-1.2
-npm run complete documents-corporativos-1.3
-npm run complete documents-corporativos-1.4
-npm run complete documents-corporativos-2.1
-npm run complete documents-corporativos-3.1
+npm run complete documents-corporations-1.1
+npm run complete documents-corporations-1.2
+npm run complete documents-corporations-1.3
+npm run complete documents-corporations-1.4
+npm run complete documents-corporations-2.1
+npm run complete documents-corporations-3.1
 # ... continue para cada task
 
 # Monitoramento em tempo real
@@ -165,7 +165,7 @@ npm run watch
 
 ```bash
 # Validação de formato
-npm run validate documents-corporativos
+npm run validate documents-corporations
 
 # Backup automático
 npm run backup

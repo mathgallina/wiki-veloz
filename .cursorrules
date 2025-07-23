@@ -34,7 +34,7 @@ wiki-veloz/
 
 ### Convenções de Nomenclatura
 - **Python**: `snake_case` (módulos, funções, variáveis)
-- **JavaScript**: `camelCase` (funções, variáveis), `PascalCase` (componentes)
+- **JavaScript**: `camelCase` (funções, variáveis), `PascalCase` (components)
 - **Arquivos**: `kebab-case` (diretórios), `snake_case.py` (Python)
 - **Constantes**: `UPPER_SNAKE_CASE`
 
@@ -64,7 +64,7 @@ def endpoint_name():
 class ServiceName:
     def __init__(self):
         self.data_file = 'data/filename.json'
-    
+
     def method_name(self):
         with open(self.data_file, 'r') as f:
             data = json.load(f)
@@ -84,13 +84,13 @@ class ApiClient {
                 },
                 ...options
             });
-            
+
             const data = await response.json();
-            
+
             if (!response.ok) {
                 throw new Error(data.message || 'Request failed');
             }
-            
+
             return data;
         } catch (error) {
             console.error('API request failed:', error);
@@ -115,11 +115,11 @@ class ApiClient {
     <nav class="bg-white shadow">
         <!-- Navigation -->
     </nav>
-    
+
     <main class="container mx-auto px-4 py-8">
         {% block content %}{% endblock %}
     </main>
-    
+
     <footer class="bg-gray-800 text-white py-4">
         <!-- Footer -->
     </footer>
@@ -158,7 +158,7 @@ class ApiClient {
 ### ❌ NÃO FAÇA
 - **Hardcoded values**: Use environment variables
 - **No error handling**: Sempre use try/catch
-- **No validation**: Valide inputs sempre
+- **No validation**: Valid inputs sempre
 - **No logging**: Log operações importantes
 - **No tests**: Teste funcionalidades críticas
 - **Inline styles**: Use Tailwind classes
@@ -168,7 +168,7 @@ class ApiClient {
 ### ✅ SEMPRE FAÇA
 - **Environment variables**: Para configurações
 - **Error handling**: Try/catch em todas as operações
-- **Input validation**: Valide entrada sempre
+- **Input validation**: Valid entrada sempre
 - **Logging**: Log operações importantes
 - **Testing**: Teste funcionalidades críticas
 - **Tailwind CSS**: Use classes utilitárias
@@ -183,7 +183,7 @@ class ApiClient {
 3. **Validar formato**: `npm run validate feature-name`
 4. **Implementar**: Seguindo patterns em `.kiro/patterns/`
 5. **Testar**: `python -m pytest tests/`
-6. **Marcar progresso**: `npm run complete feature-name-X.Y`
+6. **Marcar progression**: `npm run complete feature-name-X.Y`
 
 ### Para Bug Fix
 1. **Identificar task**: `npm run list`
@@ -197,7 +197,7 @@ class ApiClient {
 3. **Validar**: `npm run health`
 4. **Marcar concluído**: `npm run complete refactor-X.Y`
 
-## 📊 Comandos CDD Essenciais
+## 📊 Commandos CDD Essenciais
 
 ```bash
 # Task Management
@@ -221,7 +221,7 @@ npm run lint              # Linting (se configurado)
 
 ## 🎯 Métricas de Sucesso
 
-### Funcional
+### Functional
 - [ ] Editor Markdown com preview
 - [ ] Sistema de versionamento
 - [ ] Integração Google Drive
@@ -287,4 +287,4 @@ npm run lint              # Linting (se configurado)
 
 ---
 
-**Lembre-se**: Este projeto segue **CDD v2.0** - sempre consulte os patterns em `.kiro/patterns/` antes de implementar novas funcionalidades! 
+**Lembre-se**: Este projeto segue **CDD v2.0** - sempre consulte os patterns em `.kiro/patterns/` antes de implementar novas funcionalidades!

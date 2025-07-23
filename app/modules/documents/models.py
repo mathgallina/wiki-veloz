@@ -1,5 +1,5 @@
 """
-Modelos de dados para Documentos Corporativos
+Modelos de dados para Documentos Corporations
 """
 from dataclasses import asdict, dataclass
 from datetime import datetime
@@ -8,24 +8,27 @@ from typing import Any, Dict, List, Optional
 
 
 class DocumentType(Enum):
-    """Tipos de documentos corporativos"""
-    ATA = "ata"                           # Ata de reunião
-    REGULAMENTO = "regulamento"           # Regulamento
-    POLITICA = "politica"                 # Política
-    PROCEDIMENTO = "procedimento"         # Procedimento
-    MANUAL = "manual"                     # Manual
-    OUTRO = "outro"                       # Outros
+    """Tipos de documentos corporations"""
+
+    ATA = "ata"  # Ata de reunião
+    REGULAMENTO = "regulamento"  # Regulamento
+    POLITICA = "politica"  # Política
+    PROCEDIMENTO = "procedimento"  # Procedimento
+    MANUAL = "manual"  # Manual
+    OUTRO = "outro"  # Outros
 
 
 class DocumentStatus(Enum):
     """Status dos documentos"""
-    ATIVO = "ativo"           # Ativo
-    RASCUNHO = "rascunho"     # Rascunho
-    ARQUIVADO = "arquivado"   # Arquivado
+
+    ATIVO = "ativo"  # Ativo
+    RASCUNHO = "rascunho"  # Rascunho
+    ARQUIVADO = "arquivado"  # Arquivado
 
 
 class DocumentPriority(Enum):
     """Prioridade dos documentos"""
+
     BAIXA = "baixa"
     MEDIA = "media"
     ALTA = "alta"
@@ -35,33 +38,36 @@ class DocumentPriority(Enum):
 @dataclass
 class DocumentCategory:
     """Categoria de documento"""
+
     id: str
     name: str
     description: str
     color: str
     created_at: str
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
 @dataclass
 class DocumentVersion:
     """Versão de um documento"""
+
     id: str
     document_id: str
     version: int
     changes: str
     author: str
     created_at: str
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
 
 @dataclass
 class Document:
-    """Modelo principal de documento corporativo"""
+    """Modelo principal de documento corporation"""
+
     id: str
     title: str
     description: str
@@ -74,7 +80,7 @@ class Document:
     version: int
     created_at: str
     updated_at: str
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Converte para dicionário"""
-        return asdict(self) 
+        return asdict(self)

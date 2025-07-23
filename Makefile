@@ -3,7 +3,7 @@
 .PHONY: help dev test lint lint-fix cdd-scan cdd-status cdd-health cdd-complete setup
 
 help: ## Mostrar ajuda
-	@echo "Comandos disponíveis:"
+	@echo "Commandos disponíveis:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 dev: ## Rodar aplicação em desenvolvimento
@@ -17,7 +17,7 @@ lint: ## Verificar linting
 	black --check .
 	isort --check-only .
 
-lint-fix: ## Corrigir problemas de linting
+lint-fix: ## Corrigir problems de linting
 	black .
 	isort .
 

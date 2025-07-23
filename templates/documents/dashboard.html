@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard Analytics - Documentos Corporativos</title>
+    <title>Dashboard Analytics - Documentos Corporations</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link
@@ -44,7 +44,7 @@
           <i class="fas fa-chart-line mr-3 text-blue-600"></i>
           Dashboard Analytics
         </h1>
-        <p class="text-gray-600">Métricas e insights dos documentos corporativos</p>
+        <p class="text-gray-600">Métricas e insights dos documentos corporations</p>
       </div>
 
       <!-- Loading State -->
@@ -264,7 +264,7 @@
                 });
               }
             } catch (error) {
-              console.error('Erro ao carregar dados do dashboard:', error);
+              console.error('Error ao carregar dados do dashboard:', error);
             } finally {
               this.loading = false;
             }
@@ -398,11 +398,11 @@
                 console.log('Relatório gerado:', data.data);
                 alert(`Relatório ${reportType} gerado com sucesso!`);
               } else {
-                alert('Erro ao gerar relatório: ' + data.message);
+                alert('Error ao gerar relatório: ' + data.message);
               }
             } catch (error) {
-              console.error('Erro ao gerar relatório:', error);
-              alert('Erro ao gerar relatório');
+              console.error('Error ao gerar relatório:', error);
+              alert('Error ao gerar relatório');
             }
           },
         };

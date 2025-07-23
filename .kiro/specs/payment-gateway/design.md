@@ -2,7 +2,7 @@
 
 ## Overview
 
-[Visão geral da solução técnica, abordagem escolhida e principais componentes]
+[Visão geral da solução técnica, abordagem escolhida e principais components]
 
 ## Architecture
 
