@@ -4,6 +4,7 @@ Rotas para documentos corporations
 import logging
 
 from flask import Blueprint, jsonify, render_template, request
+from flask_login import current_user
 
 from app.modules.documents.services import DocumentService
 from app.modules.documents.validators import DocumentValidator
@@ -54,7 +55,7 @@ def create_document():
             )
 
         # Adicionar author
-        data["author"] = request.session.get("user_name", "Sistema")
+        data["author"] = current_user.name if current_user.is_authenticated else "Sistema"
 
         document = documents_service.create_document(data)
 
@@ -86,7 +87,7 @@ def get_document(document_id):
             )
 
         # Registrar visualização
-        user_id = request.session.get("user_id")
+        user_id = current_user.id if current_user.is_authenticated else None
         documents_service.record_view(document_id, user_id)
 
         return jsonify({"success": True, "data": document.to_dict()}), 200
@@ -111,7 +112,7 @@ def update_document(document_id):
             )
 
         # Adicionar author
-        data["author"] = request.session.get("user_name", "Sistema")
+        data["author"] = current_user.name if current_user.is_authenticated else "Sistema"
 
         document = documents_service.update_document(document_id, data)
         if not document:
@@ -231,7 +232,7 @@ def create_category():
 def record_view(document_id):
     """API para registrar visualização de documento"""
     try:
-        user_id = request.session.get("user_id")
+        user_id = current_user.id if current_user.is_authenticated else None
         documents_service.record_view(document_id, user_id)
 
         return jsonify({"success": True, "message": "Visualização registrada"}), 200
@@ -245,7 +246,7 @@ def record_view(document_id):
 def record_download(document_id):
     """API para registrar download de documento"""
     try:
-        user_id = request.session.get("user_id")
+        user_id = current_user.id if current_user.is_authenticated else None
         documents_service.record_download(document_id, user_id)
 
         return jsonify({"success": True, "message": "Download registrado"}), 200
