@@ -1,6 +1,15 @@
 import os
-import json
-from app_simple_render import app
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    return {"message": "Wiki Veloz - System running", "status": "ok"}
+
+@app.route("/debug")
+def debug():
+    return {"status": "running", "message": "Debug endpoint"}
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
