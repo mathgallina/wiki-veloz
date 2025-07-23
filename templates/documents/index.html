@@ -755,7 +755,7 @@
 
           async loadDocuments() {
             try {
-              const response = await fetch('/api/documents');
+              const response = await fetch('/documents/api/documents');
               const data = await response.json();
               if (data.success) {
                 this.documents = data.data;
@@ -767,7 +767,7 @@
 
           async loadCategories() {
             try {
-              const response = await fetch('/api/documents/categories');
+              const response = await fetch('/documents/api/documents/categories');
               const data = await response.json();
               if (data.success) {
                 this.categories = data.data;
@@ -846,7 +846,7 @@
           async showVersions(document) {
             this.selectedDocument = document;
             try {
-              const response = await fetch(`/api/documents/${document.id}/versions`);
+              const response = await fetch(`/documents/api/documents/${document.id}/versions`);
               const data = await response.json();
               if (data.success) {
                 this.documentVersions = data.data;
@@ -862,8 +862,8 @@
           async saveDocument() {
             try {
               const url = this.showEditModal
-                ? `/api/documents/${this.editingDocument.id}`
-                : '/api/documents';
+                ? `/documents/api/documents/${this.editingDocument.id}`
+                : '/documents/api/documents';
 
               const method = this.showEditModal ? 'PUT' : 'POST';
 
