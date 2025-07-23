@@ -438,7 +438,7 @@
                         <i class="fas fa-plus mr-1"></i>Adicionar Anexo
                       </button>
                     </div>
-                    
+
                     <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
                       <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
                       <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
@@ -449,7 +449,7 @@
                         <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
                       </button>
                     </div>
-                    
+
                     <div x-show="documentAttachments.length > 0" class="space-y-3">
                       <template x-for="attachment in documentAttachments" :key="attachment.id">
                         <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -642,7 +642,7 @@
           showUploadModal: false,
           selectedFile: null,
           documentAttachments: [],
-          
+
           // Filtros
           filters: {
             search: '',
@@ -650,7 +650,7 @@
             type: '',
             status: ''
           },
-          
+
           // Formulário
           form: {
             title: '',
@@ -661,45 +661,45 @@
             priority: 'baixa',
             content: ''
           },
-          
+
           uploadForm: {
             description: ''
           },
-          
+
           // Computed
           get filteredDocuments() {
             let filtered = this.documents;
-            
+
             if (this.filters.search) {
               const search = this.filters.search.toLowerCase();
-              filtered = filtered.filter(doc => 
+              filtered = filtered.filter(doc =>
                 doc.title.toLowerCase().includes(search) ||
                 doc.description.toLowerCase().includes(search) ||
                 doc.author.toLowerCase().includes(search)
               );
             }
-            
+
             if (this.filters.category) {
               filtered = filtered.filter(doc => doc.category_id === this.filters.category);
             }
-            
+
             if (this.filters.type) {
               filtered = filtered.filter(doc => doc.type === this.filters.type);
             }
-            
+
             if (this.filters.status) {
               filtered = filtered.filter(doc => doc.status === this.filters.status);
             }
-            
+
             return filtered;
           },
-          
+
           // Métodos
           async init() {
             await this.loadDocuments();
             await this.loadCategories();
           },
-          
+
           async loadDocuments() {
             try {
               const response = await fetch('/documents/api/documents');
@@ -708,10 +708,10 @@
                 this.documents = data.data;
               }
             } catch (error) {
-              console.error('Erro ao carregar documentos:', error);
+              console.error('Error ao carregar documentos:', error);
             }
           },
-          
+
           async loadCategories() {
             try {
               const response = await fetch('/documents/api/documents/categories');
@@ -720,10 +720,10 @@
                 this.categories = data.data;
               }
             } catch (error) {
-              console.error('Erro ao carregar categorias:', error);
+              console.error('Error ao carregar categorias:', error);
             }
           },
-          
+
           async loadDocumentAttachments(documentId) {
             try {
               const response = await fetch(`/documents/api/documents/${documentId}/attachments`);
@@ -736,11 +736,11 @@
                 }));
               }
             } catch (error) {
-              console.error('Erro ao carregar anexos:', error);
+              console.error('Error ao carregar anexos:', error);
               this.documentAttachments = [];
             }
           },
-          
+
           getAttachmentIconClass(attachment) {
             if (attachment.mime_type === 'application/pdf') {
               return 'fas fa-file-pdf text-red-600';
@@ -750,7 +750,7 @@
               return 'fas fa-file text-blue-600';
             }
           },
-          
+
           formatFileSize(bytes) {
             if (bytes === 0) return '0 Bytes';
             const k = 1024;
@@ -758,69 +758,69 @@
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
           },
-          
+
           handleFileSelect(event) {
             this.selectedFile = event.target.files[0];
           },
-          
+
           async uploadAttachment() {
             if (!this.selectedFile || !this.selectedDocument) return;
-            
+
             try {
               const formData = new FormData();
               formData.append('file', this.selectedFile);
               formData.append('description', this.uploadForm.description);
-              
+
               const response = await fetch(`/documents/api/documents/${this.selectedDocument.id}/attachments`, {
                 method: 'POST',
                 body: formData
               });
-              
+
               const data = await response.json();
-              
+
               if (data.success) {
                 this.closeUploadModal();
                 await this.loadDocumentAttachments(this.selectedDocument.id);
                 alert('Anexo enviado com sucesso!');
               } else {
-                alert('Erro ao enviar anexo: ' + data.message);
+                alert('Error ao enviar anexo: ' + data.message);
               }
             } catch (error) {
-              console.error('Erro ao enviar anexo:', error);
-              alert('Erro ao enviar anexo');
+              console.error('Error ao enviar anexo:', error);
+              alert('Error ao enviar anexo');
             }
           },
-          
+
           async deleteAttachment(attachment) {
             if (!confirm('Tem certeza que deseja deletar este anexo?')) return;
-            
+
             try {
               const response = await fetch(`/documents/api/documents/attachments/${attachment.id}`, {
                 method: 'DELETE'
               });
-              
+
               const data = await response.json();
-              
+
               if (data.success) {
                 await this.loadDocumentAttachments(this.selectedDocument.id);
                 alert('Anexo deletado com sucesso!');
               } else {
-                alert('Erro ao deletar anexo: ' + data.message);
+                alert('Error ao deletar anexo: ' + data.message);
               }
             } catch (error) {
-              console.error('Erro ao deletar anexo:', error);
-              alert('Erro ao deletar anexo');
+              console.error('Error ao deletar anexo:', error);
+              alert('Error ao deletar anexo');
             }
           },
-          
+
           viewAttachment(attachment) {
             window.open(`/documents/api/documents/attachments/${attachment.id}/view`, "_blank");
           },
-          
+
           downloadAttachment(attachment) {
             window.open(`/documents/api/documents/attachments/${attachment.id}/download`, '_blank');
           },
-          
+
           closeUploadModal() {
             this.showUploadModal = false;
             this.selectedFile = null;
@@ -829,28 +829,28 @@
               this.$refs.fileInput.value = '';
             }
           },
-          
+
           viewDocument(document) {
             this.selectedDocument = document;
             this.loadDocumentAttachments(document.id);
             this.showDetailModal = true;
           },
-          
+
           editDocument(document) {
             this.selectedDocument = document;
             this.form = { ...document };
             this.showEditModal = true;
             this.showDetailModal = false;
           },
-          
+
           async saveDocument() {
             try {
-              const url = this.showEditModal 
+              const url = this.showEditModal
                 ? `/documents/api/documents/${this.form.id}`
                 : '/documents/api/documents';
-              
+
               const method = this.showEditModal ? 'PUT' : 'POST';
-              
+
               const response = await fetch(url, {
                 method: method,
                 headers: {
@@ -858,22 +858,22 @@
                 },
                 body: JSON.stringify(this.form)
               });
-              
+
               const data = await response.json();
-              
+
               if (data.success) {
                 await this.loadDocuments();
                 this.closeModal();
                 alert(this.showEditModal ? 'Documento atualizado com sucesso!' : 'Documento criado com sucesso!');
               } else {
-                alert('Erro: ' + data.message);
+                alert('Error: ' + data.message);
               }
             } catch (error) {
-              console.error('Erro ao salvar documento:', error);
-              alert('Erro ao salvar documento');
+              console.error('Error ao salvar documento:', error);
+              alert('Error ao salvar documento');
             }
           },
-          
+
           closeModal() {
             this.showCreateModal = false;
             this.showEditModal = false;
@@ -887,42 +887,42 @@
               content: ''
             };
           },
-          
+
           showVersions(document) {
             alert("Funcionalidade de versões será implementada em breve");
           },
-          
+
           async deleteDocument(document) {
             if (!confirm("Tem certeza que deseja deletar este documento?")) return;
-            
+
             try {
               const response = await fetch(`/documents/api/documents/${document.id}`, {
                 method: "DELETE"
               });
-              
+
               const data = await response.json();
-              
+
               if (data.success) {
                 await this.loadDocuments();
                 alert("Documento deletado com sucesso!");
               } else {
-                alert("Erro ao deletar documento: " + data.message);
+                alert("Error ao deletar documento: " + data.message);
               }
             } catch (error) {
-              console.error("Erro ao deletar documento:", error);
-              alert("Erro ao deletar documento");
+              console.error("Error ao deletar documento:", error);
+              alert("Error ao deletar documento");
             }
           },
-          
+
           showVersions(document) {
             alert('Funcionalidade de versões será implementada em breve');
           },
-          
+
           getCategoryName(categoryId) {
             const category = this.categories.find(cat => cat.id === categoryId);
             return category ? category.name : 'Sem categoria';
           },
-          
+
           getTypeName(type) {
             const types = {
               'ata': 'Ata de Reunião',
@@ -934,7 +934,7 @@
             };
             return types[type] || type;
           },
-          
+
           formatDate(dateString) {
             if (!dateString) return '';
             const date = new Date(dateString);

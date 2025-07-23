@@ -5,7 +5,7 @@ function attachmentManager() {
     documentAttachments: [],
     showUploadModal: false,
     uploadForm: {
-      description: ''
+      description: '',
     },
 
     async loadDocumentAttachments(documentId) {
@@ -16,11 +16,11 @@ function attachmentManager() {
           this.documentAttachments = data.data.map(att => ({
             ...att,
             icon_class: this.getAttachmentIconClass(att),
-            file_size_mb: this.formatFileSize(att.file_size)
+            file_size_mb: this.formatFileSize(att.file_size),
           }));
         }
       } catch (error) {
-        console.error('Erro ao carregar anexos:', error);
+        console.error('Error ao carregar anexos:', error);
         this.documentAttachments = [];
       }
     },
@@ -49,51 +49,54 @@ function attachmentManager() {
 
     async uploadAttachment() {
       if (!this.selectedFile || !this.selectedDocument) return;
-      
+
       try {
         const formData = new FormData();
         formData.append('file', this.selectedFile);
         formData.append('description', this.uploadForm.description);
-        
-        const response = await fetch(`/documents/api/documents/${this.selectedDocument.id}/attachments`, {
-          method: 'POST',
-          body: formData
-        });
-        
+
+        const response = await fetch(
+          `/documents/api/documents/${this.selectedDocument.id}/attachments`,
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+
         const data = await response.json();
-        
+
         if (data.success) {
           this.closeUploadModal();
           await this.loadDocumentAttachments(this.selectedDocument.id);
           alert('Anexo enviado com sucesso!');
         } else {
-          alert('Erro ao enviar anexo: ' + data.message);
+          alert('Error ao enviar anexo: ' + data.message);
         }
       } catch (error) {
-        console.error('Erro ao enviar anexo:', error);
-        alert('Erro ao enviar anexo');
+        console.error('Error ao enviar anexo:', error);
+        alert('Error ao enviar anexo');
       }
     },
 
     async deleteAttachment(attachment) {
       if (!confirm('Tem certeza que deseja deletar este anexo?')) return;
-      
+
       try {
         const response = await fetch(`/documents/api/documents/attachments/${attachment.id}`, {
-          method: 'DELETE'
+          method: 'DELETE',
         });
-        
+
         const data = await response.json();
-        
+
         if (data.success) {
           await this.loadDocumentAttachments(this.selectedDocument.id);
           alert('Anexo deletado com sucesso!');
         } else {
-          alert('Erro ao deletar anexo: ' + data.message);
+          alert('Error ao deletar anexo: ' + data.message);
         }
       } catch (error) {
-        console.error('Erro ao deletar anexo:', error);
-        alert('Erro ao deletar anexo');
+        console.error('Error ao deletar anexo:', error);
+        alert('Error ao deletar anexo');
       }
     },
 
@@ -108,6 +111,6 @@ function attachmentManager() {
       if (this.$refs.fileInput) {
         this.$refs.fileInput.value = '';
       }
-    }
+    },
   };
 }

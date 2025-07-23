@@ -87,12 +87,16 @@ class Document:
     def to_dict(self) -> dict[str, Any]:
         """Converte para dicionário"""
         return asdict(self)
+
+
 class DocumentAttachmentType(Enum):
     """Tipos de anexos permitidos"""
 
     PDF = "pdf"
     IMAGE = "image"
     DOCUMENT = "document"
+
+
 @dataclass
 class DocumentAttachment:
     """Anexo de documento"""
@@ -115,7 +119,11 @@ class DocumentAttachment:
 
     def get_file_extension(self) -> str:
         """Retorna a extensão do arquivo"""
-        return self.original_filename.split(".")[-1].lower() if "." in self.original_filename else ""
+        return (
+            self.original_filename.split(".")[-1].lower()
+            if "." in self.original_filename
+            else ""
+        )
 
     def is_image(self) -> bool:
         """Verifica se é uma imagem"""
