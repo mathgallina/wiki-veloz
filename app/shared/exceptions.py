@@ -1,41 +1,58 @@
 """
-Exceções Customizadas
-=====================
-
-Exceções customizadas compartilhadas entre módulos.
+Custom exceptions for Wiki Veloz
 """
 
 
-class ValidationError(Exception):
-    """Exceção para errors de validação."""
-
-    def __init__(self, message: str, field: str = None):
-        """
-        Inicializa a exceção.
-
-        Args:
-            message (str): Mensagem de error
-            field (str): Campo que causou o error
-        """
-        self.message = message
-        self.field = field
-        super().__init__(self.message)
+class WikiVelozError(Exception):
+    """Base exception for Wiki Veloz"""
+    pass
 
 
-class NotFoundError(Exception):
-    """Exceção para recursos não encontrados."""
+class AuthenticationError(WikiVelozError):
+    """Authentication related errors"""
+    pass
 
-    def __init__(self, resource: str, resource_id: str = None):
-        """
-        Inicializa a exceção.
 
-        Args:
-            resource (str): Tipo de recurso
-            resource_id (str): ID do recurso não encontrado
-        """
-        self.resource = resource
-        self.resource_id = resource_id
-        self.message = f"{resource} não encontrado"
-        if resource_id:
-            self.message += f": {resource_id}"
-        super().__init__(self.message)
+class AuthorizationError(WikiVelozError):
+    """Authorization related errors"""
+    pass
+
+
+class ValidationError(WikiVelozError):
+    """Validation related errors"""
+    pass
+
+
+class FileUploadError(WikiVelozError):
+    """File upload related errors"""
+    pass
+
+
+class DatabaseError(WikiVelozError):
+    """Database related errors"""
+    pass
+
+
+class BackupError(WikiVelozError):
+    """Backup related errors"""
+    pass
+
+
+class NotificationError(WikiVelozError):
+    """Notification related errors"""
+    pass
+
+
+class PDFProcessingError(WikiVelozError):
+    """PDF processing related errors"""
+    pass
+
+
+class GoogleDriveError(WikiVelozError):
+    """Google Drive related errors"""
+    pass
+
+
+class AnalyticsError(WikiVelozError):
+    """Analytics related errors"""
+    pass

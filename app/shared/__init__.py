@@ -1,20 +1,30 @@
 """
-Utilitários Compartilhados
-==========================
-
-Funções e classes utilitárias compartilhadas entre todos os módulos.
+Shared utilities and components for Wiki Veloz
 """
 
-from .decorators import admin_required, login_required
-from .exceptions import NotFoundError, ValidationError
-from .utils import format_date, generate_id, validate_email
+from .decorators import admin_required, api_response, validate_json, log_activity, handle_errors
+from .exceptions import (
+    WikiVelozError, AuthenticationError, AuthorizationError, ValidationError,
+    FileUploadError, DatabaseError, BackupError, NotificationError,
+    PDFProcessingError, GoogleDriveError, AnalyticsError
+)
+from .utils import (
+    allowed_file, generate_unique_filename, save_uploaded_file,
+    format_datetime, format_file_size, create_directory_if_not_exists,
+    get_file_extension, sanitize_filename, generate_id, is_valid_email
+)
 
 __all__ = [
-    "format_date",
-    "validate_email",
-    "generate_id",
-    "login_required",
-    "admin_required",
-    "ValidationError",
-    "NotFoundError",
+    # Decorators
+    'admin_required', 'api_response', 'validate_json', 'log_activity', 'handle_errors',
+    
+    # Exceptions
+    'WikiVelozError', 'AuthenticationError', 'AuthorizationError', 'ValidationError',
+    'FileUploadError', 'DatabaseError', 'BackupError', 'NotificationError',
+    'PDFProcessingError', 'GoogleDriveError', 'AnalyticsError',
+    
+    # Utils
+    'allowed_file', 'generate_unique_filename', 'save_uploaded_file',
+    'format_datetime', 'format_file_size', 'create_directory_if_not_exists',
+    'get_file_extension', 'sanitize_filename', 'generate_id', 'is_valid_email'
 ]
