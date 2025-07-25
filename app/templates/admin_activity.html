@@ -6,7 +6,10 @@
     <title>Log de Atividades - Wiki Veloz Fibra</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
   </head>
   <body class="bg-gray-50 min-h-screen">
     <!-- Header -->
@@ -20,7 +23,10 @@
           </div>
           <div class="flex items-center space-x-4">
             <span class="text-blue-200">Olá, {{ current_user.name }}</span>
-            <a href="/logout" class="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg transition-colors">
+            <a
+              href="/logout"
+              class="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-lg transition-colors"
+            >
               <i class="fas fa-sign-out-alt mr-2"></i>Sair
             </a>
           </div>
@@ -41,7 +47,10 @@
           <a href="/admin/analytics" class="text-gray-600 hover:text-blue-600 transition-colors">
             <i class="fas fa-chart-bar mr-2"></i>Analytics
           </a>
-          <a href="/admin/notifications" class="text-gray-600 hover:text-blue-600 transition-colors">
+          <a
+            href="/admin/notifications"
+            class="text-gray-600 hover:text-blue-600 transition-colors"
+          >
             <i class="fas fa-bell mr-2"></i>Notificações
           </a>
           <a href="/admin/backup" class="text-gray-600 hover:text-blue-600 transition-colors">
@@ -75,15 +84,29 @@
           <table class="w-full">
             <thead class="bg-gray-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Usuário
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Ação </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Ação
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Detalhes
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> IP </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  IP
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Data/Hora
                 </th>
               </tr>
@@ -92,13 +115,23 @@
               {% for activity in activities %}
               <tr class="hover:bg-gray-50">
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">{{ activity.user_id }}</div>
+                  <div class="text-sm font-medium text-gray-900">
+                    {% if activity.user_id == "admin-001" %} Matheus Gallina {% elif
+                    activity.user_id == "bruna-001" %} Bruna Silva {% else %} {{ activity.user_id }}
+                    {% endif %}
+                  </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if activity.action == 'login' %}bg-green-100 text-green-800 {% elif activity.action == 'logout' %}bg-red-100 text-red-800 {% elif 'create' in activity.action %}bg-blue-100 text-blue-800 {% elif 'delete' in activity.action %}bg-red-100 text-red-800 {% elif 'update' in activity.action %}bg-yellow-100 text-yellow-800 {% else %}bg-gray-100 text-gray-800{% endif %}"
                   >
-                    {{ activity.action }}
+                    {% if activity.action == 'login' %}Login {% elif activity.action == 'logout'
+                    %}Logout {% elif activity.action == 'page_create' %}Criar Página {% elif
+                    activity.action == 'page_update' %}Editar Página {% elif activity.action ==
+                    'page_delete' %}Excluir Página {% elif activity.action == 'user_create' %}Criar
+                    Usuário {% elif activity.action == 'user_update' %}Editar Usuário {% elif
+                    activity.action == 'user_delete' %}Excluir Usuário {% elif activity.action ==
+                    'api_access' %}Acesso API {% else %}{{ activity.action }}{% endif %}
                   </span>
                 </td>
                 <td class="px-6 py-4">
@@ -108,8 +141,14 @@
                     {% endif %}
                   </div>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> {{ activity.ip_address }} </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> {{ activity.timestamp }} </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ activity.ip_address }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {% set timestamp = activity.timestamp.split('T') %} {% set date =
+                  timestamp[0].split('-') %} {% set time = timestamp[1].split('.')[0] %} {{ date[2]
+                  }}/{{ date[1] }}/{{ date[0] }} {{ time }}
+                </td>
               </tr>
               {% endfor %}
             </tbody>

@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+{% block title %}Páginas - Wiki Veloz{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Páginas do Wiki</h1>
+        <button id="createPageBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            <i class="fas fa-plus mr-2"></i>Nova Página
+        </button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="mb-6">
+        <div class="relative">
+            <input type="text" id="searchInput" placeholder="Buscar páginas..." 
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <button id="searchBtn" class="absolute right-3 top-2 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="mb-6 flex flex-wrap gap-4">
+        <select id="categoryFilter" class="px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="">Todas as categorias</option>
+            <option value="Geral">Geral</option>
+            <option value="Documentação">Documentação</option>
+            <option value="Políticas">Políticas</option>
+            <option value="Técnico">Técnico</option>
+        </select>
+        
+        <select id="sortFilter" class="px-4 py-2 border border-gray-300 rounded-lg">
+            <option value="recent">Mais recentes</option>
+            <option value="popular">Mais populares</option>
+            <option value="title">Título A-Z</option>
+        </select>
+    </div>
+
+    <!-- Pages Grid -->
+    <div id="pagesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Pages will be loaded here -->
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="hidden text-center py-8">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <p class="mt-4 text-gray-600">Carregando páginas...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-12">
+        <i class="fas fa-file-alt text-6xl text-gray-300 mb-4"></i>
+        <h3 class="text-xl font-semibold text-gray-600 mb-2">Nenhuma página encontrada</h3>
+        <p class="text-gray-500 mb-4">Crie a primeira página para começar!</p>
+        <button id="createFirstPageBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Criar Primeira Página
+        </button>
+    </div>
+</div>
+
+<!-- Create Page Modal -->
+<div id="createPageModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Criar Nova Página</h3>
+            
+            <form id="createPageForm">
+                <div class="mb-4">
+                    <label for="pageTitle" class="block text-sm font-medium text-gray-700 mb-2">Título</label>
+                    <input type="text" id="pageTitle" name="title" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <div class="mb-4">
+                    <label for="pageCategory" class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                    <select id="pageCategory" name="category" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Selecione uma categoria</option>
+                        <option value="Geral">Geral</option>
+                        <option value="Documentação">Documentação</option>
+                        <option value="Políticas">Políticas</option>
+                        <option value="Técnico">Técnico</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="pageTags" class="block text-sm font-medium text-gray-700 mb-2">Tags (separadas por vírgula)</label>
+                    <input type="text" id="pageTags" name="tags"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="ex: tutorial, guia, documentação">
+                </div>
+                
+                <div class="mb-4">
+                    <label for="pageContent" class="block text-sm font-medium text-gray-700 mb-2">Conteúdo (Markdown)</label>
+                    <textarea id="pageContent" name="content" rows="10" required
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="# Título da página
+
+Escreva o conteúdo da página em Markdown..."></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="cancelCreateBtn" 
+                            class="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50">
+                        Cancelar
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Criar Página
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Page Preview Modal -->
+<div id="pagePreviewModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-10 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-2/3 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="previewTitle" class="text-lg font-medium text-gray-900">Visualização da Página</h3>
+                <button id="closePreviewBtn" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="previewContent" class="prose max-w-none">
+                <!-- Markdown content will be rendered here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+// Page management JavaScript
+class PageManager {
+    constructor() {
+        this.pages = [];
+        this.currentPage = 1;
+        this.itemsPerPage = 12;
+        this.init();
+    }
+    
+    init() {
+        this.bindEvents();
+        this.loadPages();
+    }
+    
+    bindEvents() {
+        // Create page button
+        document.getElementById('createPageBtn').addEventListener('click', () => {
+            this.showCreateModal();
+        });
+        
+        document.getElementById('createFirstPageBtn').addEventListener('click', () => {
+            this.showCreateModal();
+        });
+        
+        // Search functionality
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            this.searchPages();
+        });
+        
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.searchPages();
+            }
+        });
+        
+        // Filters
+        document.getElementById('categoryFilter').addEventListener('change', () => {
+            this.filterPages();
+        });
+        
+        document.getElementById('sortFilter').addEventListener('change', () => {
+            this.sortPages();
+        });
+        
+        // Modal events
+        document.getElementById('cancelCreateBtn').addEventListener('click', () => {
+            this.hideCreateModal();
+        });
+        
+        document.getElementById('closePreviewBtn').addEventListener('click', () => {
+            this.hidePreviewModal();
+        });
+        
+        // Form submission
+        document.getElementById('createPageForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.createPage();
+        });
+    }
+    
+    async loadPages() {
+        this.showLoading();
+        
+        try {
+            const response = await fetch('/api/pages/');
+            const data = await response.json();
+            
+            if (data.success) {
+                this.pages = data.data;
+                this.renderPages();
+            } else {
+                this.showError('Erro ao carregar páginas');
+            }
+        } catch (error) {
+            console.error('Error loading pages:', error);
+            this.showError('Erro ao carregar páginas');
+        }
+    }
+    
+    renderPages() {
+        const grid = document.getElementById('pagesGrid');
+        grid.innerHTML = '';
+        
+        if (this.pages.length === 0) {
+            this.showEmptyState();
+            return;
+        }
+        
+        this.pages.forEach(page => {
+            const card = this.createPageCard(page);
+            grid.appendChild(card);
+        });
+        
+        this.hideLoading();
+    }
+    
+    createPageCard(page) {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200';
+        
+        const views = page.views || 0;
+        const category = page.category || 'Sem categoria';
+        const tags = page.tags || [];
+        
+        card.innerHTML = `
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-3">
+                    <h3 class="text-xl font-semibold text-gray-900 line-clamp-2">${page.title}</h3>
+                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">${category}</span>
+                </div>
+                
+                <p class="text-gray-600 text-sm mb-4 line-clamp-3">${this.truncateContent(page.content)}</p>
+                
+                <div class="flex flex-wrap gap-1 mb-4">
+                    ${tags.map(tag => `<span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">${tag}</span>`).join('')}
+                </div>
+                
+                <div class="flex justify-between items-center text-sm text-gray-500">
+                    <span><i class="fas fa-eye mr-1"></i>${views} visualizações</span>
+                    <span><i class="fas fa-clock mr-1"></i>${this.formatDate(page.updated_at)}</span>
+                </div>
+                
+                <div class="mt-4 flex space-x-2">
+                    <button onclick="pageManager.viewPage('${page.id}')" 
+                            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm py-2 px-3 rounded">
+                        <i class="fas fa-eye mr-1"></i>Ver
+                    </button>
+                    <button onclick="pageManager.editPage('${page.id}')" 
+                            class="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-sm py-2 px-3 rounded">
+                        <i class="fas fa-edit mr-1"></i>Editar
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        return card;
+    }
+    
+    truncateContent(content) {
+        const text = content.replace(/[#*`]/g, '').trim();
+        return text.length > 150 ? text.substring(0, 150) + '...' : text;
+    }
+    
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pt-BR');
+    }
+    
+    async searchPages() {
+        const query = document.getElementById('searchInput').value.trim();
+        if (!query) {
+            this.loadPages();
+            return;
+        }
+        
+        this.showLoading();
+        
+        try {
+            const response = await fetch(`/api/pages/search?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.pages = data.data;
+                this.renderPages();
+            } else {
+                this.showError('Erro na busca');
+            }
+        } catch (error) {
+            console.error('Error searching pages:', error);
+            this.showError('Erro na busca');
+        }
+    }
+    
+    filterPages() {
+        const category = document.getElementById('categoryFilter').value;
+        if (!category) {
+            this.loadPages();
+            return;
+        }
+        
+        this.showLoading();
+        
+        fetch(`/api/pages/category/${encodeURIComponent(category)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.pages = data.data;
+                    this.renderPages();
+                }
+            })
+            .catch(error => {
+                console.error('Error filtering pages:', error);
+                this.showError('Erro ao filtrar páginas');
+            });
+    }
+    
+    sortPages() {
+        const sortBy = document.getElementById('sortFilter').value;
+        
+        switch (sortBy) {
+            case 'recent':
+                this.pages.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+                break;
+            case 'popular':
+                this.pages.sort((a, b) => (b.views || 0) - (a.views || 0));
+                break;
+            case 'title':
+                this.pages.sort((a, b) => a.title.localeCompare(b.title));
+                break;
+        }
+        
+        this.renderPages();
+    }
+    
+    showCreateModal() {
+        document.getElementById('createPageModal').classList.remove('hidden');
+    }
+    
+    hideCreateModal() {
+        document.getElementById('createPageModal').classList.add('hidden');
+        document.getElementById('createPageForm').reset();
+    }
+    
+    async createPage() {
+        const formData = new FormData(document.getElementById('createPageForm'));
+        const pageData = {
+            title: formData.get('title'),
+            content: formData.get('content'),
+            category: formData.get('category'),
+            tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag)
+        };
+        
+        try {
+            const response = await fetch('/api/pages/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(pageData)
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.hideCreateModal();
+                this.loadPages();
+                this.showSuccess('Página criada com sucesso!');
+            } else {
+                this.showError(data.message);
+            }
+        } catch (error) {
+            console.error('Error creating page:', error);
+            this.showError('Erro ao criar página');
+        }
+    }
+    
+    async viewPage(pageId) {
+        try {
+            const response = await fetch(`/api/pages/${pageId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.showPagePreview(data.data);
+            } else {
+                this.showError('Erro ao carregar página');
+            }
+        } catch (error) {
+            console.error('Error viewing page:', error);
+            this.showError('Erro ao carregar página');
+        }
+    }
+    
+    showPagePreview(page) {
+        document.getElementById('previewTitle').textContent = page.title;
+        document.getElementById('previewContent').innerHTML = marked.parse(page.content);
+        document.getElementById('pagePreviewModal').classList.remove('hidden');
+    }
+    
+    hidePreviewModal() {
+        document.getElementById('pagePreviewModal').classList.add('hidden');
+    }
+    
+    editPage(pageId) {
+        // TODO: Implement edit page functionality
+        window.location.href = `/pages/${pageId}/edit`;
+    }
+    
+    showLoading() {
+        document.getElementById('loadingState').classList.remove('hidden');
+        document.getElementById('pagesGrid').classList.add('hidden');
+        document.getElementById('emptyState').classList.add('hidden');
+    }
+    
+    hideLoading() {
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('pagesGrid').classList.remove('hidden');
+    }
+    
+    showEmptyState() {
+        document.getElementById('emptyState').classList.remove('hidden');
+        document.getElementById('pagesGrid').classList.add('hidden');
+        document.getElementById('loadingState').classList.add('hidden');
+    }
+    
+    showSuccess(message) {
+        // TODO: Implement toast notification
+        alert(message);
+    }
+    
+    showError(message) {
+        // TODO: Implement toast notification
+        alert('Erro: ' + message);
+    }
+}
+
+// Initialize page manager
+const pageManager = new PageManager();
+</script>
+{% endblock %} 

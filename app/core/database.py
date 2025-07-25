@@ -1,313 +1,141 @@
 """
-Abstração de Dados
-==================
-
-Camada de abstração para operações de dados JSON.
-Centraliza operações de leitura, escrita e validação.
+Database management for Wiki Veloz
+CDD v2.0 - Centralized data management
 """
 
 import json
-import logging
+import os
 from datetime import datetime
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-logger = logging.getLogger(__name__)
+from app.core.config import Config
 
 
-class DataManager:
-    """Gerenciador centralizado de dados JSON."""
-
-    def __init__(self, data_dir: str):
-        """
-        Inicializa o gerenciador de dados.
-
-        Args:
-            data_dir (str): Diretório onde estão os arquivos JSON
-        """
-        self.data_dir = Path(data_dir)
-        self.data_dir.mkdir(exist_ok=True)
-        self._cache = {}
-        self._cache_timestamps = {}
-
-    def _get_file_path(self, filename: str) -> Path:
-        """
-        Retorna o caminho completo do arquivo.
-
-        Args:
-            filename (str): Nome do arquivo
-
-        Returns:
-            Path: Caminho completo do arquivo
-        """
-        return self.data_dir / filename
-
-    def _load_data(self, filename: str) -> list[dict[str, Any]]:
-        """
-        Carrega dados de um arquivo JSON.
-
-        Args:
-            filename (str): Nome do arquivo
-
-        Returns:
-            List[Dict[str, Any]]: Lista de dados carregados
-        """
-        file_path = self._get_file_path(filename)
-
-        # Verificar cache
-        if filename in self._cache:
-            cache_timestamp = self._cache_timestamps.get(filename, 0)
-            if file_path.stat().st_mtime <= cache_timestamp:
-                return self._cache[filename]
-
+class DatabaseManager:
+    """Centralized database management for JSON files"""
+    
+    def __init__(self, config: Config):
+        self.config = config
+        self.data_folder = config.DATA_FOLDER
+        self._ensure_data_folder()
+    
+    def _ensure_data_folder(self):
+        """Ensure data folder exists"""
+        os.makedirs(self.data_folder, exist_ok=True)
+    
+    def load_data(self, filename: str) -> List[Dict[str, Any]]:
+        """Load data from JSON file"""
+        filepath = os.path.join(self.data_folder, filename)
         try:
-            if file_path.exists():
-                with open(file_path, encoding="utf-8") as f:
-                    data = json.load(f)
-                    if not isinstance(data, list):
-                        data = [data]
-                    self._cache[filename] = data
-                    self._cache_timestamps[filename] = file_path.stat().st_mtime
-                    logger.debug(
-                        f"Dados carregados de {filename}: {len(data)} registros"
-                    )
-                    return data
-            else:
-                # Criar arquivo vazio se não existir
-                self._save_data(filename, [])
-                return []
-        except (json.JSONDecodeError, OSError) as e:
-            logger.error(f"Error ao carregar {filename}: {e}")
+            if os.path.exists(filepath):
+                with open(filepath, 'r', encoding='utf-8') as f:
+                    return json.load(f)
             return []
-
-    def _save_data(self, filename: str, data: list[dict[str, Any]]) -> bool:
-        """
-        Salva dados em um arquivo JSON.
-
-        Args:
-            filename (str): Nome do arquivo
-            data (List[Dict[str, Any]]): Dados a serem salvos
-
-        Returns:
-            bool: True se salvou com sucesso
-        """
-        file_path = self._get_file_path(filename)
-
+        except Exception as e:
+            print(f"Error loading {filename}: {e}")
+            return []
+    
+    def save_data(self, filename: str, data: List[Dict[str, Any]]) -> bool:
+        """Save data to JSON file"""
+        filepath = os.path.join(self.data_folder, filename)
         try:
-            # Criar backup antes de salvar
-            if file_path.exists():
-                backup_path = file_path.with_suffix(".json.backup")
-                file_path.rename(backup_path)
-
-            # Salvar novos dados
-            with open(file_path, "w", encoding="utf-8") as f:
+            with open(filepath, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=2)
-
-            # Atualizar cache
-            self._cache[filename] = data
-            self._cache_timestamps[filename] = file_path.stat().st_mtime
-
-            logger.debug(f"Dados salvos em {filename}: {len(data)} registros")
             return True
-        except OSError as e:
-            logger.error(f"Error ao salvar {filename}: {e}")
+        except Exception as e:
+            print(f"Error saving {filename}: {e}")
+            return False
+    
+    def get_by_id(self, filename: str, item_id: str) -> Optional[Dict[str, Any]]:
+        """Get item by ID from file"""
+        data = self.load_data(filename)
+        return next((item for item in data if item.get('id') == item_id), None)
+    
+    def create_item(self, filename: str, item: Dict[str, Any]) -> bool:
+        """Create new item in file"""
+        data = self.load_data(filename)
+        data.append(item)
+        return self.save_data(filename, data)
+    
+    def update_item(self, filename: str, item_id: str, updates: Dict[str, Any]) -> bool:
+        """Update item in file"""
+        data = self.load_data(filename)
+        for item in data:
+            if item.get('id') == item_id:
+                item.update(updates)
+                return self.save_data(filename, data)
+        return False
+    
+    def delete_item(self, filename: str, item_id: str) -> bool:
+        """Delete item from file"""
+        data = self.load_data(filename)
+        data = [item for item in data if item.get('id') != item_id]
+        return self.save_data(filename, data)
+    
+    def backup_data(self, filename: str) -> str:
+        """Create backup of data file"""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_filename = f"{filename.replace('.json', '')}_{timestamp}.json"
+        backup_path = os.path.join(self.config.BACKUP_FOLDER, backup_filename)
+        
+        os.makedirs(self.config.BACKUP_FOLDER, exist_ok=True)
+        
+        data = self.load_data(filename)
+        try:
+            with open(backup_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+            return backup_path
+        except Exception as e:
+            print(f"Error creating backup: {e}")
+            return ""
+    
+    def restore_data(self, filename: str, backup_path: str) -> bool:
+        """Restore data from backup"""
+        try:
+            with open(backup_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            return self.save_data(filename, data)
+        except Exception as e:
+            print(f"Error restoring backup: {e}")
             return False
 
-    def get_all(self, filename: str) -> list[dict[str, Any]]:
-        """
-        Retorna todos os registros de um arquivo.
 
-        Args:
-            filename (str): Nome do arquivo
-
-        Returns:
-            List[Dict[str, Any]]: Lista de todos os registros
-        """
-        return self._load_data(filename)
-
-    def get_by_id(self, filename: str, record_id: str) -> Optional[dict[str, Any]]:
-        """
-        Busca um registro por ID.
-
-        Args:
-            filename (str): Nome do arquivo
-            record_id (str): ID do registro
-
-        Returns:
-            Optional[Dict[str, Any]]: Registro encontrado ou None
-        """
-        data = self._load_data(filename)
-        for record in data:
-            if record.get("id") == record_id:
-                return record
-        return None
-
-    def create(self, filename: str, record: dict[str, Any]) -> bool:
-        """
-        Cria um novo registro.
-
-        Args:
-            filename (str): Nome do arquivo
-            record (Dict[str, Any]): Dados do registro
-
-        Returns:
-            bool: True se criado com sucesso
-        """
-        data = self._load_data(filename)
-
-        # Gerar ID se não existir
-        if "id" not in record:
-            record["id"] = self._generate_id(data)
-
-        # Adicionar timestamps
-        record["created_at"] = datetime.now().isoformat()
-        record["updated_at"] = datetime.now().isoformat()
-
-        data.append(record)
-        return self._save_data(filename, data)
-
-    def update(self, filename: str, record_id: str, updates: dict[str, Any]) -> bool:
-        """
-        Atualiza um registro existente.
-
-        Args:
-            filename (str): Nome do arquivo
-            record_id (str): ID do registro
-            updates (Dict[str, Any]): Dados a serem atualizados
-
-        Returns:
-            bool: True se atualizado com sucesso
-        """
-        data = self._load_data(filename)
-
-        for i, record in enumerate(data):
-            if record.get("id") == record_id:
-                # Atualizar campos
-                record.update(updates)
-                record["updated_at"] = datetime.now().isoformat()
-                data[i] = record
-                return self._save_data(filename, data)
-
-        return False
-
-    def delete(self, filename: str, record_id: str) -> bool:
-        """
-        Remove um registro.
-
-        Args:
-            filename (str): Nome do arquivo
-            record_id (str): ID do registro
-
-        Returns:
-            bool: True se removido com sucesso
-        """
-        data = self._load_data(filename)
-
-        for i, record in enumerate(data):
-            if record.get("id") == record_id:
-                del data[i]
-                return self._save_data(filename, data)
-
-        return False
-
-    def search(self, filename: str, query: str, fields: list[str] = None) -> list[dict[str, Any]]:  # type: ignore
-        """
-        Busca registros por texto.
-
-        Args:
-            filename (str): Nome do arquivo
-            query (str): Texto para busca
-            fields (List[str]): Campos para buscar (None = todos)
-
-        Returns:
-            List[Dict[str, Any]]: Registros encontrados
-        """
-        data = self._load_data(filename)
-        results = []
-        query_lower = query.lower()
-
-        for record in data:
-            if fields:
-                # Buscar apenas nos campos especificados
-                for field in fields:
-                    if field in record:
-                        value = str(record[field]).lower()
-                        if query_lower in value:
-                            results.append(record)
-                            break
-            else:
-                # Buscar em todos os campos
-                for value in record.values():
-                    if query_lower in str(value).lower():
-                        results.append(record)
-                        break
-
-        return results
-
-    def _generate_id(self, data: list[dict[str, Any]]) -> str:
-        """
-        Gera um ID único para um novo registro.
-
-        Args:
-            data (List[Dict[str, Any]]): Dados existentes
-
-        Returns:
-            str: ID único gerado
-        """
-        if not data:
-            return "1"
-
-        # Encontrar o maior ID numérico
-        max_id = 0
-        for record in data:
-            try:
-                record_id = int(record.get("id", "0"))
-                max_id = max(max_id, record_id)
-            except (ValueError, TypeError):
-                continue
-
-        return str(max_id + 1)
-
-    def clear_cache(self, filename: str = None):
-        """
-        Limpa o cache de dados.
-
-        Args:
-            filename (str): Nome do arquivo específico (None = todos)
-        """
-        if filename:
-            self._cache.pop(filename, None)
-            self._cache_timestamps.pop(filename, None)
-        else:
-            self._cache.clear()
-            self._cache_timestamps.clear()
-
-        logger.debug("Cache limpo")
-
-
-# Instância global do gerenciador de dados
-data_manager = None
-
-
-def init_data_manager(data_dir: str):
-    """
-    Inicializa o gerenciador de dados global.
-
-    Args:
-        data_dir (str): Diretório dos dados
-    """
-    global data_manager
-    data_manager = DataManager(data_dir)
-    logger.info(f"DataManager inicializado com diretório: {data_dir}")
-
-
-def get_data_manager() -> DataManager:
-    """
-    Retorna a instância global do gerenciador de dados.
-
-    Returns:
-        DataManager: Instância do gerenciador de dados
-    """
-    if data_manager is None:
-        raise RuntimeError("DataManager não foi inicializado")
-    return data_manager
+class ActivityLogger:
+    """Activity logging system"""
+    
+    def __init__(self, db_manager: DatabaseManager):
+        self.db_manager = db_manager
+        self.log_file = "activity_log.json"
+    
+    def log_activity(self, user_id: str, action: str, details: str = None) -> bool:
+        """Log user activity"""
+        activity = {
+            "id": f"activity-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+            "user_id": user_id,
+            "action": action,
+            "details": details,
+            "timestamp": datetime.now().isoformat()
+        }
+        
+        return self.db_manager.create_item(self.log_file, activity)
+    
+    def get_user_activities(self, user_id: str, limit: int = 50) -> List[Dict[str, Any]]:
+        """Get user activities"""
+        activities = self.db_manager.load_data(self.log_file)
+        user_activities = [a for a in activities if a.get('user_id') == user_id]
+        return sorted(user_activities, key=lambda x: x.get('timestamp', ''), reverse=True)[:limit]
+    
+    def cleanup_old_activities(self, days: int = 30) -> int:
+        """Clean up old activities"""
+        activities = self.db_manager.load_data(self.log_file)
+        cutoff_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        cutoff_date = cutoff_date.replace(day=cutoff_date.day - days)
+        
+        original_count = len(activities)
+        activities = [
+            a for a in activities 
+            if datetime.fromisoformat(a.get('timestamp', '')) > cutoff_date
+        ]
+        
+        self.db_manager.save_data(self.log_file, activities)
+        return original_count - len(activities)

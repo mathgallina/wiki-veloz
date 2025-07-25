@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -50,9 +50,7 @@
                 <i class="fas fa-wifi text-white text-sm"></i>
               </div>
               <div class="ml-3">
-                <h1 class="text-xl font-bold text-gray-900 dark:text-white">
-                  VELOZ FIBRA
-                </h1>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
                 <p class="text-xs text-gray-500 dark:text-gray-400">PDFs por Setores</p>
               </div>
             </a>
@@ -129,16 +127,12 @@
 
         <!-- Upload Form -->
         <div x-show="selectedFiles.length > 0" class="mt-6">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
-            Configurar Upload
-          </h3>
+          <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Configurar Upload</h3>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Setor -->
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Setor <span class="text-red-500">*</span>
               </label>
               <select
@@ -155,9 +149,7 @@
 
             <!-- Página (opcional) -->
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Página (opcional)
               </label>
               <select
@@ -173,9 +165,7 @@
 
             <!-- Data do Treinamento -->
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Data do Treinamento
               </label>
               <input
@@ -187,9 +177,7 @@
 
             <!-- Instrutor -->
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Instrutor/Treinador
               </label>
               <input
@@ -202,9 +190,7 @@
 
             <!-- Descrição -->
             <div class="md:col-span-2">
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Descrição
               </label>
               <textarea
@@ -237,10 +223,7 @@
               :style="`width: ${uploadProgress}%`"
             ></div>
           </div>
-          <p
-            class="text-sm text-gray-600 dark:text-gray-400 mt-2"
-            x-text="uploadStatus"
-          ></p>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2" x-text="uploadStatus"></p>
         </div>
       </div>
 
@@ -295,9 +278,7 @@
         <div class="flex flex-wrap items-center justify-between gap-4">
           <div class="flex items-center space-x-4">
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Filtrar por Setor
               </label>
               <select
@@ -313,9 +294,7 @@
             </div>
 
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Ordenar por
               </label>
               <select
@@ -333,9 +312,7 @@
           </div>
 
           <div class="flex-1 max-w-md">
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-            >
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Buscar PDFs
             </label>
             <input
@@ -545,7 +522,7 @@
                 role: 'admin', // Assumindo que é admin para esta página
               };
             } catch (error) {
-              console.error('Erro ao carregar dados:', error);
+              console.error('Error ao carregar dados:', error);
             }
           },
 
@@ -588,11 +565,11 @@
                 });
 
                 if (!response.ok) {
-                  throw new Error(`Erro ao enviar ${file.name}`);
+                  throw new Error(`Error ao enviar ${file.name}`);
                 }
               } catch (error) {
-                console.error('Erro no upload:', error);
-                alert(`Erro ao enviar ${file.name}: ${error.message}`);
+                console.error('Error no upload:', error);
+                alert(`Error ao enviar ${file.name}: ${error.message}`);
               }
             }
 
@@ -641,9 +618,7 @@
                 case 'original_filename':
                   return a.original_filename.localeCompare(b.original_filename);
                 case 'training_date':
-                  return (
-                    new Date(b.training_date || 0) - new Date(a.training_date || 0)
-                  );
+                  return new Date(b.training_date || 0) - new Date(a.training_date || 0);
                 case 'file_size':
                   return b.file_size - a.file_size;
                 case 'download_count':
@@ -711,11 +686,11 @@
                 await this.loadData();
                 this.filterPdfs();
               } else {
-                alert('Erro ao excluir PDF');
+                alert('Error ao excluir PDF');
               }
             } catch (error) {
-              console.error('Erro ao excluir PDF:', error);
-              alert('Erro ao excluir PDF');
+              console.error('Error ao excluir PDF:', error);
+              alert('Error ao excluir PDF');
             }
           },
 

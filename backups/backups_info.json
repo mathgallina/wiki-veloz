@@ -298,5 +298,17 @@
     "description": "Backup automático",
     "encrypted": true,
     "compressed": true
+  },
+  {
+    "id": "backup_20250725_152028",
+    "name": "wiki_veloz_backup_20250725_152028",
+    "filename": "wiki_veloz_backup_20250725_152028.zip.encrypted",
+    "size": 18456568,
+    "created_at": "2025-07-25T15:20:28.573436",
+    "description": "",
+    "encrypted": true,
+    "compressed": true,
+    "google_drive_id": null,
+    "status": "completed"
   }
 ]

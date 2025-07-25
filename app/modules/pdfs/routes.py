@@ -1,8 +1,11 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
+from flask_login import login_required
 
-pdfs_bp = Blueprint("pdfs", __name__, url_prefix="/pdfs")
+pdfs_bp = Blueprint("pdfs", __name__)
 
 
 @pdfs_bp.route("/")
+@login_required
 def index():
-    return {"message": "PDFs module funcionando!"}
+    """PDFs management page"""
+    return render_template("admin_pdfs.html")

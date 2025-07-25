@@ -928,17 +928,13 @@ def delete_page(page_id):
 @app.route("/api/search")
 @login_required
 def search_pages():
-    """Pesquisa páginas e arquivos por termo (protegida)"""
+    """Pesquisa páginas e arquivos por thermo (protegida)"""
     query = request.args.get("q", "").lower()
     pages = load_pages()
     pdfs = load_pdfs()
 
     if not query:
-        return jsonify({
-            "pages": pages,
-            "files": [],
-            "total_results": len(pages)
-        })
+        return jsonify({"pages": pages, "files": [], "total_results": len(pages)})
 
     # Buscar em páginas
     page_results = []
@@ -948,10 +944,7 @@ def search_pages():
             or query in page["content"].lower()
             or query in page["category"].lower()
         ):
-            page_results.append({
-                **page,
-                "type": "page"
-            })
+            page_results.append({**page, "type": "page"})
 
     # Buscar em arquivos
     file_results = []
@@ -962,20 +955,19 @@ def search_pages():
             or query in pdf.get("sector_name", "").lower()
             or query in pdf.get("trainer", "").lower()
         ):
-            file_results.append({
-                **pdf,
-                "type": "file"
-            })
+            file_results.append({**pdf, "type": "file"})
 
     total_results = len(page_results) + len(file_results)
-    
-    log_activity(current_user.id, "search", f"Pesquisou por: {query} ({total_results} resultados)")
-    
-    return jsonify({
-        "pages": page_results,
-        "files": file_results,
-        "total_results": total_results
-    })
+
+    log_activity(
+        current_user.id,
+        "search",
+        f"Pesquisou por: {query} ({total_results} resultados)",
+    )
+
+    return jsonify(
+        {"pages": page_results, "files": file_results, "total_results": total_results}
+    )
 
 
 @app.route("/api/categories")
@@ -1950,9 +1942,9 @@ def view_pdf(pdf_id):
 
     # Log da visualização
     log_activity(
-        current_user.id, 
-        "file_viewed", 
-        f"Visualizou arquivo: {pdf['original_filename']}"
+        current_user.id,
+        "file_viewed",
+        f"Visualizou arquivo: {pdf['original_filename']}",
     )
 
     return send_from_directory(
@@ -1965,16 +1957,12 @@ def view_pdf(pdf_id):
 def view_file(filename):
     """Visualiza qualquer arquivo na tela"""
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-    
+
     if not os.path.exists(file_path):
         return jsonify({"error": "Arquivo não encontrado"}), 404
 
     # Log da visualização
-    log_activity(
-        current_user.id, 
-        "file_viewed", 
-        f"Visualizou arquivo: {filename}"
-    )
+    log_activity(current_user.id, "file_viewed", f"Visualizou arquivo: {filename}")
 
     return send_from_directory(
         app.config["UPLOAD_FOLDER"], filename, as_attachment=False
@@ -2027,9 +2015,9 @@ def upload_editor_file():
         file_ext = ""
         if file.filename and "." in file.filename:
             file_ext = file.filename.rsplit(".", 1)[1].lower()
-        
+
         app.logger.info(f"Extensão do arquivo: {file_ext}")
-        
+
         if file_ext not in allowed_extensions:
             app.logger.error(f"Extensão não permitida: {file_ext}")
             return (
@@ -2045,19 +2033,19 @@ def upload_editor_file():
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         safe_filename = secure_filename(file.filename) if file.filename else "arquivo"
         unique_filename = f"editor_{timestamp}_{safe_filename}"
-        
+
         app.logger.info(f"Nome único gerado: {unique_filename}")
 
         # Salvar arquivo
         file_path = os.path.join(upload_folder, unique_filename)
-        
+
         app.logger.info(f"Salvando arquivo em: {file_path}")
         file.save(file_path)
-        
+
         # Verificar se o arquivo foi salvo
         if not os.path.exists(file_path):
             app.logger.error(f"Arquivo não foi salvo corretamente: {file_path}")
-            return jsonify({"error": "Erro ao salvar arquivo"}), 500
+            return jsonify({"error": "Error ao salvar arquivo"}), 500
 
         file_size = os.path.getsize(file_path)
         app.logger.info(f"Arquivo salvo com sucesso. Tamanho: {file_size} bytes")
@@ -2080,17 +2068,18 @@ def upload_editor_file():
                 f"Arquivo enviado via editor: {file.filename}",
             )
         except Exception as log_error:
-            app.logger.error(f"Erro no log de atividade: {log_error}")
+            app.logger.error(f"Error no log de atividade: {log_error}")
 
         app.logger.info(f"Upload concluído com sucesso: {file.filename}")
         return jsonify(file_info), 200
 
     except Exception as e:
-        app.logger.error(f"Erro no upload do editor: {str(e)}")
-        app.logger.error(f"Tipo de erro: {type(e).__name__}")
+        app.logger.error(f"Error no upload do editor: {str(e)}")
+        app.logger.error(f"Tipo de error: {type(e).__name__}")
         import traceback
+
         app.logger.error(f"Traceback: {traceback.format_exc()}")
-        return jsonify({"error": "Erro interno do servidor"}), 500
+        return jsonify({"error": "Error interno do servidor"}), 500
 
 
 # Registrar blueprint de documentos
@@ -2110,6 +2099,8 @@ if __name__ == "__main__":
 
     app.run(debug=True, host="0.0.0.0", port=8000)
 from flask import send_file
+
+
 @app.route("/test-simple")
 def test_simple():
     return send_file("test_simple.html")

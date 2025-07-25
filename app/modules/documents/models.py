@@ -1,5 +1,5 @@
 """
-Modelos de dados para Documentos Corporations
+Modelos de dados para Documentos Corporations - VERSÃO CORRIGIDA
 """
 from dataclasses import asdict, dataclass
 from datetime import datetime
@@ -43,9 +43,9 @@ class DocumentCategory:
     name: str
     description: str
     color: str
-    icon: str
-    created_at: str
-    updated_at: str
+    icon: str = "fas fa-folder"
+    created_at: str = ""
+    updated_at: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -61,7 +61,7 @@ class DocumentVersion:
     changes: str
     author: str
     created_at: str
-    updated_at: str
+    updated_at: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -73,16 +73,16 @@ class Document:
 
     id: str
     title: str
-    description: str
-    category_id: str
-    type: str
-    status: str
-    priority: str
-    content: str
-    author: str
-    version: int
-    created_at: str
-    updated_at: str
+    description: str = ""
+    category_id: str = ""
+    type: str = "outro"
+    status: str = "ativo"
+    priority: str = "media"
+    content: str = ""
+    author: str = ""
+    version: int = 1
+    created_at: str = ""
+    updated_at: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         """Converte para dicionário"""

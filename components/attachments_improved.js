@@ -1,4 +1,16 @@
-// Funcionalidades de Anexos Melhoradas
+/**
+ * @fileoverview Gerenciador de Anexos Melhorado - Wiki Veloz Fibra
+ * @description Componente JavaScript avançado para gerenciamento de anexos com suporte a tema escuro
+ * @version 2.0.0
+ * @author Matheus Gallina
+ * @license MIT
+ */
+
+/**
+ * Gerenciador de Anexos Melhorado
+ * @description Alpine.js component avançado para gerenciar anexos com preview e tema escuro
+ * @returns {Object} Objeto com métodos e propriedades do gerenciador
+ */
 function attachmentManager() {
   return {
     selectedFile: null,
@@ -13,6 +25,9 @@ function attachmentManager() {
     // Detectar tema do sistema
     isDarkMode: false,
 
+    /**
+     * Inicializa o componente e detecta o tema
+     */
     init() {
       this.detectTheme();
       // Observar mudanças no tema do sistema
@@ -21,6 +36,9 @@ function attachmentManager() {
       });
     },
 
+    /**
+     * Detecta o tema atual (claro/escuro)
+     */
     detectTheme() {
       // Verificar se o usuário tem preferência salva
       const savedTheme = localStorage.getItem('wiki-theme');
@@ -32,6 +50,11 @@ function attachmentManager() {
       }
     },
 
+    /**
+     * Carrega anexos de um documento específico
+     * @param {string} documentId - ID do documento
+     * @returns {Promise<void>}
+     */
     async loadDocumentAttachments(documentId) {
       try {
         const response = await fetch(`/documents/api/documents/${documentId}/attachments`);
@@ -49,6 +72,11 @@ function attachmentManager() {
       }
     },
 
+    /**
+     * Determina a classe CSS do ícone baseado no tipo MIME com suporte a tema escuro
+     * @param {Object} attachment - Objeto do anexo
+     * @returns {string} Classe CSS do ícone
+     */
     getAttachmentIconClass(attachment) {
       if (attachment.mime_type === 'application/pdf') {
         return 'fas fa-file-pdf text-red-600 dark:text-red-400';
@@ -74,6 +102,11 @@ function attachmentManager() {
       }
     },
 
+    /**
+     * Formata o tamanho do arquivo em bytes para unidades legíveis
+     * @param {number} bytes - Tamanho em bytes
+     * @returns {string} Tamanho formatado (ex: "1.5 MB")
+     */
     formatFileSize(bytes) {
       if (bytes === 0) return '0 Bytes';
       const k = 1024;
@@ -82,10 +115,18 @@ function attachmentManager() {
       return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     },
 
+    /**
+     * Manipula a seleção de arquivo no input
+     * @param {Event} event - Evento do input file
+     */
     handleFileSelect(event) {
       this.selectedFile = event.target.files[0];
     },
 
+    /**
+     * Faz upload de um anexo para o documento
+     * @returns {Promise<void>}
+     */
     async uploadAttachment() {
       if (!this.selectedFile || !this.selectedDocument) return;
 
@@ -109,11 +150,11 @@ function attachmentManager() {
           await this.loadDocumentAttachments(this.selectedDocument.id);
           this.showNotification('Anexo enviado com sucesso!', 'success');
         } else {
-          this.showNotification('Error ao enviar anexo: ' + data.message, 'error');
+          this.showNotification('Erro ao enviar anexo: ' + data.message, 'error');
         }
       } catch (error) {
         console.error('Error ao enviar anexo:', error);
-        this.showNotification('Error ao enviar anexo', 'error');
+        this.showNotification('Erro ao enviar anexo', 'error');
       }
     },
 

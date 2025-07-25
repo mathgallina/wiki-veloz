@@ -1,1034 +1,944 @@
-<!doctype html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Documentos Corporations - Wiki Veloz</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {},
-        },
-      };
-    </script>    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-  </head>
-  <body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200" x-data="documentManager()">
-    <!-- Navigation -->
-    <nav class="bg-white dark:bg-gray-800 shadow-lg border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <div class="flex items-center">
-            <a href="/" class="text-xl font-bold text-gray-800 dark:text-white transition-colors">
-              <i class="fas fa-book-open mr-2"></i>Wiki Veloz
-            </a>
-          </div>
-          <div class="flex items-center space-x-4">
-            <!-- Theme Toggle -->
-            <button
-              @click="toggleTheme()"
-              class="p-2 rounded-md text-gray-400 hover:text-gray-300 transition-colors"
-              :title="isDarkMode ? 'Mudar para modo claro' : 'Mudar para modo escuro'"
-            >
-              <i class="fas fa-sun" x-show="isDarkMode"></i>
-              <i class="fas fa-moon" x-show="!isDarkMode"></i>
-            </button>            <a href="/admin" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
-              <i class="fas fa-cog mr-1"></i>Admin
-            </a>
-            <a href="/logout" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors">
-              <i class="fas fa-sign-out-alt mr-1"></i>Sair
-            </a>
-          </div>
-        </div>
-      </div>
-    </nav>
+{% extends "base.html" %} {% block title %}Documentos - Wiki Veloz{% endblock %} {% block extra_head
+%}
+<style>
+  /* Estilos específicos para dark mode */
+  .dark .bg-white {
+    background-color: #1f2937;
+  }
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <!-- Header -->
-      <div class="mb-8">
-        <div class="flex justify-between items-center">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">
-              <i class="fas fa-file-alt mr-3 text-blue-600"></i>
-              Documentos Corporations
-            </h1>
-            <p class="text-gray-600">Gerencie documentos importantes da empresa</p>
-          </div>
-          <button
-            @click="showCreateModal = true; console.log("Botão clicado, showCreateModal:", showCreateModal)"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center"
+  .dark .text-gray-900 {
+    color: #f9fafb;
+  }
+
+  .dark .text-gray-700 {
+    color: #d1d5db;
+  }
+
+  .dark .text-gray-600 {
+    color: #9ca3af;
+  }
+
+  .dark .border-gray-300 {
+    border-color: #4b5563;
+  }
+
+  .dark .bg-gray-50 {
+    background-color: #374151;
+  }
+
+  .dark .hover\:bg-gray-50:hover {
+    background-color: #4b5563;
+  }
+
+  /* Card styles for dark mode */
+  .dark .document-card {
+    background-color: #1f2937;
+    border-color: #4b5563;
+  }
+
+  .dark .document-card:hover {
+    background-color: #374151;
+  }
+
+  /* Button styles for dark mode */
+  .dark .btn-primary {
+    background-color: #3b82f6;
+    color: white;
+  }
+
+  .dark .btn-primary:hover {
+    background-color: #2563eb;
+  }
+
+  .dark .btn-danger {
+    background-color: #dc2626;
+    color: white;
+  }
+
+  .dark .btn-danger:hover {
+    background-color: #b91c1c;
+  }
+
+  .dark .btn-success {
+    background-color: #059669;
+    color: white;
+  }
+
+  .dark .btn-success:hover {
+    background-color: #047857;
+  }
+
+  /* Modal styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: 8px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: auto;
+  }
+
+  .dark .modal-content {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+
+  /* File viewer styles */
+  .file-viewer {
+    width: 100%;
+    height: 80vh;
+    border: none;
+  }
+
+  .image-viewer {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Documentos</h1>
+    <button
+      id="addDocumentBtn"
+      class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors"
+    >
+      <i class="fas fa-plus mr-2"></i>Adicionar Documento
+    </button>
+  </div>
+
+  <!-- Add Document Form with File Upload -->
+  <div
+    id="addDocumentForm"
+    class="hidden mb-8 bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border border-gray-300 dark:border-gray-600"
+  >
+    <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+      Adicionar Novo Documento
+    </h3>
+    <form id="documentForm" enctype="multipart/form-data">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >Título *</label
           >
-            <i class="fas fa-plus mr-2"></i>
-            Novo Documento
-          </button>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            required
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          />
+        </div>
+
+        <div>
+          <label
+            for="category"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >Categoria *</label
+          >
+          <select
+            id="category"
+            name="category"
+            required
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          >
+            <option value="">Selecione uma categoria</option>
+            <option value="Geral">Geral</option>
+            <option value="Documentação">Documentação</option>
+            <option value="Políticas">Políticas</option>
+            <option value="Técnico">Técnico</option>
+            <option value="Financeiro">Financeiro</option>
+            <option value="RH">RH</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Vendas">Vendas</option>
+          </select>
+        </div>
+
+        <div class="md:col-span-2">
+          <label
+            for="description"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >Descrição</label
+          >
+          <textarea
+            id="description"
+            name="description"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            placeholder="Descreva o documento..."
+          ></textarea>
+        </div>
+
+        <div class="md:col-span-2">
+          <label
+            for="content"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >Conteúdo *</label
+          >
+          <textarea
+            id="content"
+            name="content"
+            rows="5"
+            required
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            placeholder="Digite o conteúdo do documento..."
+          ></textarea>
+        </div>
+
+        <div class="md:col-span-2">
+          <label for="file" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <i class="fas fa-paperclip mr-2"></i>Anexo (PDF, PNG, JPG)
+          </label>
+          <input
+            type="file"
+            id="file"
+            name="file"
+            accept=".pdf,.png,.jpg,.jpeg"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
+          />
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Formatos aceitos: PDF, PNG, JPG. Máximo 50MB.
+          </p>
         </div>
       </div>
 
-      <!-- Filters and Search -->
-      <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
-            <input
-              type="text"
-              x-model="filters.search"
-              placeholder="Título, descrição ou author..."
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
-            <select
-              x-model="filters.category"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Todas</option>
-              <template x-for="category in categories" :key="category.id">
-                <option :value="category.id" x-text="category.name"></option>
-              </template>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
-            <select
-              x-model="filters.type"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Todos</option>
-              <option value="ata">Ata de Reunião</option>
-              <option value="regulamento">Regulamento</option>
-              <option value="politica">Política</option>
-              <option value="procedimento">Procedimento</option>
-              <option value="manual">Manual</option>
-              <option value="outro">Outro</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-            <select
-              x-model="filters.status"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Todos</option>
-              <option value="ativo">Ativo</option>
-              <option value="rascunho">Rascunho</option>
-              <option value="arquivado">Arquivado</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Documents Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <template x-for="document in filteredDocuments" :key="document.id">
-          <div class="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-lg transition-all duration-300">
-            <div class="p-6">
-              <div class="flex justify-between items-start mb-4">
-                <div class="flex-1">
-                  <h3 class="text-lg font-semibold text-gray-900 mb-2" x-text="document.title"></h3>
-                  <p class="text-gray-600 text-sm mb-3" x-text="document.description"></p>
-                </div>
-                <div class="flex space-x-2">
-                  <span
-                    class="px-2 py-1 text-xs font-medium rounded-full"
-                    :class="{
-                      'bg-green-100 text-green-800': document.status === 'ativo',
-                      'bg-yellow-100 text-yellow-800': document.status === 'rascunho',
-                      'bg-gray-100 text-gray-800': document.status === 'arquivado'
-                    }"
-                    x-text="document.status"
-                  ></span>
-                </div>
-              </div>
-
-              <div class="space-y-2 mb-4">
-                <div class="flex items-center text-sm text-gray-500">
-                  <i class="fas fa-tag mr-2"></i>
-                  <span x-text="getCategoryName(document.category_id)"></span>
-                </div>
-                <div class="flex items-center text-sm text-gray-500">
-                  <i class="fas fa-file-alt mr-2"></i>
-                  <span x-text="getTypeName(document.type)"></span>
-                </div>
-                <div class="flex items-center text-sm text-gray-500">
-                  <i class="fas fa-user mr-2"></i>
-                  <span x-text="document.author"></span>
-                </div>
-                <div class="flex items-center text-sm text-gray-500">
-                  <i class="fas fa-calendar mr-2"></i>
-                  <span x-text="formatDate(document.created_at)"></span>
-                </div>
-              </div>
-
-              <div class="flex justify-between items-center">
-                <div class="flex space-x-2">
-                  <button
-                    @click="viewDocument(document)"
-                    class="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                  >
-                    <i class="fas fa-eye mr-1"></i>Ver
-                  </button>
-                  <button
-                    @click="editDocument(document)"
-                    class="text-green-600 hover:text-green-800 text-sm font-medium"
-                  >
-                    <i class="fas fa-edit mr-1"></i>Editar
-                  </button>
-                  <button
-                    @click="showVersions(document)"
-                    class="text-purple-600 hover:text-purple-800 text-sm font-medium"
-                  >
-                    <i class="fas fa-history mr-1">Versões</button>
-                <button
-                  @click="deleteDocument(document)"
-                  class="text-red-600 hover:text-red-800 text-sm font-medium"
-                >
-                  <i class="fas fa-trash mr-1"></i>Deletar
-                  </button>
-                </div>
-                <div class="text-xs text-gray-400" x-text="`v${document.version}`"></div>
-              </div>
-            </div>
-          </div>
-        </template>
-      </div>
-
-      <!-- Empty State -->
-      <div x-show="filteredDocuments.length === 0" class="text-center py-12">
-        <i class="fas fa-file-alt text-6xl text-gray-300 mb-4"></i>
-        <h3 class="text-xl font-medium text-gray-900 mb-2">Nenhum documento encontrado</h3>
-        <p class="text-gray-600 mb-6">Tente ajustar os filtros ou criar um novo documento.</p>
+      <div class="flex justify-end gap-3 mt-6">
         <button
-          @click="showCreateModal = true; console.log("Botão clicado, showCreateModal:", showCreateModal)"
-          class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium"
+          type="button"
+          id="cancelBtn"
+          class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
-          <i class="fas fa-plus mr-2"></i>Criar Primeiro Documento
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+        >
+          <i class="fas fa-save mr-2"></i>Salvar Documento
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="mb-6">
+    <div class="relative">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Buscar documentos..."
+        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+      />
+      <button
+        id="searchBtn"
+        class="absolute right-3 top-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+      >
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Documents Grid -->
+  <div id="documentsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Documents will be loaded here -->
+  </div>
+
+  <!-- Loading State -->
+  <div id="loadingState" class="hidden text-center py-8">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+    <p class="mt-4 text-gray-600 dark:text-gray-400">Carregando documentos...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div id="emptyState" class="hidden text-center py-12">
+    <i class="fas fa-file-alt text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+    <h3 class="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
+      Nenhum documento encontrado
+    </h3>
+    <p class="text-gray-500 dark:text-gray-500 mb-4">Adicione o primeiro documento para começar!</p>
+    <button
+      id="addFirstDocumentBtn"
+      class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors"
+    >
+      Adicionar Primeiro Documento
+    </button>
+  </div>
+</div>
+
+<!-- File Viewer Modal -->
+<div id="fileViewerModal" class="modal-overlay hidden">
+  <div class="modal-content p-6 w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+    <div
+      class="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4"
+    >
+      <h3 id="fileViewerTitle" class="text-xl font-semibold text-gray-900 dark:text-white"></h3>
+      <button
+        id="closeFileViewer"
+        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+    <div id="fileViewerContent" class="text-center">
+      <!-- File content will be loaded here -->
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay hidden">
+  <div class="modal-content p-6 w-full max-w-md">
+    <div class="text-center">
+      <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Confirmar Exclusão</h3>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">
+        Tem certeza que deseja excluir este documento? Esta ação não pode ser desfeita.
+      </p>
+      <div class="flex justify-center gap-3">
+        <button
+          id="cancelDelete"
+          class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          id="confirmDelete"
+          class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+        >
+          <i class="fas fa-trash mr-2"></i>Excluir
         </button>
       </div>
     </div>
-
-    <!-- Create/Edit Modal -->
-    <div
-      x-show="showCreateModal || showEditModal"
-      class="fixed inset-0 z-50 overflow-y-auto"
-      x-transition:enter="transition ease-out duration-300"
-      x-transition:enter-start="opacity-0"
-      x-transition:enter-end="opacity-100"
-      x-transition:leave="transition ease-in duration-200"
-      x-transition:leave-start="opacity-100"
-      x-transition:leave-end="opacity-0"
-    >
-      <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-
-        <div
-          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full"
-          x-transition:enter="transition ease-out duration-300"
-          x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-          x-transition:leave="transition ease-in duration-200"
-          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        >
-          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <div class="sm:flex sm:items-start">
-              <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
-                <i class="fas fa-file-alt text-blue-600"></i>
-              </div>
-              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
-                  <span x-show="!showEditModal">Criar Novo Documento</span>
-                  <span x-show="showEditModal">Editar Documento</span>
-                </h3>
-
-                <form @submit.prevent="saveDocument" class="space-y-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Título *</label>
-                    <input
-                      type="text"
-                      x-model="form.title"
-                      required
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-                    <textarea
-                      x-model="form.description"
-                      rows="3"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    ></textarea>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-4">
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-1">Categoria *</label>
-                      <select
-                        x-model="form.category_id"
-                        required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="">Selecione...</option>
-                        <template x-for="category in categories" :key="category.id">
-                          <option :value="category.id" x-text="category.name"></option>
-                        </template>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
-                      <select
-                        x-model="form.type"
-                        required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="">Selecione...</option>
-                        <option value="ata">Ata de Reunião</option>
-                        <option value="regulamento">Regulamento</option>
-                        <option value="politica">Política</option>
-                        <option value="procedimento">Procedimento</option>
-                        <option value="manual">Manual</option>
-                        <option value="outro">Outro</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-4">
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                      <select
-                        x-model="form.status"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="ativo">Ativo</option>
-                        <option value="rascunho">Rascunho</option>
-                        <option value="arquivado">Arquivado</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-1">Prioridade</label>
-                      <select
-                        x-model="form.priority"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="baixa">Baixa</option>
-                        <option value="media">Média</option>
-                        <option value="alta">Alta</option>
-                        <option value="critica">Crítica</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Conteúdo</label>
-                    <textarea
-                      x-model="form.content"
-                      rows="8"
-                      placeholder="Digite o conteúdo do documento..."
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    ></textarea>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            <button
-              @click="saveDocument"
-              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
-            >
-              <i class="fas fa-save mr-2"></i>
-              <span x-show="!showEditModal">Criar</span>
-              <span x-show="showEditModal">Salvar</span>
-            </button>
-            <button
-              @click="closeModal"
-              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Document Detail Modal -->
-    <div
-      x-show="showDetailModal"
-      class="fixed inset-0 z-50 overflow-y-auto"
-      x-transition:enter="transition ease-out duration-300"
-      x-transition:enter-start="opacity-0"
-      x-transition:enter-end="opacity-100"
-      x-transition:leave="transition ease-in duration-200"
-      x-transition:leave-start="opacity-100"
-      x-transition:leave-end="opacity-0"
-    >
-      <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-
-        <div
-          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full"
-          x-transition:enter="transition ease-out duration-300"
-          x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-          x-transition:leave="transition ease-in duration-200"
-          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        >
-          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <div class="sm:flex sm:items-start">
-              <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
-                <i class="fas fa-file-alt text-blue-600"></i>
-              </div>
-              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                <div class="flex justify-between items-start mb-4">
-                  <h3 class="text-lg leading-6 font-medium text-gray-900" x-text="selectedDocument?.title"></h3>
-                  <button @click="showDetailModal = false" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-
-                <div x-show="selectedDocument" class="space-y-6">
-                  <!-- Document Info -->
-                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-4 rounded-lg">
-                    <div>
-                      <span class="text-sm font-medium text-gray-500">Status</span>
-                      <div class="mt-1">
-                        <span
-                          class="px-2 py-1 text-xs font-medium rounded-full"
-                          :class="{
-                            'bg-green-100 text-green-800': selectedDocument?.status === 'ativo',
-                            'bg-yellow-100 text-yellow-800': selectedDocument?.status === 'rascunho',
-                            'bg-gray-100 text-gray-800': selectedDocument?.status === 'arquivado'
-                          }"
-                          x-text="selectedDocument?.status"
-                        ></span>
-                      </div>
-                    </div>
-                    <div>
-                      <span class="text-sm font-medium text-gray-500">Categoria</span>
-                      <div class="mt-1 text-sm text-gray-900" x-text="getCategoryName(selectedDocument?.category_id)"></div>
-                    </div>
-                    <div>
-                      <span class="text-sm font-medium text-gray-500">Tipo</span>
-                      <div class="mt-1 text-sm text-gray-900" x-text="getTypeName(selectedDocument?.type)"></div>
-                    </div>
-                    <div>
-                      <span class="text-sm font-medium text-gray-500">Versão</span>
-                      <div class="mt-1 text-sm text-gray-900" x-text="`v${selectedDocument?.version}`"></div>
-                    </div>
-                  </div>
-
-                  <!-- Description -->
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-500 mb-2">Descrição</h4>
-                    <p class="text-gray-900" x-text="selectedDocument?.description || 'Sem descrição'"></p>
-                  </div>
-
-                  <!-- Content -->
-                  <div>
-                    <h4 class="text-sm font-medium text-gray-500 mb-2">Conteúdo</h4>
-                    <div class="bg-gray-50 p-4 rounded-lg max-h-96 overflow-y-auto">
-                      <pre class="text-sm text-gray-900 whitespace-pre-wrap" x-text="selectedDocument?.content || 'Sem conteúdo'"></pre>
-                    </div>
-                  </div>
-
-                  <!-- Anexos -->
-                  <div>
-                    <div class="flex justify-between items-center mb-4">
-                      <h4 class="text-sm font-medium text-gray-500">Anexos</h4>
-                      <button
-                        @click="showUploadModal = true"
-                        class="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                      >
-                        <i class="fas fa-plus mr-1"></i>Adicionar Anexo
-                      </button>
-                    </div>
-
-                    <div x-show="documentAttachments.length === 0" class="text-center py-8 bg-gray-50 rounded-lg">
-                      <i class="fas fa-paperclip text-4xl text-gray-300 mb-4"></i>
-                      <p class="text-gray-600 mb-4">Nenhum anexo encontrado</p>
-                      <button
-                        @click="showUploadModal = true"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
-                      >
-                        <i class="fas fa-plus mr-1"></i>Adicionar Primeiro Anexo
-                      </button>
-                    </div>
-
-                    <div x-show="documentAttachments.length > 0" class="space-y-3">
-                      <template x-for="attachment in documentAttachments" :key="attachment.id">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                          <div class="flex items-center space-x-3">
-                            <i :class="attachment.icon_class" class="text-2xl text-gray-600"></i>
-                            <div>
-                              <div class="font-medium text-gray-900" x-text="attachment.original_filename"></div>
-                              <div class="text-sm text-gray-500" x-text="`${attachment.file_size_mb} MB`"></div>
-                              <div x-show="attachment.description" class="text-xs text-gray-400" x-text="attachment.description"></div>
-                            </div>
-                          </div>
-                          <div class="flex space-x-2">
-                            <button
-                              @click="downloadAttachment(attachment)"
-                              class="text-blue-600 hover:text-blue-800 text-sm"
-                              title="Download"
-                            >
-                              <i class="fas fa-download"></i>
-                            </button>
-                            <button
-                              @click="deleteAttachment(attachment)"
-                              class="text-red-600 hover:text-red-800 text-sm"
-                              title="Deletar"
-                            >
-                              <i class="fas fa-trash"></i>
-                            </button>
-                          </div>
-                        </div>
-                      </template>
-                    </div>
-                  </div>
-
-                  <!-- Metadata -->
-                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <span class="font-medium text-gray-500">Author</span>
-                      <div class="mt-1 text-gray-900" x-text="selectedDocument?.author"></div>
-                    </div>
-                    <div>
-                      <span class="font-medium text-gray-500">Criado em</span>
-                      <div class="mt-1 text-gray-900" x-text="formatDate(selectedDocument?.created_at)"></div>
-                    </div>
-                    <div>
-                      <span class="font-medium text-gray-500">Atualizado em</span>
-                      <div class="mt-1 text-gray-900" x-text="formatDate(selectedDocument?.updated_at)"></div>
-                    </div>
-                    <div>
-                      <span class="font-medium text-gray-500">Prioridade</span>
-                      <div class="mt-1">
-                        <span
-                          class="px-2 py-1 text-xs font-medium rounded-full"
-                          :class="{
-                            'bg-green-100 text-green-800': selectedDocument?.priority === 'baixa',
-                            'bg-yellow-100 text-yellow-800': selectedDocument?.priority === 'media',
-                            'bg-orange-100 text-orange-800': selectedDocument?.priority === 'alta',
-                            'bg-red-100 text-red-800': selectedDocument?.priority === 'critica'
-                          }"
-                          x-text="selectedDocument?.priority"
-                        ></span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            <button
-              @click="editDocument(selectedDocument)"
-              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
-            >
-              <i class="fas fa-edit mr-2"></i>Editar
-            </button>
-            <button
-              @click="showVersions(selectedDocument)"
-              class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-            >
-              <i class="fas fa-history mr-2"></i>Ver Versões
-            </button>
-            <button
-              @click="showDetailModal = false"
-              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-            >
-              Fechar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Upload Attachment Modal -->
-    <div
-      x-show="showUploadModal"
-      class="fixed inset-0 z-50 overflow-y-auto"
-      x-transition:enter="transition ease-out duration-300"
-      x-transition:enter-start="opacity-0"
-      x-transition:enter-end="opacity-100"
-      x-transition:leave="transition ease-in duration-200"
-      x-transition:leave-start="opacity-100"
-      x-transition:leave-end="opacity-0"
-    >
-      <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-          <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-        </div>
-
-        <div
-          class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
-          x-transition:enter="transition ease-out duration-300"
-          x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-          x-transition:leave="transition ease-in duration-200"
-          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        >
-          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <div class="sm:flex sm:items-start">
-              <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
-                <i class="fas fa-paperclip text-green-600"></i>
-              </div>
-              <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Adicionar Anexo</h3>
-
-                <form @submit.prevent="uploadAttachment" class="space-y-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Arquivo</label>
-                    <input
-                      type="file"
-                      x-ref="fileInput"
-                      @change="handleFileSelect"
-                      accept=".pdf,.png,.jpg,.jpeg,.gif,.bmp,.tiff,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      required
-                    />
-                    <p class="text-xs text-gray-500 mt-1">Formatos permitidos: PDF, imagens, documentos Office (máx. 50MB)</p>
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Descrição (opcional)</label>
-                    <textarea
-                      x-model="uploadForm.description"
-                      rows="3"
-                      placeholder="Descreva o conteúdo do anexo..."
-                      class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    ></textarea>
-                  </div>
-
-                  <div x-show="selectedFile" class="bg-blue-50 p-3 rounded-lg">
-                    <div class="flex items-center space-x-2">
-                      <i class="fas fa-file text-blue-600"></i>
-                      <span class="text-sm text-blue-800" x-text="selectedFile.name"></span>
-                      <span class="text-xs text-blue-600" x-text="`(${formatFileSize(selectedFile.size)})`"></span>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            <button
-              @click="uploadAttachment"
-              :disabled="!selectedFile"
-              class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed sm:ml-3 sm:w-auto sm:text-sm"
-            >
-              <i class="fas fa-upload mr-2"></i>Enviar
-            </button>
-            <button
-              @click="closeUploadModal"
-              class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script>
-      function documentManager() {
-        console.log("documentManager inicializado");
-        return {
-          // Estado
-          documents: [],
-          categories: [],
-          selectedDocument: null,
-          showCreateModal: false,
-          showEditModal: false,
-          showDetailModal: false,
-          showUploadModal: false,
-          selectedFile: null,
-          documentAttachments: [],
-
-          // Filtros
-          filters: {
-            search: '',
-            category: '',
-            type: '',
-            status: ''
-          },
-
-          // Formulário
-          form: {
-            title: '',
-            description: '',
-            category_id: '',
-            type: '',
-            status: 'rascunho',
-            priority: 'baixa',
-            content: ''
-          },
-
-          uploadForm: {
-            description: ''
-          },
-
-          // Computed
-          get filteredDocuments() {
-            let filtered = this.documents;
-
-            if (this.filters.search) {
-              const search = this.filters.search.toLowerCase();
-              filtered = filtered.filter(doc =>
-                doc.title.toLowerCase().includes(search) ||
-                doc.description.toLowerCase().includes(search) ||
-                doc.author.toLowerCase().includes(search)
-              );
-            }
-
-            if (this.filters.category) {
-              filtered = filtered.filter(doc => doc.category_id === this.filters.category);
-            }
-
-            if (this.filters.type) {
-              filtered = filtered.filter(doc => doc.type === this.filters.type);
-            }
-
-            if (this.filters.status) {
-              filtered = filtered.filter(doc => doc.status === this.filters.status);
-            }
-
-            return filtered;
-          },
-
-          // Métodos
-          async init() {
-            this.detectTheme();
-            await this.loadDocuments();
-            await this.loadCategories();
-          },
-
-          async loadDocuments() {
-            try {
-              const response = await fetch('/documents/api/documents');
-              const data = await response.json();
-              if (data.success) {
-                this.documents = data.data;
-              }
-            } catch (error) {
-              console.error('Error ao carregar documentos:', error);
-            }
-          },
-
-          async loadCategories() {
-            try {
-              const response = await fetch('/documents/api/documents/categories');
-              const data = await response.json();
-              if (data.success) {
-                this.categories = data.data;
-              }
-            } catch (error) {
-              console.error('Error ao carregar categorias:', error);
-            }
-          },
-
-          async loadDocumentAttachments(documentId) {
-            try {
-              const response = await fetch(`/documents/api/documents/${documentId}/attachments`);
-              const data = await response.json();
-              if (data.success) {
-                this.documentAttachments = data.data.map(att => ({
-                  ...att,
-                  icon_class: this.getAttachmentIconClass(att),
-                  file_size_mb: this.formatFileSize(att.file_size)
-                }));
-              }
-            } catch (error) {
-              console.error('Error ao carregar anexos:', error);
-              this.documentAttachments = [];
-            }
-          },
-
-          getAttachmentIconClass(attachment) {
-            if (attachment.mime_type === 'application/pdf') {
-              return 'fas fa-file-pdf text-red-600';
-            } else if (attachment.mime_type.startsWith('image/')) {
-              return 'fas fa-file-image text-green-600';
-            } else {
-              return 'fas fa-file text-blue-600';
-            }
-          },
-
-          formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-          },
-
-          handleFileSelect(event) {
-            this.selectedFile = event.target.files[0];
-          },
-
-          async uploadAttachment() {
-            if (!this.selectedFile || !this.selectedDocument) return;
-
-            try {
-              const formData = new FormData();
-              formData.append('file', this.selectedFile);
-              formData.append('description', this.uploadForm.description);
-
-              const response = await fetch(`/documents/api/documents/${this.selectedDocument.id}/attachments`, {
-                method: 'POST',
-                body: formData
-              });
-
-              const data = await response.json();
-
-              if (data.success) {
-                this.closeUploadModal();
-                await this.loadDocumentAttachments(this.selectedDocument.id);
-                alert('Anexo enviado com sucesso!');
-              } else {
-                alert('Error ao enviar anexo: ' + data.message);
-              }
-            } catch (error) {
-              console.error('Error ao enviar anexo:', error);
-              alert('Error ao enviar anexo');
-            }
-          },
-
-          async deleteAttachment(attachment) {
-            if (!confirm('Tem certeza que deseja deletar este anexo?')) return;
-
-            try {
-              const response = await fetch(`/documents/api/documents/attachments/${attachment.id}`, {
-                method: 'DELETE'
-              });
-
-              const data = await response.json();
-
-              if (data.success) {
-                await this.loadDocumentAttachments(this.selectedDocument.id);
-                alert('Anexo deletado com sucesso!');
-              } else {
-                alert('Error ao deletar anexo: ' + data.message);
-              }
-            } catch (error) {
-              console.error('Error ao deletar anexo:', error);
-              alert('Error ao deletar anexo');
-            }
-          },
-
-          viewAttachment(attachment) {
-            window.open(`/documents/api/documents/attachments/${attachment.id}/view`, "_blank");
-          },
-
-          downloadAttachment(attachment) {
-            window.open(`/documents/api/documents/attachments/${attachment.id}/download`, '_blank');
-          },
-
-          closeUploadModal() {
-            this.showUploadModal = false;
-            this.selectedFile = null;
-            this.uploadForm.description = '';
-            if (this.$refs.fileInput) {
-              this.$refs.fileInput.value = '';
-            }
-          },
-
-          viewDocument(document) {
-            this.selectedDocument = document;
-            this.loadDocumentAttachments(document.id);
-            this.showDetailModal = true;
-          },
-
-          editDocument(document) {
-            this.selectedDocument = document;
-            this.form = { ...document };
-            this.showEditModal = true;
-            this.showDetailModal = false;
-          },
-
-          async saveDocument() {
-            try {
-              const url = this.showEditModal
-                ? `/documents/api/documents/${this.form.id}`
-                : '/documents/api/documents';
-
-              const method = this.showEditModal ? 'PUT' : 'POST';
-
-              const response = await fetch(url, {
-                method: method,
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(this.form)
-              });
-
-              const data = await response.json();
-
-              if (data.success) {
-                await this.loadDocuments();
-                this.closeModal();
-                alert(this.showEditModal ? 'Documento atualizado com sucesso!' : 'Documento criado com sucesso!');
-              } else {
-                alert('Error: ' + data.message);
-              }
-            } catch (error) {
-              console.error('Error ao salvar documento:', error);
-              alert('Error ao salvar documento');
-            }
-          },
-
-          closeModal() {
-            this.showCreateModal = false;
-            this.showEditModal = false;
-            this.form = {
-              title: '',
-              description: '',
-              category_id: '',
-              type: '',
-              status: 'rascunho',
-              priority: 'baixa',
-              content: ''
-            };
-          },
-
-          showVersions(document) {
-            alert("Funcionalidade de versões será implementada em breve");
-          },
-
-          async deleteDocument(document) {
-            if (!confirm("Tem certeza que deseja deletar este documento?")) return;
-
-            try {
-              const response = await fetch(`/documents/api/documents/${document.id}`, {
-                method: "DELETE"
-              });
-
-              const data = await response.json();
-
-              if (data.success) {
-                await this.loadDocuments();
-                alert("Documento deletado com sucesso!");
-              } else {
-                alert("Error ao deletar documento: " + data.message);
-              }
-            } catch (error) {
-              console.error("Error ao deletar documento:", error);
-              alert("Error ao deletar documento");
-            }
-          },
-
-          showVersions(document) {
-            alert('Funcionalidade de versões será implementada em breve');
-          },
-
-          getCategoryName(categoryId) {
-            const category = this.categories.find(cat => cat.id === categoryId);
-            return category ? category.name : 'Sem categoria';
-          },
-
-          getTypeName(type) {
-            const types = {
-              'ata': 'Ata de Reunião',
-              'regulamento': 'Regulamento',
-              'politica': 'Política',
-              'procedimento': 'Procedimento',
-              'manual': 'Manual',
-              'outro': 'Outro'
-            };
-            return types[type] || type;
-          },
-
-          formatDate(dateString) {
-          },
-
-          // Detectar tema do sistema
-          isDarkMode: false,
-
-          detectTheme() {
-            // Verificar se o usuário tem preferência salva
-            const savedTheme = localStorage.getItem('wiki-theme');
-            if (savedTheme) {
-              this.isDarkMode = savedTheme === 'dark';
-              if (this.isDarkMode) {
-                document.documentElement.classList.add('dark');
-              } else {
-                document.documentElement.classList.remove('dark');
-              }
-            } else {
-              // Detectar preferência do sistema
-              this.isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-              if (this.isDarkMode) {
-                document.documentElement.classList.add('dark');
-              }
-            }
-          },
-
-          toggleTheme() {
-            this.isDarkMode = !this.isDarkMode;
-            if (this.isDarkMode) {
-              document.documentElement.classList.add('dark');
-              localStorage.setItem('wiki-theme', 'dark');
-            } else {
-              document.documentElement.classList.remove('dark');
-              localStorage.setItem('wiki-theme', 'light');
-            }
-          },
-
-          // Preview de PDF antes do download
-          async previewAttachment(attachment) {
-            if (attachment.mime_type === 'application/pdf') {
-              // Abrir PDF em nova aba para preview
-              window.open(`/documents/api/documents/attachments/${attachment.id}/view`, '_blank');
-            } else {
-              // Para outros tipos, fazer download direto
-              this.downloadAttachment(attachment);
-            }
-          },
-
-          showNotification(message, type = 'info') {
-            // Criar notificação temporária
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ${
-              type === 'success' ? 'bg-green-500 text-white' :
-              type === 'error' ? 'bg-red-500 text-white' :
-              'bg-blue-500 text-white'
-            }`;
-            notification.textContent = message;
-
-            document.body.appendChild(notification);
-
-            // Animar entrada
-            setTimeout(() => {
-              notification.classList.remove('translate-x-full');
-            }, 100);
-
-            // Remover após 3 segundos
-            setTimeout(() => {
-              notification.classList.add('translate-x-full');
-              setTimeout(() => {
-                document.body.removeChild(notification);
-              }, 300);
-            }, 3000);
-          }            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('pt-BR');
-          }
-        };
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const addDocumentBtn = document.getElementById('addDocumentBtn');
+    const addDocumentForm = document.getElementById('addDocumentForm');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const documentForm = document.getElementById('documentForm');
+    const addFirstDocumentBtn = document.getElementById('addFirstDocumentBtn');
+    const fileViewerModal = document.getElementById('fileViewerModal');
+    const closeFileViewer = document.getElementById('closeFileViewer');
+    const deleteModal = document.getElementById('deleteModal');
+    const cancelDelete = document.getElementById('cancelDelete');
+    const confirmDelete = document.getElementById('confirmDelete');
+
+    let currentDocumentToDelete = null;
+
+    // Show/hide form
+    function toggleForm() {
+      addDocumentForm.classList.toggle('hidden');
+    }
+
+    addDocumentBtn.addEventListener('click', toggleForm);
+    cancelBtn.addEventListener('click', toggleForm);
+    addFirstDocumentBtn.addEventListener('click', toggleForm);
+
+    // Close modals
+    function closeModal(modal) {
+      modal.classList.add('hidden');
+    }
+
+    closeFileViewer.addEventListener('click', () => closeModal(fileViewerModal));
+    cancelDelete.addEventListener('click', () => closeModal(deleteModal));
+
+    // Close modal when clicking outside
+    fileViewerModal.addEventListener('click', e => {
+      if (e.target === fileViewerModal) {
+        closeModal(fileViewerModal);
       }
-    </script>
-  </body>
-</html>
+    });
+
+    deleteModal.addEventListener('click', e => {
+      if (e.target === deleteModal) {
+        closeModal(deleteModal);
+      }
+    });
+
+    // Handle form submission with file upload
+    documentForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('title', document.getElementById('title').value);
+      formData.append('category', document.getElementById('category').value);
+      formData.append('description', document.getElementById('description').value);
+      formData.append('content', document.getElementById('content').value);
+      formData.append('type', 'documento');
+      formData.append('priority', 'media');
+      formData.append('author', 'Matheus Gallina');
+
+      const fileInput = document.getElementById('file');
+      if (fileInput.files.length > 0) {
+        formData.append('file', fileInput.files[0]);
+      }
+
+      try {
+        const response = await fetch('/documents/create', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert('Documento criado com sucesso!');
+          documentForm.reset();
+          toggleForm();
+          loadDocuments();
+        } else {
+          alert('Erro ao criar documento: ' + result.message);
+        }
+      } catch (error) {
+        alert('Erro ao criar documento: ' + error.message);
+      }
+    });
+
+    // Load documents
+    async function loadDocuments() {
+      const loadingState = document.getElementById('loadingState');
+      const documentsGrid = document.getElementById('documentsGrid');
+      const emptyState = document.getElementById('emptyState');
+
+      loadingState.classList.remove('hidden');
+      documentsGrid.innerHTML = '';
+
+      try {
+        const response = await fetch('/documents/api/');
+        const data = await response.json();
+
+        loadingState.classList.add('hidden');
+
+        if (data.success && data.data.length > 0) {
+          data.data.forEach(doc => {
+            const docCard = createDocumentCard(doc);
+            documentsGrid.appendChild(docCard);
+          });
+        } else {
+          emptyState.classList.remove('hidden');
+        }
+      } catch (error) {
+        loadingState.classList.add('hidden');
+        console.error('Erro ao carregar documentos:', error);
+      }
+    }
+
+    function createDocumentCard(doc) {
+      const card = document.createElement('div');
+      card.className =
+        'bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700';
+
+      const hasAttachment = doc.filename || doc.attachment_path;
+      const attachmentIcon = hasAttachment
+        ? '<i class="fas fa-paperclip text-blue-500 mr-2" title="Contém anexo"></i>'
+        : '';
+
+      card.innerHTML = `
+        <div class="flex justify-between items-start mb-4">
+          <div class="flex-1">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">${attachmentIcon}${
+        doc.title
+      }</h3>
+            <span class="inline-block px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded mt-2">${
+              doc.category
+            }</span>
+          </div>
+          <button 
+            class="delete-doc-btn text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+            data-doc-id="${doc.id}"
+            title="Excluir documento"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">${
+          doc.description || 'Sem descrição'
+        }</p>
+        <div class="text-xs text-gray-500 dark:text-gray-500 mb-4">
+          <p>Autor: ${doc.author || 'Sistema'}</p>
+          <p>Criado: ${new Date(doc.created_at).toLocaleDateString()}</p>
+          ${
+            hasAttachment
+              ? '<p class="text-blue-600 dark:text-blue-400"><i class="fas fa-file mr-1"></i>Contém anexo</p>'
+              : ''
+          }
+        </div>
+        <div class="flex gap-2">
+          <button 
+            class="view-doc-btn flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+            data-doc-id="${doc.id}"
+          >
+            <i class="fas fa-eye mr-1"></i>Visualizar
+          </button>
+          ${
+            hasAttachment
+              ? `
+            <button 
+              class="view-attachment-btn px-3 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+              data-doc-id="${doc.id}"
+              title="Visualizar anexo"
+            >
+              <i class="fas fa-file"></i>
+            </button>
+          `
+              : ''
+          }
+          ${
+            window.currentUserRole === 'admin'
+              ? `
+            <button 
+              class="edit-doc-btn px-3 py-2 bg-yellow-600 text-white text-sm rounded hover:bg-yellow-700 transition-colors"
+              data-doc-id="${doc.id}"
+              title="Editar documento"
+            >
+              <i class="fas fa-edit"></i>
+            </button>
+          `
+              : ''
+          }
+        </div>
+      `;
+
+      // Add event listeners
+      const deleteBtn = card.querySelector('.delete-doc-btn');
+      const viewBtn = card.querySelector('.view-doc-btn');
+      const viewAttachmentBtn = card.querySelector('.view-attachment-btn');
+      const editBtn = card.querySelector('.edit-doc-btn');
+
+      deleteBtn.addEventListener('click', () => showDeleteConfirmation(doc.id));
+      viewBtn.addEventListener('click', () => viewDocument(doc));
+      if (viewAttachmentBtn) {
+        viewAttachmentBtn.addEventListener('click', () => viewAttachment(doc));
+      }
+      if (editBtn) {
+        editBtn.addEventListener('click', () => editDocument(doc.id));
+      }
+
+      return card;
+    }
+
+    function showDeleteConfirmation(docId) {
+      currentDocumentToDelete = docId;
+      deleteModal.classList.remove('hidden');
+    }
+
+    confirmDelete.addEventListener('click', async () => {
+      if (!currentDocumentToDelete) return;
+
+      try {
+        const response = await fetch(`/documents/${currentDocumentToDelete}`, {
+          method: 'DELETE',
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          closeModal(deleteModal);
+          loadDocuments();
+          alert('Documento excluído com sucesso!');
+        } else {
+          alert('Erro ao excluir documento: ' + result.message);
+        }
+      } catch (error) {
+        alert('Erro ao excluir documento: ' + error.message);
+      }
+    });
+
+    function viewDocument(doc) {
+      // Show document details in modal
+      const hasAttachment = doc.filename || doc.attachment_path;
+
+      // Set modal title
+      document.getElementById('fileViewerTitle').textContent = doc.title;
+
+      const content = document.getElementById('fileViewerContent');
+
+      // Create document info
+      const documentInfo = `
+        <div class="mb-6 text-left">
+          <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Informações do Documento</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Título:</span>
+                <span class="text-gray-900 dark:text-white ml-2">${doc.title}</span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Categoria:</span>
+                <span class="text-gray-900 dark:text-white ml-2">${doc.category}</span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Autor:</span>
+                <span class="text-gray-900 dark:text-white ml-2">${doc.author || 'Sistema'}</span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Criado em:</span>
+                <span class="text-gray-900 dark:text-white ml-2">${new Date(
+                  doc.created_at
+                ).toLocaleDateString()}</span>
+              </div>
+            </div>
+            ${
+              doc.description
+                ? `
+              <div class="mt-3">
+                <span class="font-medium text-gray-700 dark:text-gray-300">Descrição:</span>
+                <p class="text-gray-900 dark:text-white mt-1">${doc.description}</p>
+              </div>
+            `
+                : ''
+            }
+          </div>
+        </div>
+      `;
+
+      if (hasAttachment) {
+        // Document has attachment - show file viewer
+        const filePath = doc.attachment_path || `/documents/${doc.id}/view`;
+        const fileName = doc.original_filename || doc.filename;
+
+        if (doc.filename && doc.filename.toLowerCase().endsWith('.pdf')) {
+          content.innerHTML = `
+            ${documentInfo}
+            <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+              <iframe src="${filePath}" class="w-full h-96 border-0" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              </iframe>
+              <div class="hidden text-center py-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <i class="fas fa-exclamation-triangle text-2xl text-red-500 mb-2"></i>
+                <p class="text-red-700 dark:text-red-300 mb-2">Erro ao carregar o arquivo</p>
+                <p class="text-sm text-red-600 dark:text-red-400">O arquivo pode ter sido movido ou excluído.</p>
+                <div class="mt-4">
+                  <a href="/documents/${doc.id}/download" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-download mr-2"></i>Tentar Download
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div id="confirmationSection" class="mt-6 text-center">
+              <!-- Confirmation button will be loaded here -->
+            </div>
+          `;
+        } else if (doc.filename && /\.(png|jpg|jpeg|gif|webp)$/i.test(doc.filename)) {
+          content.innerHTML = `
+            ${documentInfo}
+            <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+              <img src="${filePath}" class="w-full max-h-96 object-contain" alt="${fileName}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              <div class="hidden text-center py-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <i class="fas fa-exclamation-triangle text-2xl text-red-500 mb-2"></i>
+                <p class="text-red-700 dark:text-red-300 mb-2">Erro ao carregar a imagem</p>
+                <p class="text-sm text-red-600 dark:text-red-400">A imagem pode ter sido movida ou excluída.</p>
+                <div class="mt-4">
+                  <a href="/documents/${doc.id}/download" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-download mr-2"></i>Tentar Download
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div id="confirmationSection" class="mt-6 text-center">
+              <!-- Confirmation button will be loaded here -->
+            </div>
+          `;
+        } else {
+          content.innerHTML = `
+            ${documentInfo}
+            <div class="text-center py-8">
+              <i class="fas fa-file text-4xl text-gray-400 mb-4"></i>
+              <p class="text-gray-600 dark:text-gray-400 mb-4">Visualização não disponível para este tipo de arquivo.</p>
+              <div class="flex justify-center gap-3">
+                <a href="/documents/${doc.id}/download" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                  <i class="fas fa-download mr-2"></i>Baixar Arquivo
+                </a>
+                <a href="/documents/${doc.id}/view" target="_blank" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
+                  <i class="fas fa-external-link-alt mr-2"></i>Abrir em Nova Aba
+                </a>
+              </div>
+            </div>
+            <div id="confirmationSection" class="mt-6 text-center">
+              <!-- Confirmation button will be loaded here -->
+            </div>
+          `;
+        }
+      } else {
+        // Document has no attachment
+        content.innerHTML = `
+          ${documentInfo}
+          <div class="text-center py-8">
+            <i class="fas fa-file-alt text-4xl text-gray-400 mb-4"></i>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">Este documento não possui arquivo anexado.</p>
+            <p class="text-sm text-gray-500 dark:text-gray-500">Apenas as informações do documento estão disponíveis.</p>
+          </div>
+          <div id="confirmationSection" class="mt-6 text-center">
+            <!-- Confirmation button will be loaded here -->
+          </div>
+        `;
+      }
+
+      // Load confirmation status and button
+      loadConfirmationStatus(doc.id);
+
+      fileViewerModal.classList.remove('hidden');
+    }
+
+    function viewAttachment(doc) {
+      if (!doc.filename && !doc.attachment_path) {
+        alert('Este documento não possui anexo.');
+        return;
+      }
+
+      const filePath = doc.attachment_path || `/documents/${doc.id}/view`;
+      const fileName = doc.original_filename || doc.filename;
+
+      document.getElementById('fileViewerTitle').textContent = `Anexo: ${fileName}`;
+
+      const content = document.getElementById('fileViewerContent');
+
+      if (doc.filename && doc.filename.toLowerCase().endsWith('.pdf')) {
+        content.innerHTML = `
+          <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+            <iframe src="${filePath}" class="w-full h-96 border-0"></iframe>
+          </div>
+        `;
+      } else if (doc.filename && /\.(png|jpg|jpeg|gif|webp)$/i.test(doc.filename)) {
+        content.innerHTML = `
+          <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+            <img src="${filePath}" class="w-full max-h-96 object-contain" alt="${fileName}">
+          </div>
+        `;
+      } else {
+        content.innerHTML = `
+          <div class="text-center py-8">
+            <i class="fas fa-file text-4xl text-gray-400 mb-4"></i>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">Visualização não disponível para este tipo de arquivo.</p>
+            <div class="flex justify-center gap-3">
+              <a href="${filePath}" download="${fileName}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                <i class="fas fa-download mr-2"></i>Baixar Arquivo
+              </a>
+              <a href="/documents/${doc.id}/download" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
+                <i class="fas fa-external-link-alt mr-2"></i>Abrir em Nova Aba
+              </a>
+            </div>
+          </div>
+        `;
+      }
+
+      fileViewerModal.classList.remove('hidden');
+    }
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+
+    function performSearch() {
+      const query = searchInput.value.trim();
+      if (query) {
+        // Implement search logic
+        console.log('Searching for:', query);
+      } else {
+        loadDocuments();
+      }
+    }
+
+    searchBtn.addEventListener('click', performSearch);
+    searchInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+    // Get current user role
+    async function getCurrentUserRole() {
+      try {
+        const response = await fetch('/auth/current-user');
+        const data = await response.json();
+        if (data.success) {
+          window.currentUserRole = data.data.role;
+        } else {
+          window.currentUserRole = 'user'; // Default to user
+        }
+      } catch (error) {
+        console.error('Erro ao obter papel do usuário:', error);
+        window.currentUserRole = 'user'; // Default to user
+      }
+    }
+
+    function editDocument(documentId) {
+      window.location.href = `/documents/${documentId}/edit`;
+    }
+
+    // Initial load
+    getCurrentUserRole().then(() => {
+      loadDocuments();
+    });
+
+    // Confirmation functions
+    async function loadConfirmationStatus(documentId) {
+      try {
+        const response = await fetch(`/documents/${documentId}/confirmation`);
+        const data = await response.json();
+
+        if (data.success) {
+          updateConfirmationButton(documentId, data.data);
+        } else {
+          console.error('Erro ao carregar status de confirmação:', data.message);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar status de confirmação:', error);
+      }
+    }
+
+    function updateConfirmationButton(documentId, confirmationData) {
+      const confirmationSection = document.getElementById('confirmationSection');
+
+      if (confirmationData.confirmed) {
+        // User already confirmed - show confirmation message
+        const confirmedDate = new Date(confirmationData.confirmation.confirmed_at);
+        const formattedDate = confirmedDate.toLocaleDateString('pt-BR');
+        const formattedTime = confirmedDate.toLocaleTimeString('pt-BR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+        confirmationSection.innerHTML = `
+          <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+            <div class="flex items-center justify-center">
+              <i class="fas fa-check-circle text-2xl text-green-500 mr-3"></i>
+              <div class="text-center">
+                <p class="text-green-700 dark:text-green-300 font-medium">Documento lido</p>
+                <p class="text-sm text-green-600 dark:text-green-400">Confirmado em ${formattedDate} às ${formattedTime}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        // User hasn't confirmed - show confirmation button
+        confirmationSection.innerHTML = `
+          <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <p class="text-blue-700 dark:text-blue-300 mb-3">Confirme que você leu este documento:</p>
+            <button 
+              id="confirmReadBtn"
+              class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition-colors flex items-center justify-center mx-auto"
+              onclick="confirmDocumentRead('${documentId}')"
+            >
+              <i class="fas fa-check mr-2"></i>✅ Confirmar Leitura
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    async function confirmDocumentRead(documentId) {
+      try {
+        const confirmBtn = document.getElementById('confirmReadBtn');
+        if (confirmBtn) {
+          confirmBtn.disabled = true;
+          confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Confirmando...';
+        }
+
+        const response = await fetch(`/documents/${documentId}/confirm`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Show success message
+          const confirmationSection = document.getElementById('confirmationSection');
+          confirmationSection.innerHTML = `
+            <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+              <div class="flex items-center justify-center">
+                <i class="fas fa-check-circle text-2xl text-green-500 mr-3"></i>
+                <div class="text-center">
+                  <p class="text-green-700 dark:text-green-300 font-medium">Leitura confirmada!</p>
+                  <p class="text-sm text-green-600 dark:text-green-400">Obrigado por confirmar a leitura deste documento.</p>
+                </div>
+              </div>
+            </div>
+          `;
+
+          // Show success notification
+          showNotification('Leitura confirmada com sucesso!', 'success');
+        } else {
+          // Show error message
+          showNotification('Erro ao confirmar leitura: ' + data.message, 'error');
+
+          // Reset button
+          if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="fas fa-check mr-2"></i>✅ Confirmar Leitura';
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao confirmar leitura:', error);
+        showNotification('Erro ao confirmar leitura. Tente novamente.', 'error');
+
+        // Reset button
+        const confirmBtn = document.getElementById('confirmReadBtn');
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerHTML = '<i class="fas fa-check mr-2"></i>✅ Confirmar Leitura';
+        }
+      }
+    }
+
+    function showNotification(message, type = 'info') {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ${
+        type === 'success'
+          ? 'bg-green-500 text-white'
+          : type === 'error'
+          ? 'bg-red-500 text-white'
+          : 'bg-blue-500 text-white'
+      }`;
+
+      notification.innerHTML = `
+        <div class="flex items-center">
+          <i class="fas ${
+            type === 'success'
+              ? 'fa-check-circle'
+              : type === 'error'
+              ? 'fa-exclamation-circle'
+              : 'fa-info-circle'
+          } mr-2"></i>
+          <span>${message}</span>
+        </div>
+      `;
+
+      document.body.appendChild(notification);
+
+      // Animate in
+      setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+      }, 100);
+
+      // Remove after 3 seconds
+      setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+  });
+</script>
+{% endblock %}

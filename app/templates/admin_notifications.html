@@ -37,12 +37,8 @@
                 <i class="fas fa-wifi text-white text-sm"></i>
               </div>
               <div class="ml-3">
-                <h1 class="text-xl font-bold text-gray-900 dark:text-white">
-                  VELOZ FIBRA
-                </h1>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
-                  Gerenciar Notificações
-                </p>
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Gerenciar Notificações</p>
               </div>
             </a>
           </div>
@@ -88,9 +84,7 @@
         <form @submit.prevent="createNotification()" class="space-y-4">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Usuário Destinatário
               </label>
               <select
@@ -106,9 +100,7 @@
             </div>
 
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Tipo de Notificação
               </label>
               <select
@@ -124,9 +116,7 @@
             </div>
 
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Prioridade
               </label>
               <select
@@ -142,9 +132,7 @@
             </div>
 
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Data de Expiração (opcional)
               </label>
               <input
@@ -156,9 +144,7 @@
           </div>
 
           <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Título
             </label>
             <input
@@ -171,9 +157,7 @@
           </div>
 
           <div>
-            <label
-              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Mensagem
             </label>
             <textarea
@@ -187,9 +171,7 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 URL de Ação (opcional)
               </label>
               <input
@@ -201,9 +183,7 @@
             </div>
 
             <div>
-              <label
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Texto do Botão de Ação (opcional)
               </label>
               <input
@@ -232,9 +212,7 @@
         class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
       >
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-            Todas as Notificações
-          </h3>
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Todas as Notificações</h3>
         </div>
 
         <div class="overflow-x-auto">
@@ -278,19 +256,13 @@
                 </th>
               </tr>
             </thead>
-            <tbody
-              class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700"
-            >
+            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               <template x-for="notification in notifications" :key="notification.id">
                 <tr>
-                  <td
-                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
-                  >
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                     <span x-text="getUserName(notification.user_id)"></span>
                   </td>
-                  <td
-                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white"
-                  >
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
                     <span x-text="notification.title"></span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
@@ -324,9 +296,7 @@
                       x-text="notification.is_read ? 'Lida' : 'Não lida'"
                     ></span>
                   </td>
-                  <td
-                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400"
-                  >
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     <span x-text="formatDate(notification.created_at)"></span>
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -378,9 +348,7 @@
 
           async loadNotifications() {
             try {
-              const response = await fetch(
-                '/api/notifications?include_read=true&limit=100'
-              );
+              const response = await fetch('/api/notifications?include_read=true&limit=100');
               const data = await response.json();
               this.notifications = data.notifications;
             } catch (error) {
@@ -424,9 +392,7 @@
               });
 
               if (response.ok) {
-                this.notifications = this.notifications.filter(
-                  n => n.id !== notificationId
-                );
+                this.notifications = this.notifications.filter(n => n.id !== notificationId);
                 alert('Notificação deletada com sucesso!');
               } else {
                 alert('Error ao deletar notificação');

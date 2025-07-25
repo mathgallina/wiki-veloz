@@ -4,6 +4,7 @@ Clean and modular Flask application
 """
 
 import os
+
 from app import create_app
 
 # Create the Flask application instance

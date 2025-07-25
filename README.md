@@ -1,393 +1,298 @@
-# 🚀 Wiki Veloz Fibra
+# Wiki Veloz Fibra
 
-Sistema de Wiki Interna da Veloz Fibra - Plataforma completa para documentação, gerenciamento de usuários, upload de PDFs e backup automático.
+Sistema de Wiki Interna da Veloz Fibra - Plataforma de documentação colaborativa que resolve o problema de documentação fragmentada em organizações.
 
-## ✨ Funcionalidades
+## 🚀 Stack Tecnológica
 
-### 📚 **Wiki e Documentação**
+- **Backend**: Flask 2.3+ (Python 3.11+)
+- **Frontend**: Vanilla JavaScript + Tailwind CSS + Alpine.js
+- **Database**: JSON files + Google Drive API
+- **Deployment**: Heroku/Railway
+- **Arquitetura**: Monolítica → Microservices (evolução)
 
-- ✅ Criação e edição de páginas
-- ✅ Categorização de conteúdo
-- ✅ Sistema de busca avançada
-- ✅ Histórico de mudanças
-- ✅ Markdown support
+## 📋 Pré-requisitos
 
-### 👥 **Gerenciamento de Usuários**
-
-- ✅ Sistema de login seguro
-- ✅ Controle de acesso por roles
-- ✅ Perfis de usuário
-- ✅ Logs de atividade
-- ✅ Notificações em tempo real
-
-### 📄 **Sistema de PDFs**
-
-- ✅ Upload de documentos
-- ✅ Visualização inline
-- ✅ Download seguro
-- ✅ Categorização
-- ✅ Busca por conteúdo
-
-### 💾 **Sistema de Backup**
-
-- ✅ Backup automático
-- ✅ Criptografia de dados
-- ✅ Compressão inteligente
-- ✅ Integração Google Drive (opcional)
-- ✅ Restauração de dados
-
-### 📊 **Analytics e Relatórios**
-
-- ✅ Dashboard administrativo
-- ✅ Métricas de uso
-- ✅ Relatórios exportáveis
-- ✅ Gráficos interativos
-
-## 🛠️ Tecnologias
-
-### Backend
-
-- **Python 3.9+**
-- **Flask** - Framework web
-- **Flask-Login** - Autenticação
-- **Werkzeug** - Utilitários web
-- **bcrypt** - Criptografia de senhas
-- **Pillow** - Processamento de imagens
-- **cryptography** - Criptografia avançada
-
-### Frontend
-
-- **HTML5** - Estrutura
-- **Tailwind CSS** - Estilização
-- **Alpine.js** - Interatividade
-- **JavaScript** - Funcionalidades
-
-### DevOps
-
-- **Docker** - Containerização
-- **Git** - Versionamento
-- **Pre-commit** - Qualidade de código
-- **Black** - Formatação Python
-- **Flake8** - Linting Python
-- **ESLint** - Linting JavaScript
-
-## 🚀 Instalação
-
-### Pré-requisitos
-
-- Python 3.9+
+- Python 3.11+
 - Node.js 16+
-- Git
+- npm 8+
+
+## 🛠️ Como Rodar Localmente
 
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/wiki-veloz-fibra.git
-cd wiki-veloz-fibra
+git clone <repository-url>
+cd wiki-veloz
 ```
 
-### 2. Configure o ambiente Python
+### 2. Configure o ambiente virtual
 
 ```bash
-# Crie o ambiente virtual
-python3 -m venv .venv
-
-# Ative o ambiente
+python -m venv .venv
 source .venv/bin/activate  # Linux/Mac
 # ou
-.venv\Scripts\activate     # Windows
-
-# Instale as dependências
-pip install -r requirements.txt
+.venv\Scripts\activate  # Windows
 ```
 
-### 3. Configure o ambiente Node.js
+### 3. Instale as dependências
 
 ```bash
-# Instale as dependências do frontend
+pip install -r requirements.txt
 npm install
-
-# Compile o CSS
-npm run build:css
 ```
 
 ### 4. Configure as variáveis de ambiente
 
 ```bash
-# Crie o arquivo .env
 cp .env.example .env
-
-# Edite as variáveis conforme necessário
-nano .env
+# Edite o arquivo .env com suas configurações
 ```
 
-### 5. Inicialize o banco de dados
-
-```bash
-# Execute o script de inicialização
-python3 app.py
-```
-
-### 6. Execute o servidor
+### 5. Execute a aplicação
 
 ```bash
 # Desenvolvimento
-python3 app.py
+python app.py
 
-# Ou usando Docker
-docker-compose up -d
+# Ou usando npm
+npm run dev
 ```
 
-## 📖 Uso
-
-### Acesso ao Sistema
-
-1. Abra o navegador em `http://localhost:8000`
-2. Faça login com as credenciais:
-   - **Usuário**: `matheus.gallina`
-   - **Senha**: `B@rcelona1998`
-
-### Funcionalidades Principais
-
-#### 📚 Criar Páginas
-
-1. Acesse a página inicial
-2. Clique em "Nova Página"
-3. Preencha título, categoria e conteúdo
-4. Use Markdown para formatação
-5. Salve a página
-
-#### 📄 Upload de PDFs
-
-1. Acesse "Gerenciar PDFs" no menu
-2. Arraste arquivos ou clique para selecionar
-3. Adicione descrição e tags
-4. Visualize ou baixe os documentos
-
-#### 👥 Gerenciar Usuários
-
-1. Acesse "Gerenciar Usuários" (apenas admin)
-2. Crie novos usuários
-3. Defina roles e permissões
-4. Monitore atividades
-
-#### 💾 Sistema de Backup
-
-1. Acesse "Sistema de Backup"
-2. Configure backup automático
-3. Monitore status dos backups
-4. Restaure dados quando necessário
-
-## 🧪 Testes
-
-### Executar Testes
-
-```bash
-# Todos os testes
-pytest
-
-# Com cobertura
-pytest --cov=app --cov-report=html
-
-# Testes específicos
-pytest tests/test_users.py
-```
-
-### Qualidade de Código
-
-```bash
-# Formatação
-black . --line-length=88
-
-# Linting
-flake8 . --max-line-length=88
-
-# Organizar imports
-isort . --profile=black
-
-# Verificar tudo
-npm run check
-```
-
-## 🐳 Docker
-
-### Desenvolvimento
-
-```bash
-# Construir imagem
-docker build -t wiki-veloz .
-
-# Executar container
-docker run -p 8000:8000 wiki-veloz
-
-# Ou usar docker-compose
-docker-compose up -d
-```
-
-### Produção
-
-```bash
-# Construir para produção
-docker build -t wiki-veloz:prod .
-
-# Executar com variáveis de produção
-docker run -d \
-  -p 8000:8000 \
-  -e FLASK_ENV=production \
-  -e SECRET_KEY=sua-chave-secreta \
-  wiki-veloz:prod
-```
+A aplicação estará disponível em `http://localhost:8000`
 
 ## 📁 Estrutura do Projeto
 
 ```
-wiki-veloz-fibra/
-├── app.py                 # Aplicação principal
-├── requirements.txt       # Dependências Python
-├── package.json          # Dependências Node.js
-├── pyproject.toml        # Configuração Python
-├── tailwind.config.js    # Configuração Tailwind
-├── .pre-commit-config.yaml # Hooks de qualidade
-├── Dockerfile            # Containerização
-├── docker-compose.yml    # Orquestração
-├── .vscode/             # Configurações VS Code
-│   └── settings.json
-├── data/                # Dados da aplicação
-│   ├── users.json
-│   ├── pages.json
-│   ├── notifications.json
-│   └── activity_log.json
-├── static/              # Arquivos estáticos
-│   ├── css/
-│   ├── js/
-│   └── uploads/
-├── templates/           # Templates HTML
-│   ├── index.html
-│   ├── login.html
-│   └── admin_*.html
-├── tests/              # Testes automatizados
-│   ├── __init__.py
-│   ├── conftest.py
-│   └── test_*.py
-└── backups/            # Backups do sistema
+wiki-veloz/
+├── app/                    # Aplicação Flask principal
+│   ├── core/              # Configurações e banco de dados
+│   ├── modules/           # Módulos da aplicação
+│   ├── shared/            # Utilitários compartilhados
+│   ├── static/            # Arquivos estáticos
+│   └── templates/         # Templates HTML
+├── components/            # Componentes JavaScript reutilizáveis
+├── pages/                # Rotas principais do sistema
+├── services/             # Integrações com APIs e serviços
+├── utils/                # Funções auxiliares
+├── constants/            # Constantes e configurações
+├── tests/                # Testes automatizados
+└── data/                 # Arquivos JSON (banco de dados)
 ```
 
-## 🔧 Configuração
+## 🎯 Como Organizar Novas Páginas ou Seções
+
+### 1. Criando um Novo Módulo
+
+1. **Crie a estrutura do módulo**:
+
+```bash
+mkdir -p app/modules/novo_modulo/{models,repositories,routes,services,validators}
+```
+
+2. **Implemente os arquivos básicos**:
+
+   - `models/`: Classes de dados
+   - `repositories/`: Acesso a dados
+   - `routes/`: Endpoints da API
+   - `services/`: Lógica de negócio
+   - `validators/`: Validação de dados
+
+3. **Registre o blueprint** em `app/__init__.py`:
+
+```python
+from app.modules.novo_modulo.routes import novo_modulo_bp
+app.register_blueprint(novo_modulo_bp, url_prefix="/api/novo-modulo")
+```
+
+### 2. Criando Novas Páginas
+
+1. **Adicione a rota** no módulo apropriado
+2. **Crie o template** em `app/templates/`
+3. **Adicione JavaScript** se necessário em `components/`
+
+### 3. Funcionalidades de Documentos
+
+#### Edição de Documentos (Admin)
+
+A Wiki Veloz agora inclui funcionalidade completa de edição de documentos para usuários com perfil Admin:
+
+- **Acesso**: Apenas usuários Admin podem editar documentos
+- **Campos editáveis**: Título, descrição, categoria
+- **Campos não editáveis**: Autor (mantido para histórico)
+- **Upload opcional**: Substituição de arquivo PDF/PNG/JPG
+- **Versionamento**: Controle automático de versões
+- **Histórico**: Rastreamento de alterações e quem editou
+
+**Como usar**:
+
+1. Faça login como usuário Admin
+2. Acesse a lista de documentos
+3. Clique no botão "Editar" (ícone de lápis) ao lado do documento
+4. Modifique os campos desejados
+5. Opcionalmente, substitua o arquivo
+6. Clique em "Salvar Alterações"
+
+**Recursos técnicos**:
+
+- Formulário responsivo com validação
+- Preview do arquivo atual
+- Controle de versão automático
+- Log de atividades de edição
+- Interface dark mode compatível
+
+### 4. Padrões de Código
+
+#### Python (Flask)
+
+```python
+@app.route('/api/endpoint', methods=['GET'])
+@login_required
+def endpoint_name():
+    try:
+        result = service.method()
+        return jsonify({
+            'success': True,
+            'data': result
+        }), 200
+    except Exception as e:
+        logger.error(f"Error: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Internal server error'
+        }), 500
+```
+
+#### JavaScript (Frontend)
+
+```javascript
+class ApiClient {
+  static async request(endpoint, options = {}) {
+    try {
+      const response = await fetch(`/api/${endpoint}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        ...options,
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('API request failed:', error);
+      throw error;
+    }
+  }
+}
+```
+
+## 🚀 Como Fazer Deploy
+
+### Heroku
+
+```bash
+# Configure o Heroku CLI
+heroku create wiki-veloz-fibra
+heroku config:set FLASK_ENV=production
+git push heroku main
+```
+
+### Railway
+
+```bash
+# Conecte seu repositório ao Railway
+# Configure as variáveis de ambiente no dashboard
+# O deploy será automático
+```
+
+### Docker
+
+```bash
+# Build da imagem
+docker build -t wiki-veloz .
+
+# Executar container
+docker run -p 8000:8000 wiki-veloz
+```
+
+## 🧪 Testes
+
+```bash
+# Executar todos os testes
+python -m pytest tests/
+
+# Executar testes específicos
+python -m pytest tests/test_auth.py
+
+# Com cobertura
+python -m pytest --cov=app tests/
+```
+
+## 📊 Comandos Úteis
+
+```bash
+# Desenvolvimento
+npm run dev              # Rodar aplicação
+npm run test             # Executar testes
+npm run format           # Formatar código
+npm run lint             # Linting
+npm run build:css        # Compilar CSS
+
+# Produção
+npm run build:css:prod   # CSS otimizado
+python app.py            # Rodar aplicação
+```
+
+## 🔧 Configurações Importantes
 
 ### Variáveis de Ambiente
 
 ```bash
-# .env
 FLASK_ENV=development
-SECRET_KEY=sua-chave-secreta
-UPLOAD_FOLDER=static/uploads
-MAX_CONTENT_LENGTH=52428800
+SECRET_KEY=your-secret-key
+GOOGLE_DRIVE_CREDENTIALS=path/to/credentials.json
+UPLOAD_FOLDER=app/static/uploads
 ```
 
-### Configurações do VS Code
+### Google Drive API
 
-O projeto inclui configurações otimizadas para:
+1. Crie um projeto no Google Cloud Console
+2. Ative a Google Drive API
+3. Crie uma service account
+4. Baixe as credenciais JSON
+5. Configure o arquivo de credenciais
 
-- ✅ Formatação automática
-- ✅ Linting em tempo real
-- ✅ IntelliSense para Python
-- ✅ Suporte a Tailwind CSS
-- ✅ Git integration
-- ✅ Debugging
+## 📚 Documentação
 
-## 📊 Monitoramento
-
-### Logs
-
-- Logs de aplicação em `logs/`
-- Logs de atividade em `data/activity_log.json`
-- Logs de erro em console
-
-### Métricas
-
-- Dashboard de analytics em `/admin/analytics`
-- Relatórios exportáveis
-- Métricas de performance
-
-## 🔒 Segurança
-
-### Implementado
-
-- ✅ Autenticação segura
-- ✅ Criptografia de senhas
-- ✅ Controle de acesso por roles
-- ✅ Validação de entrada
-- ✅ Sanitização de dados
-- ✅ Proteção CSRF
-- ✅ Headers de segurança
-
-### Recomendações
-
-- Use HTTPS em produção
-- Configure firewall adequado
-- Mantenha dependências atualizadas
-- Monitore logs de segurança
-- Faça backups regulares
+- [Guia de Analytics](ANALYTICS_GUIDE.md)
+- [Sistema de Backup](SISTEMA_BACKUP.md)
+- [Sistema de Notificações](SISTEMA_NOTIFICACOES.md)
+- [Sistema de PDFs](SISTEMA_PDFS.md)
+- [Credenciais Google Drive](CREDENCIAIS_GOOGLE_DRIVE.md)
 
 ## 🤝 Contribuição
 
-### Como Contribuir
-
 1. Fork o projeto
-2. Crie uma branch: `git checkout -b feature/nova-funcionalidade`
-3. Commit suas mudanças: `git commit -am 'Adiciona nova funcionalidade'`
-4. Push para a branch: `git push origin feature/nova-funcionalidade`
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
 
-### Padrões de Código
+## 📄 Licença
 
-- Use Black para formatação Python
-- Use Prettier para formatação JavaScript
-- Siga as convenções PEP 8
-- Escreva testes para novas funcionalidades
-- Documente APIs e funções
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
-## 📝 Licença
+## 👨‍💻 Autor
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
+**Matheus Gallina**
 
-## 👨‍💻 Desenvolvido por
+- Email: matheus@velozfibra.com
+- GitHub: [@mathuesgallina](https://github.com/mathuesgallina)
 
-**Matheus Gallina** - [matheus@velozfibra.com](mailto:matheus@velozfibra.com)
+## 🙏 Agradecimentos
 
-## 🆘 Suporte
-
-### Problemas Comuns
-
-#### Erro de Porta Ocupada
-
-```bash
-# Encontre o processo
-lsof -ti:8000
-
-# Mate o processo
-kill -9 $(lsof -ti:8000)
-```
-
-#### Erro de Dependências
-
-```bash
-# Reinstale as dependências
-pip install -r requirements.txt --force-reinstall
-```
-
-#### Problemas de CSS
-
-```bash
-# Recompile o CSS
-npm run build:css:prod
-```
-
-### Contato
-
-- **Email**: matheus@velozfibra.com
-- **Issues**: [GitHub Issues](https://github.com/seu-usuario/wiki-veloz-fibra/issues)
+- Equipe Veloz Fibra
+- Comunidade Flask
+- Contribuidores do projeto
 
 ---
 
-**⭐ Se este projeto te ajudou, considere dar uma estrela!**
+**Wiki Veloz Fibra** - Transformando a documentação corporativa em uma experiência colaborativa e eficiente.

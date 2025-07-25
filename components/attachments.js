@@ -1,4 +1,16 @@
-// Funcionalidades de Anexos
+/**
+ * @fileoverview Gerenciador de Anexos - Wiki Veloz Fibra
+ * @description Componente JavaScript para gerenciamento de anexos de documentos
+ * @version 1.0.0
+ * @author Matheus Gallina
+ * @license MIT
+ */
+
+/**
+ * Gerenciador de Anexos
+ * @description Alpine.js component para gerenciar anexos de documentos
+ * @returns {Object} Objeto com métodos e propriedades do gerenciador
+ */
 function attachmentManager() {
   return {
     selectedFile: null,
@@ -8,6 +20,11 @@ function attachmentManager() {
       description: '',
     },
 
+    /**
+     * Carrega anexos de um documento específico
+     * @param {string} documentId - ID do documento
+     * @returns {Promise<void>}
+     */
     async loadDocumentAttachments(documentId) {
       try {
         const response = await fetch(`/documents/api/documents/${documentId}/attachments`);
@@ -25,6 +42,11 @@ function attachmentManager() {
       }
     },
 
+    /**
+     * Determina a classe CSS do ícone baseado no tipo MIME
+     * @param {Object} attachment - Objeto do anexo
+     * @returns {string} Classe CSS do ícone
+     */
     getAttachmentIconClass(attachment) {
       if (attachment.mime_type === 'application/pdf') {
         return 'fas fa-file-pdf text-red-600';
@@ -35,6 +57,11 @@ function attachmentManager() {
       }
     },
 
+    /**
+     * Formata o tamanho do arquivo em bytes para unidades legíveis
+     * @param {number} bytes - Tamanho em bytes
+     * @returns {string} Tamanho formatado (ex: "1.5 MB")
+     */
     formatFileSize(bytes) {
       if (bytes === 0) return '0 Bytes';
       const k = 1024;
@@ -43,10 +70,18 @@ function attachmentManager() {
       return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     },
 
+    /**
+     * Manipula a seleção de arquivo no input
+     * @param {Event} event - Evento do input file
+     */
     handleFileSelect(event) {
       this.selectedFile = event.target.files[0];
     },
 
+    /**
+     * Faz upload de um anexo para o documento
+     * @returns {Promise<void>}
+     */
     async uploadAttachment() {
       if (!this.selectedFile || !this.selectedDocument) return;
 
@@ -78,6 +113,11 @@ function attachmentManager() {
       }
     },
 
+    /**
+     * Remove um anexo do documento
+     * @param {Object} attachment - Objeto do anexo a ser removido
+     * @returns {Promise<void>}
+     */
     async deleteAttachment(attachment) {
       if (!confirm('Tem certeza que deseja deletar este anexo?')) return;
 

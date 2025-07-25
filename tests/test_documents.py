@@ -176,7 +176,7 @@ class TestDocumentValidator:
         result = self.validator.validate_document_data(data)
 
         assert result["valid"] is False
-        assert "XSS" in result["errors"]
+        assert any("XSS" in error for error in result["errors"])
 
     def test_validate_category_data_success(self):
         """Testa validação bem-sucedida de dados de categoria"""
@@ -511,7 +511,7 @@ class TestDocumentService:
             ),
         ]
 
-        mock_categories = [DocumentCategory(id="cat-1", name="Test Category")]
+        mock_categories = [DocumentCategory(id="cat-1", name="Test Category", description="Test description", color="#3b82f6")]
 
         with patch.object(self.service, "get_all_documents", return_value=mock_docs):
             with patch.object(
@@ -521,6 +521,7 @@ class TestDocumentService:
                 self.service.analytics = {
                     "views": {"doc-1": 10, "doc-2": 5},
                     "downloads": {"doc-1": 3, "doc-2": 2},
+                    "daily_stats": {},
                 }
 
                 stats = self.service.get_dashboard_stats()
@@ -546,7 +547,7 @@ class TestDocumentAPI:
         # Mock de autenticação
         with patch("app.modules.documents.routes.login_required") as mock_auth:
             mock_auth.return_value = lambda f: f
-            self.app.register_blueprint(self.app.modules.documents.routes.documents_bp)
+            # Blueprint já registrado no create_app()
 
     def test_get_documents_api(self):
         """Testa API de listagem de documentos"""

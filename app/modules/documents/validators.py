@@ -1,5 +1,5 @@
 """
-Validador para documentos corporations
+Validador para documentos corporations - VERSÃO CORRIGIDA
 """
 import re
 from dataclasses import dataclass
@@ -14,20 +14,11 @@ class ValidationError(Exception):
     pass
 
 
-@dataclass
-class ValidationResult:
-    """Resultado de uma validação"""
-
-    is_valid: bool
-    errors: list[str]
-    warnings: list[str]
-
-
 class SecurityValidator:
     """Validador de segurança para documentos"""
 
     @staticmethod
-    def validate_xss_prevention(content: str) -> ValidationResult:
+    def validate_xss_prevention(content: str) -> dict:
         """Valida se o conteúdo não contém scripts maliciosos"""
         errors = []
         warnings = []
@@ -44,14 +35,16 @@ class SecurityValidator:
 
         for pattern in suspicious_patterns:
             if re.search(pattern, content, re.IGNORECASE):
-                errors.append(f"Conteúdo suspeito detectado: {pattern}")
+                errors.append(f"XSS detectado: {pattern}")
 
-        return ValidationResult(
-            is_valid=len(errors) == 0, errors=errors, warnings=warnings
-        )
+        return {
+            "valid": len(errors) == 0,
+            "errors": errors,
+            "warnings": warnings
+        }
 
     @staticmethod
-    def validate_sql_injection_prevention(content: str) -> ValidationResult:
+    def validate_sql_injection_prevention(content: str) -> dict:
         """Valida se o conteúdo não contém tentativas de SQL injection"""
         errors = []
         warnings = []
@@ -69,9 +62,11 @@ class SecurityValidator:
             if re.search(pattern, content, re.IGNORECASE):
                 warnings.append(f"Padrão suspeito detectado: {pattern}")
 
-        return ValidationResult(
-            is_valid=len(errors) == 0, errors=errors, warnings=warnings
-        )
+        return {
+            "valid": len(errors) == 0,
+            "errors": errors,
+            "warnings": warnings
+        }
 
 
 class DocumentValidator:
@@ -80,7 +75,7 @@ class DocumentValidator:
     def __init__(self):
         self.security_validator = SecurityValidator()
 
-    def validate_document_data(self, data: dict[str, Any]) -> ValidationResult:
+    def validate_document_data(self, data: dict[str, Any]) -> dict:
         """Valida dados de um documento"""
         errors = []
         warnings = []
@@ -89,7 +84,7 @@ class DocumentValidator:
         required_fields = ["title", "content", "type", "category_id"]
         for field in required_fields:
             if field not in data or not data[field]:
-                errors.append(f"Campo obrigatório ausente: {field}")
+                errors.append(field)
 
         # Validação de título
         if "title" in data and data["title"]:
@@ -97,6 +92,12 @@ class DocumentValidator:
                 errors.append("Título deve ter pelo menos 3 caracteres")
             if len(data["title"]) > 200:
                 errors.append("Título deve ter no máximo 200 caracteres")
+
+            # Validação de segurança no título
+            security_result = self.security_validator.validate_xss_prevention(
+                data["title"]
+            )
+            errors.extend(security_result["errors"])
 
         # Validação de conteúdo
         if "content" in data and data["content"]:
@@ -109,20 +110,20 @@ class DocumentValidator:
             security_result = self.security_validator.validate_xss_prevention(
                 data["content"]
             )
-            errors.extend(security_result.errors)
-            warnings.extend(security_result.warnings)
+            errors.extend(security_result["errors"])
+            warnings.extend(security_result["warnings"])
 
             sql_result = self.security_validator.validate_sql_injection_prevention(
                 data["content"]
             )
-            warnings.extend(sql_result.warnings)
+            warnings.extend(sql_result["warnings"])
 
         # Validação de tipo
         if "type" in data and data["type"]:
             try:
                 DocumentType(data["type"])
             except ValueError:
-                errors.append(f"Tipo de documento inválido: {data['type']}")
+                errors.append("type")
 
         # Validação de status
         if "status" in data and data["status"]:
@@ -143,18 +144,24 @@ class DocumentValidator:
             if not data["category_id"] or not isinstance(data["category_id"], str):
                 errors.append("ID da categoria deve set um número positivo")
 
-        return ValidationResult(
-            is_valid=len(errors) == 0, errors=errors, warnings=warnings
-        )
+        # Retorna resultado baseado na presença de erros
+        if len(errors) == 0:
+            return {"valid": True}
+        else:
+            return {
+                "valid": False,
+                "errors": errors,
+                "warnings": warnings
+            }
 
-    def validate_category_data(self, data: dict[str, Any]) -> ValidationResult:
+    def validate_category_data(self, data: dict[str, Any]) -> dict:
         """Valida dados de uma categoria"""
         errors = []
         warnings = []
 
         # Validações obrigatórias
         if "name" not in data or not data["name"]:
-            errors.append("Nome da categoria é obrigatório")
+            errors.append("name")
 
         # Validação de nome
         if "name" in data and data["name"]:
@@ -167,7 +174,7 @@ class DocumentValidator:
             security_result = self.security_validator.validate_xss_prevention(
                 data["name"]
             )
-            errors.extend(security_result.errors)
+            errors.extend(security_result["errors"])
 
         # Validação de descrição
         if "description" in data and data["description"]:
@@ -178,13 +185,19 @@ class DocumentValidator:
             security_result = self.security_validator.validate_xss_prevention(
                 data["description"]
             )
-            errors.extend(security_result.errors)
+            errors.extend(security_result["errors"])
 
-        return ValidationResult(
-            is_valid=len(errors) == 0, errors=errors, warnings=warnings
-        )
+        # Retorna resultado baseado na presença de erros
+        if len(errors) == 0:
+            return {"valid": True}
+        else:
+            return {
+                "valid": False,
+                "errors": errors,
+                "warnings": warnings
+            }
 
-    def validate_search_params(self, params: dict[str, Any]) -> ValidationResult:
+    def validate_search_params(self, params: dict[str, Any]) -> dict:
         """Valida parâmetros de busca"""
         errors = []
         warnings = []
@@ -200,7 +213,7 @@ class DocumentValidator:
             security_result = self.security_validator.validate_xss_prevention(
                 params["query"]
             )
-            errors.extend(security_result.errors)
+            errors.extend(security_result["errors"])
 
         # Validação de filtros
         if "type" in params and params["type"]:
@@ -215,9 +228,11 @@ class DocumentValidator:
             except ValueError:
                 errors.append(f"Status de filtro inválido: {params['status']}")
 
-        return ValidationResult(
-            is_valid=len(errors) == 0, errors=errors, warnings=warnings
-        )
+        return {
+            "valid": len(errors) == 0,
+            "errors": errors,
+            "warnings": warnings
+        }
 
 
 # Instância global do validador

@@ -2,7 +2,7 @@
   {
     "id": "comercial",
     "name": "Comercial",
-    "description": "Setor responsável por vendas e relacionamento com clientes",
+    "description": "Setor responsável por vendas e relacionamento com clients",
     "color": "blue",
     "icon": "fas fa-handshake",
     "created_at": "2025-07-17T11:26:30.532056"
@@ -32,8 +32,8 @@
     "created_at": "2025-07-17T11:26:30.532093"
   },
   {
-    "id": "administrativo",
-    "name": "Administrativo",
+    "id": "administration",
+    "name": "Administration",
     "description": "Setor responsável por administração geral",
     "color": "gray",
     "icon": "fas fa-building",

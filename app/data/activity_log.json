@@ -740,5 +740,656 @@
     "details": "Acesso à API de páginas",
     "timestamp": "2025-07-24T10:33:45.569176",
     "ip_address": "127.0.0.1"
+  },
+  {
+    "id": "activity-000107",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T11:25:13.190186"
+  },
+  {
+    "id": "activity-20250725115259",
+    "user_id": "admin-001",
+    "action": "page_created",
+    "details": "Página criada: Bem-vindo ao Wiki Veloz",
+    "timestamp": "2025-07-25T11:52:59.049229"
+  },
+  {
+    "id": "activity-20250725115259",
+    "user_id": "admin-001",
+    "action": "page_created",
+    "details": "Página criada: Como Usar o Sistema",
+    "timestamp": "2025-07-25T11:52:59.050731"
+  },
+  {
+    "id": "activity-20250725115259",
+    "user_id": "admin-001",
+    "action": "page_created",
+    "details": "Página criada: Políticas da Empresa",
+    "timestamp": "2025-07-25T11:52:59.051605"
+  },
+  {
+    "id": "activity-20250725121622",
+    "user_id": "user-fac47cd1",
+    "action": "user_created",
+    "details": "Usuário criado: Usuário Teste",
+    "timestamp": "2025-07-25T12:16:22.573017"
+  },
+  {
+    "id": "activity-20250725121645",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:16:45.290669"
+  },
+  {
+    "id": "activity-20250725121646",
+    "user_id": "user-fa9c7a8f",
+    "action": "user_created",
+    "details": "Usuário criado: Usuário Teste",
+    "timestamp": "2025-07-25T12:16:46.186636"
+  },
+  {
+    "id": "activity-20250725121646",
+    "user_id": "user-fac47cd1",
+    "action": "login",
+    "details": "Login realizado por Usuário Teste",
+    "timestamp": "2025-07-25T12:16:46.365366"
+  },
+  {
+    "id": "activity-20250725121655",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:16:55.303810"
+  },
+  {
+    "id": "activity-20250725121723",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:17:23.759207"
+  },
+  {
+    "id": "activity-20250725121832",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:18:32.458899"
+  },
+  {
+    "id": "activity-20250725123146",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:31:46.108458"
+  },
+  {
+    "id": "activity-20250725123532",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:35:32.604042"
+  },
+  {
+    "id": "activity-20250725123612",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:36:12.821489"
+  },
+  {
+    "id": "activity-20250725123622",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:36:22.403727"
+  },
+  {
+    "id": "activity-20250725123634",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:36:34.456659"
+  },
+  {
+    "id": "activity-20250725123649",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:36:49.284321"
+  },
+  {
+    "id": "activity-20250725123649",
+    "user_id": "admin-001",
+    "action": "document_created",
+    "details": "Documento criado: Documento de Teste via API",
+    "timestamp": "2025-07-25T12:36:49.300965"
+  },
+  {
+    "id": "activity-20250725124035",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:40:35.196410"
+  },
+  {
+    "id": "activity-20250725124414",
+    "user_id": "admin-001",
+    "action": "document_created",
+    "details": "Documento criado: Instalação ",
+    "timestamp": "2025-07-25T12:44:14.362595"
+  },
+  {
+    "id": "activity-20250725125558",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:55:58.857377"
+  },
+  {
+    "id": "activity-20250725125601",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T12:56:01.252784"
+  },
+  {
+    "id": "activity-20250725125601",
+    "user_id": "admin-001",
+    "action": "document_created",
+    "details": "Documento criado: Teste de Documento Refatorado",
+    "timestamp": "2025-07-25T12:56:01.263527"
+  },
+  {
+    "id": "activity-20250725125601",
+    "user_id": "admin-001",
+    "action": "document_created",
+    "details": "Documento criado: Teste com Anexo",
+    "timestamp": "2025-07-25T12:56:01.267467"
+  },
+  {
+    "id": "activity-20250725125824",
+    "user_id": "admin-001",
+    "action": "document_created",
+    "details": "Documento criado: teste ",
+    "timestamp": "2025-07-25T12:58:24.672993"
+  },
+  {
+    "id": "activity-20250725130855",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T13:08:55.485024"
+  },
+  {
+    "id": "activity-20250725130951",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T13:09:51.478840"
+  },
+  {
+    "id": "activity-20250725130951",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: Teste",
+    "timestamp": "2025-07-25T13:09:51.501084"
+  },
+  {
+    "id": "activity-20250725131015",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: Documento de Teste API",
+    "timestamp": "2025-07-25T13:10:15.531640"
+  },
+  {
+    "id": "activity-20250725131019",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: Novo Documento via API",
+    "timestamp": "2025-07-25T13:10:19.742515"
+  },
+  {
+    "id": "activity-20250725131024",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: Documento de Teste via API",
+    "timestamp": "2025-07-25T13:10:24.328059"
+  },
+  {
+    "id": "activity-20250725131029",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: Teste de Documento Refatorado",
+    "timestamp": "2025-07-25T13:10:29.712517"
+  },
+  {
+    "id": "activity-20250725131034",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: Teste com Anexo",
+    "timestamp": "2025-07-25T13:10:34.211437"
+  },
+  {
+    "id": "activity-20250725131043",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: teste ",
+    "timestamp": "2025-07-25T13:10:43.781052"
+  },
+  {
+    "id": "activity-20250725131206",
+    "user_id": "admin-001",
+    "action": "document_created",
+    "details": "Documento criado: Comercial",
+    "timestamp": "2025-07-25T13:12:06.422408"
+  },
+  {
+    "id": "activity-20250725131532",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T13:15:32.217517"
+  },
+  {
+    "id": "activity-20250725131547",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T13:15:47.297905"
+  },
+  {
+    "id": "activity-20250725131547",
+    "user_id": "admin-001",
+    "action": "document_created",
+    "details": "Documento criado: Documento de Teste - Visualização",
+    "timestamp": "2025-07-25T13:15:47.314910"
+  },
+  {
+    "id": "activity-20250725131549",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T13:15:49.581656"
+  },
+  {
+    "id": "activity-20250725131609",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T13:16:09.755338"
+  },
+  {
+    "id": "activity-20250725131628",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T13:16:28.878733"
+  },
+  {
+    "id": "activity-20250725131812",
+    "user_id": "admin-001",
+    "action": "document_downloaded",
+    "details": "Documento baixado: Documento de Teste - Visualização",
+    "timestamp": "2025-07-25T13:18:12.907184"
+  },
+  {
+    "id": "activity-20250725131905",
+    "user_id": "admin-001",
+    "action": "document_created",
+    "details": "Documento criado: teste matheus",
+    "timestamp": "2025-07-25T13:19:05.873818"
+  },
+  {
+    "id": "activity-20250725132138",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T13:21:38.195354"
+  },
+  {
+    "id": "activity-20250725132154",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T13:21:54.669794"
+  },
+  {
+    "id": "activity-20250725132154",
+    "user_id": "admin-001",
+    "action": "document_created",
+    "details": "Documento criado: Documento PDF de Teste",
+    "timestamp": "2025-07-25T13:21:54.687321"
+  },
+  {
+    "id": "activity-20250725132159",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T13:21:59.501026"
+  },
+  {
+    "id": "activity-20250725132218",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T13:22:18.577385"
+  },
+  {
+    "id": "activity-20250725132249",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T13:22:49.697140"
+  },
+  {
+    "id": "activity-20250725132413",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: Instalação ",
+    "timestamp": "2025-07-25T13:24:13.097600"
+  },
+  {
+    "id": "activity-20250725132417",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: Documento de Teste - Visualização",
+    "timestamp": "2025-07-25T13:24:17.296181"
+  },
+  {
+    "id": "activity-20250725132422",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: Documento PDF de Teste",
+    "timestamp": "2025-07-25T13:24:22.663759"
+  },
+  {
+    "id": "activity-20250725132606",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: teste matheus",
+    "timestamp": "2025-07-25T13:26:06.614570"
+  },
+  {
+    "id": "activity-20250725133536",
+    "user_id": "admin-001",
+    "action": "document_created",
+    "details": "Documento criado: Comercial",
+    "timestamp": "2025-07-25T13:35:36.816956"
+  },
+  {
+    "id": "activity-20250725140434",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T14:04:34.412098"
+  },
+  {
+    "id": "activity-20250725140434",
+    "user_id": "user-1d88d202",
+    "action": "user_created",
+    "details": "Usuário criado: Matheus Gallina",
+    "timestamp": "2025-07-25T14:04:34.610229"
+  },
+  {
+    "id": "activity-20250725140434",
+    "user_id": "user-8610d015",
+    "action": "user_created",
+    "details": "Usuário criado: Bruna Silva",
+    "timestamp": "2025-07-25T14:04:34.793760"
+  },
+  {
+    "id": "activity-20250725140624",
+    "user_id": "user-f22add99",
+    "action": "user_created",
+    "details": "Usuário criado: Matheus Gallina",
+    "timestamp": "2025-07-25T14:06:24.422670"
+  },
+  {
+    "id": "activity-20250725140818",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T14:08:18.257927"
+  },
+  {
+    "id": "activity-20250725140842",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T14:08:42.240865"
+  },
+  {
+    "id": "activity-20250725141213",
+    "user_id": "system",
+    "action": "user_deleted",
+    "details": "Usuário deletado: Usuário Teste",
+    "timestamp": "2025-07-25T14:12:13.115048"
+  },
+  {
+    "id": "activity-20250725141216",
+    "user_id": "system",
+    "action": "user_deleted",
+    "details": "Usuário deletado: Usuário Teste",
+    "timestamp": "2025-07-25T14:12:16.351018"
+  },
+  {
+    "id": "activity-20250725141222",
+    "user_id": "system",
+    "action": "user_deleted",
+    "details": "Usuário deletado: Matheus Gallina",
+    "timestamp": "2025-07-25T14:12:22.835190"
+  },
+  {
+    "id": "activity-20250725141225",
+    "user_id": "system",
+    "action": "user_deleted",
+    "details": "Usuário deletado: Bruna Silva",
+    "timestamp": "2025-07-25T14:12:25.632503"
+  },
+  {
+    "id": "activity-20250725141227",
+    "user_id": "system",
+    "action": "user_deleted",
+    "details": "Usuário deletado: Matheus Gallina",
+    "timestamp": "2025-07-25T14:12:27.799535"
+  },
+  {
+    "id": "activity-20250725141234",
+    "user_id": "bruna-001",
+    "action": "user_updated",
+    "details": "Usuário atualizado: Bruna Silva",
+    "timestamp": "2025-07-25T14:12:34.466779"
+  },
+  {
+    "id": "activity-20250725144932",
+    "user_id": "bruna-001",
+    "action": "user_updated",
+    "details": "Usuário atualizado: Bruna Silva",
+    "timestamp": "2025-07-25T14:49:32.418262"
+  },
+  {
+    "id": "activity-20250725145502",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T14:55:02.357426"
+  },
+  {
+    "id": "activity-20250725150045",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T15:00:45.892831"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "test_action",
+    "details": "Teste de log manual via API",
+    "timestamp": "2025-07-25T15:00:45.915081",
+    "ip_address": "127.0.0.1"
+  },
+  {
+    "id": "activity-20250725150633",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T15:06:33.944191"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "search",
+    "details": "Pesquisou por: veloz (5 resultados)",
+    "timestamp": "2025-07-25T15:06:33.950951",
+    "ip_address": "unknown"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "search",
+    "details": "Pesquisou por: internet (3 resultados)",
+    "timestamp": "2025-07-25T15:06:33.954161",
+    "ip_address": "unknown"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "search",
+    "details": "Pesquisou por: fibra (4 resultados)",
+    "timestamp": "2025-07-25T15:06:33.959120",
+    "ip_address": "unknown"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "search",
+    "details": "Pesquisou por: processors (3 resultados)",
+    "timestamp": "2025-07-25T15:06:33.962317",
+    "ip_address": "unknown"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "search",
+    "details": "Pesquisou por: ferramentas (2 resultados)",
+    "timestamp": "2025-07-25T15:06:33.965313",
+    "ip_address": "unknown"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "search",
+    "details": "Pesquisou por: internet (3 resultados)",
+    "timestamp": "2025-07-25T15:06:33.969970",
+    "ip_address": "unknown"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "search",
+    "details": "Pesquisou por: processors-internos (0 resultados)",
+    "timestamp": "2025-07-25T15:06:33.973077",
+    "ip_address": "unknown"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "search",
+    "details": "Pesquisou por: ferramentas apps (0 resultados)",
+    "timestamp": "2025-07-25T15:06:33.976563",
+    "ip_address": "unknown"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "search",
+    "details": "Pesquisou por: veloz (5 resultados)",
+    "timestamp": "2025-07-25T15:06:33.980273",
+    "ip_address": "unknown"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "search",
+    "details": "Pesquisou por: docu (4 resultados)",
+    "timestamp": "2025-07-25T15:07:05.312973",
+    "ip_address": "unknown"
+  },
+  {
+    "user_id": "admin-001",
+    "action": "search",
+    "details": "Pesquisou por: comercial (2 resultados)",
+    "timestamp": "2025-07-25T15:07:22.338480",
+    "ip_address": "unknown"
+  },
+  {
+    "id": "activity-20250725154708",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T15:47:08.753699"
+  },
+  {
+    "id": "activity-20250725154708",
+    "user_id": "admin-001",
+    "action": "document_updated",
+    "details": "Documento editado: Comercial - Editado em 15:47",
+    "timestamp": "2025-07-25T15:47:08.789520"
+  },
+  {
+    "id": "activity-20250725154950",
+    "user_id": "admin-001",
+    "action": "document_created",
+    "details": "Documento criado: Instalação ",
+    "timestamp": "2025-07-25T15:49:50.557209"
+  },
+  {
+    "id": "activity-20250725155101",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T15:51:01.924445"
+  },
+  {
+    "id": "activity-20250725155101",
+    "user_id": "admin-001",
+    "action": "document_updated",
+    "details": "Documento editado: Comercial - Editado em 15:47 - Editado em 15:51",
+    "timestamp": "2025-07-25T15:51:01.956638"
+  },
+  {
+    "id": "activity-20250725155127",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T15:51:27.212469"
+  },
+  {
+    "id": "activity-20250725155127",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: Comercial - Editado em 15:47 - Editado em 15:51",
+    "timestamp": "2025-07-25T15:51:27.233271"
+  },
+  {
+    "id": "activity-20250725155127",
+    "user_id": "admin-001",
+    "action": "login",
+    "details": "Login realizado por Matheus Gallina",
+    "timestamp": "2025-07-25T15:51:27.415798"
+  },
+  {
+    "id": "activity-20250725155257",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: Instalação ",
+    "timestamp": "2025-07-25T15:52:57.946443"
+  },
+  {
+    "id": "activity-20250725155303",
+    "user_id": "admin-001",
+    "action": "document_deleted",
+    "details": "Documento deletado: Comercial",
+    "timestamp": "2025-07-25T15:53:03.130966"
+  },
+  {
+    "id": "activity-20250725155347",
+    "user_id": "admin-001",
+    "action": "document_created",
+    "details": "Documento criado: Comercial",
+    "timestamp": "2025-07-25T15:53:47.763209"
   }
 ]
