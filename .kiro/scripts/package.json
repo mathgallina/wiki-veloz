@@ -1,0 +1,28 @@
+{
+  "name": "kiro-automation",
+  "version": "2.0.0",
+  "scripts": {
+    "scan": "node task-manager.js scan",
+    "list": "node task-manager.js list",
+    "status": "node task-manager.js status",
+    "complete": "node task-manager.js complete",
+    "watch": "node task-manager.js watch",
+    "report": "node task-manager.js report",
+    "validate": "./validate-task-format.sh",
+    "backup": "./backup-tasks.sh",
+    "cleanup": "./weekly-cleanup.sh",
+    "health": "./health-dashboard.sh"
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.1",
+    "glob": "^10.3.10",
+    "chalk": "^5.3.0",
+    "inquirer": "^9.2.12"
+  },
+  "devDependencies": {
+    "fs-extra": "^11.1.1",
+    "glob": "^10.3.10",
+    "chalk": "^5.3.0",
+    "inquirer": "^9.2.12"
+  }
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "31f2fa58-6c78-4092-a1e3-a32791eff945",
+    "document_id": "66d84edd-f729-4924-b83a-fb5011399da3",
+    "original_filename": "editor_20250718_183419_NOVAS_REGRAS_COMERCIAIS__A_PARTIR_DE_16_07_2025.pdf",
+    "filename": "44c41eb4-47e3-475b-b865-c6ae3789f4a5.pdf",
+    "file_path": "static/uploads/attachments/44c41eb4-47e3-475b-b865-c6ae3789f4a5.pdf",
+    "file_size": 3515122,
+    "mime_type": "application/pdf",
+    "description": "teste",
+    "uploaded_by": "Matheus Gallina",
+    "uploaded_at": "2025-07-23T15:16:53.485278"
+  },
+  {
+    "id": "f9db4d91-6a93-4df3-a832-4c8fc76fde64",
+    "document_id": "20c67176-5e11-451a-9565-6c797e7d4ec5",
+    "original_filename": "editor_20250718_183419_NOVAS_REGRAS_COMERCIAIS__A_PARTIR_DE_16_07_2025.pdf",
+    "filename": "c7b14bb4-6d9b-4735-a5dd-7f084a38f4a9.pdf",
+    "file_path": "static/uploads/attachments/c7b14bb4-6d9b-4735-a5dd-7f084a38f4a9.pdf",
+    "file_size": 3515122,
+    "mime_type": "application/pdf",
+    "description": "teste",
+    "uploaded_by": "Matheus Gallina",
+    "uploaded_at": "2025-07-23T15:19:37.844461"
+  },
+  {
+    "id": "e47d0159-6b0e-462a-8b90-582de12b95dc",
+    "document_id": "1d1d5d37-0ebf-415c-8902-f012e0f6234f",
+    "original_filename": "editor_20250718_183419_NOVAS_REGRAS_COMERCIAIS__A_PARTIR_DE_16_07_2025.pdf",
+    "filename": "f8d13acd-cf49-482c-bd8c-39f667e8566f.pdf",
+    "file_path": "static/uploads/attachments/f8d13acd-cf49-482c-bd8c-39f667e8566f.pdf",
+    "file_size": 3515122,
+    "mime_type": "application/pdf",
+    "description": "teste",
+    "uploaded_by": "Matheus Gallina",
+    "uploaded_at": "2025-07-23T15:20:32.592661"
+  }
+]

@@ -1,1 +1,19 @@
 Flask==2.3.3
+Flask-CORS==4.0.0
+markdown==3.5.1
+python-slugify==8.0.1
+Werkzeug==2.3.7
+gunicorn==21.2.0
+Flask-Login==0.6.3
+Flask-WTF==1.1.1
+WTForms==3.0.1
+bcrypt==4.0.1
+python-dotenv==1.0.0
+# Backup System Dependencies
+google-auth==2.23.4
+google-auth-oauthlib==1.1.0
+google-auth-httplib2==0.1.1
+google-api-python-client==2.108.0
+cryptography==41.0.7
+schedule==1.2.0
+zipfile36==0.1.3

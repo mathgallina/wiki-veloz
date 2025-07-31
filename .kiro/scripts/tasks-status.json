@@ -1,0 +1,370 @@
+{
+  "lastUpdate": "2025-07-23T16:29:32.638Z",
+  "tasks": [
+    {
+      "id": "architecture-refactor-1.1",
+      "feature": "architecture-refactor",
+      "number": "1.1",
+      "description": "Setup base structure",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-1.2",
+      "feature": "architecture-refactor",
+      "number": "1.2",
+      "description": "Implement modular system base",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-1.3",
+      "feature": "architecture-refactor",
+      "number": "1.3",
+      "description": "Configure modular testing system",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-2.1",
+      "feature": "architecture-refactor",
+      "number": "2.1",
+      "description": "Extract users logic to module",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-2.2",
+      "feature": "architecture-refactor",
+      "number": "2.2",
+      "description": "Implement users module routes and templates",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-2.3",
+      "feature": "architecture-refactor",
+      "number": "2.3",
+      "description": "Implement authentication and authorization",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-3.1",
+      "feature": "architecture-refactor",
+      "number": "3.1",
+      "description": "Extract pages logic to module",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-3.2",
+      "feature": "architecture-refactor",
+      "number": "3.2",
+      "description": "Implement pages module routes and templates",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-3.3",
+      "feature": "architecture-refactor",
+      "number": "3.3",
+      "description": "Implement versioning system",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-4.1",
+      "feature": "architecture-refactor",
+      "number": "4.1",
+      "description": "Extract PDFs logic to module",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-4.2",
+      "feature": "architecture-refactor",
+      "number": "4.2",
+      "description": "Implement upload system and Google Drive",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-4.3",
+      "feature": "architecture-refactor",
+      "number": "4.3",
+      "description": "Implement PDFs module routes and templates",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-5.1",
+      "feature": "architecture-refactor",
+      "number": "5.1",
+      "description": "Extract notifications logic to module",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-5.2",
+      "feature": "architecture-refactor",
+      "number": "5.2",
+      "description": "Implement real-time notifications system",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-5.3",
+      "feature": "architecture-refactor",
+      "number": "5.3",
+      "description": "Implement notifications module routes and templates",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-6.1",
+      "feature": "architecture-refactor",
+      "number": "6.1",
+      "description": "Extract analytics logic to module",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-6.2",
+      "feature": "architecture-refactor",
+      "number": "6.2",
+      "description": "Implement dashboards and cache",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-6.3",
+      "feature": "architecture-refactor",
+      "number": "6.3",
+      "description": "Implement analytics module routes and templates",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-7.1",
+      "feature": "architecture-refactor",
+      "number": "7.1",
+      "description": "Extract backup logic to module",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-7.2",
+      "feature": "architecture-refactor",
+      "number": "7.2",
+      "description": "Implement scheduling and Google Drive",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-7.3",
+      "feature": "architecture-refactor",
+      "number": "7.3",
+      "description": "Implement backup module routes and templates",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-8.1",
+      "feature": "architecture-refactor",
+      "number": "8.1",
+      "description": "Performance tuning and optimization",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-8.2",
+      "feature": "architecture-refactor",
+      "number": "8.2",
+      "description": "Documentation and training",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "architecture-refactor-8.3",
+      "feature": "architecture-refactor",
+      "number": "8.3",
+      "description": "Cleanup and production deploy",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/architecture-refactor/tasks.md"
+    },
+    {
+      "id": "documents-corporations-1.0",
+      "feature": "documents-corporations",
+      "number": "1.0",
+      "description": "Setup base structure",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
+    },
+    {
+      "id": "documents-corporations-1.1",
+      "feature": "documents-corporations",
+      "number": "1.1",
+      "description": "Implement data models",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
+    },
+    {
+      "id": "documents-corporations-1.2",
+      "feature": "documents-corporations",
+      "number": "1.2",
+      "description": "Implement repository pattern",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
+    },
+    {
+      "id": "documents-corporations-1.3",
+      "feature": "documents-corporations",
+      "number": "1.3",
+      "description": "Implement business logic",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
+    },
+    {
+      "id": "documents-corporations-2.1",
+      "feature": "documents-corporations",
+      "number": "2.1",
+      "description": "Create API endpoints",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
+    },
+    {
+      "id": "documents-corporations-3.1",
+      "feature": "documents-corporations",
+      "number": "3.1",
+      "description": "Create base UI components",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
+    },
+    {
+      "id": "documents-corporations-4.1",
+      "feature": "documents-corporations",
+      "number": "4.1",
+      "description": "Implement validations and security",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
+    },
+    {
+      "id": "documents-corporations-4.2",
+      "feature": "documents-corporations",
+      "number": "4.2",
+      "description": "Advanced UI features",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
+    },
+    {
+      "id": "documents-corporations-4.3",
+      "feature": "documents-corporations",
+      "number": "4.3",
+      "description": "Metrics and analytics",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
+    },
+    {
+      "id": "documents-corporations-5.1",
+      "feature": "documents-corporations",
+      "number": "5.1",
+      "description": "Unit testing",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
+    },
+    {
+      "id": "documents-corporations-5.2",
+      "feature": "documents-corporations",
+      "number": "5.2",
+      "description": "Documentation and deployment",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/documents-corporativos/tasks.md"
+    },
+    {
+      "id": "payment-gateway-1.1",
+      "feature": "payment-gateway",
+      "number": "1.1",
+      "description": "Setup base structure",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/payment-gateway/tasks.md"
+    },
+    {
+      "id": "payment-gateway-1.2",
+      "feature": "payment-gateway",
+      "number": "1.2",
+      "description": "Implement core business logic",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/payment-gateway/tasks.md"
+    },
+    {
+      "id": "payment-gateway-2.1",
+      "feature": "payment-gateway",
+      "number": "2.1",
+      "description": "Create base UI components",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/payment-gateway/tasks.md"
+    },
+    {
+      "id": "payment-gateway-3.1",
+      "feature": "payment-gateway",
+      "number": "3.1",
+      "description": "API development",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/payment-gateway/tasks.md"
+    },
+    {
+      "id": "payment-gateway-4.1",
+      "feature": "payment-gateway",
+      "number": "4.1",
+      "description": "Unit testing",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/payment-gateway/tasks.md"
+    },
+    {
+      "id": "user-authentication-1.1",
+      "feature": "user-authentication",
+      "number": "1.1",
+      "description": "Setup authentication structure",
+      "completed": true,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/user-authentication/tasks.md"
+    },
+    {
+      "id": "user-authentication-1.2",
+      "feature": "user-authentication",
+      "number": "1.2",
+      "description": "Implement core auth logic",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/user-authentication/tasks.md"
+    },
+    {
+      "id": "user-authentication-2.1",
+      "feature": "user-authentication",
+      "number": "2.1",
+      "description": "Create auth UI components",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/user-authentication/tasks.md"
+    },
+    {
+      "id": "user-authentication-3.1",
+      "feature": "user-authentication",
+      "number": "3.1",
+      "description": "API endpoints development",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/user-authentication/tasks.md"
+    },
+    {
+      "id": "user-authentication-4.1",
+      "feature": "user-authentication",
+      "number": "4.1",
+      "description": "Auth testing suite",
+      "completed": false,
+      "file": "/Users/mathuesgallina/wiki-veloz /.kiro/specs/user-authentication/tasks.md"
+    }
+  ],
+  "summary": {
+    "total": 45,
+    "completed": 14,
+    "pending": 31
+  }
+}

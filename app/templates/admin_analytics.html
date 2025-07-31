@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analytics - Wiki Veloz Fibra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="h-full bg-gray-50 dark:bg-gray-900">
+    <div class="min-h-full">
+      <!-- Header -->
+      <header
+        class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700"
+      >
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between items-center py-4">
+            <div class="flex items-center">
+              <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
+                <i class="fas fa-chart-line mr-2"></i>
+                Analytics & Relatórios
+              </h1>
+            </div>
+            <div class="flex items-center space-x-4">
+              <button
+                @click="exportData()"
+                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center"
+              >
+                <i class="fas fa-download mr-2"></i>
+                Exportar Dados
+              </button>
+              <a
+                href="/"
+                class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              >
+                <i class="fas fa-home mr-1"></i>
+                Voltar à Wiki
+              </a>
+              <a
+                href="/admin/users"
+                class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              >
+                <i class="fas fa-users mr-1"></i>
+                Usuários
+              </a>
+              <a
+                href="/admin/activity"
+                class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              >
+                <i class="fas fa-history mr-1"></i>
+                Logs
+              </a>
+              <a
+                href="/logout"
+                class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
+              >
+                <i class="fas fa-sign-out-alt mr-1"></i>
+                Sair
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div x-data="analyticsDashboard()" class="space-y-6">
+          <!-- Loading State -->
+          <div x-show="loading" class="flex justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+
+          <!-- Dashboard Content -->
+          <div x-show="!loading" class="space-y-6">
+            <!-- Overview Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                      <i class="fas fa-file-alt text-2xl text-blue-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                          Total de Páginas
+                        </dt>
+                        <dd
+                          class="text-lg font-medium text-gray-900 dark:text-white"
+                          x-text="overview.total_pages || 0"
+                        ></dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                      <i class="fas fa-users text-2xl text-green-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                          Usuários Ativos
+                        </dt>
+                        <dd
+                          class="text-lg font-medium text-gray-900 dark:text-white"
+                          x-text="overview.active_users || 0"
+                        ></dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                      <i class="fas fa-chart-line text-2xl text-purple-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                          Atividades (30 dias)
+                        </dt>
+                        <dd
+                          class="text-lg font-medium text-gray-900 dark:text-white"
+                          x-text="overview.recent_activities || 0"
+                        ></dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                  <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                      <i class="fas fa-shield-alt text-2xl text-red-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                          Administradores
+                        </dt>
+                        <dd
+                          class="text-lg font-medium text-gray-900 dark:text-white"
+                          x-text="overview.admin_users || 0"
+                        ></dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Activity Types Chart -->
+              <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                  Tipos de Atividade
+                </h3>
+                <canvas id="activityChart" width="400" height="200"></canvas>
+              </div>
+
+              <!-- Pages Growth Chart -->
+              <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                  Crescimento de Páginas
+                </h3>
+                <canvas id="growthChart" width="400" height="200"></canvas>
+              </div>
+            </div>
+
+            <!-- Top Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Top Pages -->
+              <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+                    Páginas Mais Acessadas
+                  </h3>
+                </div>
+                <div class="p-6">
+                  <div class="space-y-4">
+                    <template x-for="(page, index) in topPages" :key="index">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                          <span
+                            class="text-sm font-medium text-gray-500 dark:text-gray-400 w-6"
+                            x-text="index + 1"
+                          ></span>
+                          <span
+                            class="text-sm text-gray-900 dark:text-white ml-3"
+                            x-text="page.title"
+                          ></span>
+                        </div>
+                        <span
+                          class="text-sm text-gray-500 dark:text-gray-400"
+                          x-text="page.views + ' visualizações'"
+                        ></span>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Top Users -->
+              <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+                    Usuários Mais Ativos
+                  </h3>
+                </div>
+                <div class="p-6">
+                  <div class="space-y-4">
+                    <template x-for="(user, index) in topUsers" :key="index">
+                      <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                          <span
+                            class="text-sm font-medium text-gray-500 dark:text-gray-400 w-6"
+                            x-text="index + 1"
+                          ></span>
+                          <div class="ml-3">
+                            <span
+                              class="text-sm font-medium text-gray-900 dark:text-white"
+                              x-text="user.name"
+                            ></span>
+                            <p
+                              class="text-xs text-gray-500 dark:text-gray-400"
+                              x-text="user.username"
+                            ></p>
+                          </div>
+                        </div>
+                        <span
+                          class="text-sm text-gray-500 dark:text-gray-400"
+                          x-text="user.activity_count + ' ações'"
+                        ></span>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+              <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+                  Atividades Recentes
+                </h3>
+              </div>
+              <div class="p-6">
+                <div class="space-y-4">
+                  <template x-for="activity in latestActivities" :key="activity.timestamp">
+                    <div class="flex items-center space-x-4">
+                      <div class="flex-shrink-0">
+                        <div
+                          class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center"
+                        >
+                          <i class="fas fa-user text-blue-600 dark:text-blue-400 text-sm"></i>
+                        </div>
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p
+                          class="text-sm text-gray-900 dark:text-white"
+                          x-text="activity.details"
+                        ></p>
+                        <p
+                          class="text-xs text-gray-500 dark:text-gray-400"
+                          x-text="formatDate(activity.timestamp)"
+                        ></p>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      function analyticsDashboard() {
+        return {
+          loading: true,
+          overview: {},
+          topPages: [],
+          topUsers: [],
+          latestActivities: [],
+          activityChart: null,
+          growthChart: null,
+
+          async init() {
+            await this.loadAnalytics();
+            this.setupCharts();
+          },
+
+          async loadAnalytics() {
+            try {
+              const response = await fetch('/admin/analytics/api/overview');
+              if (response.ok) {
+                const data = await response.json();
+                this.overview = data.overview;
+                this.topPages = data.top_pages;
+                this.topUsers = data.top_users;
+                this.latestActivities = data.latest_activities;
+              } else {
+                console.error('Error ao carregar analytics');
+              }
+            } catch (error) {
+              console.error('Error ao carregar analytics:', error);
+            } finally {
+              this.loading = false;
+            }
+          },
+
+          setupCharts() {
+            this.$nextTick(() => {
+              this.setupActivityChart();
+              this.setupGrowthChart();
+            });
+          },
+
+          setupActivityChart() {
+            const ctx = document.getElementById('activityChart');
+            if (!ctx) return;
+
+            const activityTypes = this.overview.activity_types || {};
+            const labels = Object.keys(activityTypes).map(key => {
+              const labels = {
+                login: 'Login',
+                logout: 'Logout',
+                page_view: 'Visualização',
+                page_create: 'Criação',
+                page_update: 'Edição',
+                page_delete: 'Exclusão',
+                search: 'Pesquisa',
+                api_access: 'API',
+              };
+              return labels[key] || key;
+            });
+            const data = Object.values(activityTypes);
+
+            this.activityChart = new Chart(ctx, {
+              type: 'doughnut',
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    data: data,
+                    backgroundColor: [
+                      '#3B82F6',
+                      '#10B981',
+                      '#F59E0B',
+                      '#EF4444',
+                      '#8B5CF6',
+                      '#06B6D4',
+                      '#84CC16',
+                    ],
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: {
+                    position: 'bottom',
+                  },
+                },
+              },
+            });
+          },
+
+          setupGrowthChart() {
+            const ctx = document.getElementById('growthChart');
+            if (!ctx) return;
+
+            // Usar dados reais do backend
+            const pagesByMonth = this.overview.pages_by_month || {};
+            let months = Object.keys(pagesByMonth).sort();
+            let data = months.map(month => pagesByMonth[month] || 0);
+
+            // Se não há dados, usar dados simulados
+            if (months.length === 0) {
+              const currentMonth = new Date().getMonth();
+              const monthNames = [
+                'Jan',
+                'Fev',
+                'Mar',
+                'Abr',
+                'Mai',
+                'Jun',
+                'Jul',
+                'Ago',
+                'Set',
+                'Out',
+                'Nov',
+                'Dez',
+              ];
+              months = [];
+              data = [];
+
+              for (let i = 5; i >= 0; i--) {
+                const monthIndex = (currentMonth - i + 12) % 12;
+                months.push(monthNames[monthIndex]);
+                data.push(Math.floor(Math.random() * 5) + 1); // Dados simulados
+              }
+            }
+
+            this.growthChart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: months,
+                datasets: [
+                  {
+                    label: 'Páginas',
+                    data: data,
+                    borderColor: '#3B82F6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                  },
+                },
+              },
+            });
+          },
+
+          async exportData() {
+            try {
+              const response = await fetch('/admin/analytics/api/export');
+              if (response.ok) {
+                const data = await response.json();
+
+                // Criar arquivo JSON para download
+                const blob = new Blob([JSON.stringify(data, null, 2)], {
+                  type: 'application/json',
+                });
+
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `wiki-analytics-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                alert('Dados exportados com sucesso!');
+              } else {
+                alert('Error ao exportar dados');
+              }
+            } catch (error) {
+              console.error('Error ao exportar:', error);
+              alert('Error ao exportar dados');
+            }
+          },
+
+          formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleString('pt-BR');
+          },
+        };
+      }
+    </script>
+  </body>
+</html>

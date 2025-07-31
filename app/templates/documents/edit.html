@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Documento - Wiki Veloz{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Estilos específicos para dark mode */
+  .dark .bg-white {
+    background-color: #1f2937;
+  }
+
+  .dark .text-gray-900 {
+    color: #f9fafb;
+  }
+
+  .dark .text-gray-700 {
+    color: #d1d5db;
+  }
+
+  .dark .text-gray-600 {
+    color: #9ca3af;
+  }
+
+  .dark .border-gray-300 {
+    border-color: #4b5563;
+  }
+
+  .dark .bg-gray-50 {
+    background-color: #374151;
+  }
+
+  .dark .hover\:bg-gray-50:hover {
+    background-color: #4b5563;
+  }
+
+  /* Form styles for dark mode */
+  .dark .form-input {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+  }
+
+  .dark .form-input:focus {
+    border-color: #3b82f6;
+    ring-color: #3b82f6;
+  }
+
+  /* Button styles for dark mode */
+  .dark .btn-primary {
+    background-color: #3b82f6;
+    color: white;
+  }
+
+  .dark .btn-primary:hover {
+    background-color: #2563eb;
+  }
+
+  .dark .btn-secondary {
+    background-color: #6b7280;
+    color: white;
+  }
+
+  .dark .btn-secondary:hover {
+    background-color: #4b5563;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+          <i class="fas fa-edit mr-3 text-blue-600"></i>
+          Editar Documento
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400 mt-2">
+          Atualize as informações do documento
+        </p>
+      </div>
+      <a href="/documents" class="btn-secondary px-4 py-2 rounded-lg transition-colors">
+        <i class="fas fa-arrow-left mr-2"></i>Voltar
+      </a>
+    </div>
+
+    <!-- Edit Form -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 border border-gray-200 dark:border-gray-700">
+      <form id="editDocumentForm" enctype="multipart/form-data">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Título -->
+          <div class="md:col-span-2">
+            <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Título *
+            </label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value="{{ document.title }}"
+              required
+              class="form-input w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          <!-- Categoria -->
+          <div>
+            <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Categoria *
+            </label>
+            <select
+              id="category"
+              name="category"
+              required
+              class="form-input w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Selecione uma categoria</option>
+              <option value="Geral" {% if document.category == "Geral" %}selected{% endif %}>Geral</option>
+              <option value="Documentação" {% if document.category == "Documentação" %}selected{% endif %}>Documentação</option>
+              <option value="Políticas" {% if document.category == "Políticas" %}selected{% endif %}>Políticas</option>
+              <option value="Técnico" {% if document.category == "Técnico" %}selected{% endif %}>Técnico</option>
+              <option value="Financeiro" {% if document.category == "Financeiro" %}selected{% endif %}>Financeiro</option>
+              <option value="RH" {% if document.category == "RH" %}selected{% endif %}>RH</option>
+              <option value="Marketing" {% if document.category == "Marketing" %}selected{% endif %}>Marketing</option>
+              <option value="Vendas" {% if document.category == "Vendas" %}selected{% endif %}>Vendas</option>
+            </select>
+          </div>
+
+          <!-- Autor (não editável) -->
+          <div>
+            <label for="author" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Autor
+            </label>
+            <input
+              type="text"
+              id="author"
+              value="{{ document.author or 'Sistema' }}"
+              disabled
+              class="form-input w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              O autor não pode ser alterado
+            </p>
+          </div>
+
+          <!-- Descrição -->
+          <div class="md:col-span-2">
+            <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Descrição
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              rows="3"
+              class="form-input w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Descreva o documento..."
+            >{{ document.description or '' }}</textarea>
+          </div>
+
+          <!-- Arquivo Atual -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Arquivo Atual
+            </label>
+            {% if document.filename %}
+              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center">
+                    <i class="fas fa-file text-blue-500 mr-3 text-xl"></i>
+                    <div>
+                      <p class="font-medium text-gray-900 dark:text-white">
+                        {{ document.original_filename or document.filename }}
+                      </p>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Versão atual do arquivo
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex gap-2">
+                    <a href="/documents/{{ document.id }}/view" target="_blank" 
+                       class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors">
+                      <i class="fas fa-eye mr-1"></i>Visualizar
+                    </a>
+                    <a href="/documents/{{ document.id }}/download" 
+                       class="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors">
+                      <i class="fas fa-download mr-1"></i>Download
+                    </a>
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                <div class="flex items-center">
+                  <i class="fas fa-info-circle text-gray-400 mr-3"></i>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    Este documento não possui arquivo anexado
+                  </p>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Novo Arquivo (opcional) -->
+          <div class="md:col-span-2">
+            <label for="file" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <i class="fas fa-upload mr-2"></i>Substituir Arquivo (opcional)
+            </label>
+            <input
+              type="file"
+              id="file"
+              name="file"
+              accept=".pdf,.png,.jpg,.jpeg"
+              class="form-input w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
+            />
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Deixe em branco para manter o arquivo atual. Formatos aceitos: PDF, PNG, JPG. Máximo 50MB.
+            </p>
+          </div>
+
+          <!-- Informações de Versão -->
+          <div class="md:col-span-2">
+            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+              <h4 class="font-medium text-blue-900 dark:text-blue-100 mb-2">
+                <i class="fas fa-info-circle mr-2"></i>Informações de Versão
+              </h4>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span class="font-medium text-blue-800 dark:text-blue-200">Versão Atual:</span>
+                  <span class="text-blue-900 dark:text-blue-100 ml-2">{{ document.version or 1 }}</span>
+                </div>
+                <div>
+                  <span class="font-medium text-blue-800 dark:text-blue-200">Criado em:</span>
+                  <span class="text-blue-900 dark:text-blue-100 ml-2">
+                    {{ document.created_at.split('T')[0] if document.created_at else 'N/A' }}
+                  </span>
+                </div>
+                <div>
+                  <span class="font-medium text-blue-800 dark:text-blue-200">Última edição:</span>
+                  <span class="text-blue-900 dark:text-blue-100 ml-2">
+                    {{ document.updated_at.split('T')[0] if document.updated_at else 'N/A' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <a href="/documents" class="btn-secondary px-6 py-2 rounded-lg transition-colors">
+            Cancelar
+          </a>
+          <button
+            type="submit"
+            class="btn-primary px-6 py-2 rounded-lg transition-colors"
+          >
+            <i class="fas fa-save mr-2"></i>Salvar Alterações
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('editDocumentForm');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      // Disable submit button
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Salvando...';
+
+      try {
+        const formData = new FormData(form);
+        
+        const response = await fetch(window.location.pathname, {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          // Show success message
+          showNotification('Documento atualizado com sucesso!', 'success');
+          
+          // Redirect to documents page after a short delay
+          setTimeout(() => {
+            window.location.href = '/documents';
+          }, 1500);
+        } else {
+          showNotification('Erro ao atualizar documento: ' + result.message, 'error');
+        }
+      } catch (error) {
+        showNotification('Erro ao atualizar documento: ' + error.message, 'error');
+      } finally {
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i>Salvar Alterações';
+      }
+    });
+
+    function showNotification(message, type = 'info') {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ${
+        type === 'success'
+          ? 'bg-green-500 text-white'
+          : type === 'error'
+          ? 'bg-red-500 text-white'
+          : 'bg-blue-500 text-white'
+      }`;
+
+      notification.innerHTML = `
+        <div class="flex items-center">
+          <i class="fas ${
+            type === 'success'
+              ? 'fa-check-circle'
+              : type === 'error'
+              ? 'fa-exclamation-circle'
+              : 'fa-info-circle'
+          } mr-2"></i>
+          <span>${message}</span>
+        </div>
+      `;
+
+      document.body.appendChild(notification);
+
+      // Animate in
+      setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+      }, 100);
+
+      // Remove after 3 seconds
+      setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+  });
+</script>
+{% endblock %} 

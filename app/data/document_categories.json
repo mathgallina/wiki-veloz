@@ -1,0 +1,56 @@
+[
+  {
+    "id": "meeting-minutes",
+    "name": "Atas de Reunião",
+    "description": "Documentos de atas de reuniões e assembleias",
+    "color": "bg-blue-500",
+    "icon": "📋",
+    "created_at": "2025-07-23T10:53:45.980742",
+    "updated_at": "2025-07-23T10:53:45.980746"
+  },
+  {
+    "id": "company-rules",
+    "name": "Regras da Empresa",
+    "description": "Regras, normas e diretrizes corporativas",
+    "color": "bg-red-500",
+    "icon": "📜",
+    "created_at": "2025-07-23T10:53:45.980747",
+    "updated_at": "2025-07-23T10:53:45.980748"
+  },
+  {
+    "id": "policies",
+    "name": "Políticas",
+    "description": "Políticas internas e procedimentos",
+    "color": "bg-green-500",
+    "icon": "⚖️",
+    "created_at": "2025-07-23T10:53:45.980749",
+    "updated_at": "2025-07-23T10:53:45.980749"
+  },
+  {
+    "id": "procedures",
+    "name": "Procedimentos",
+    "description": "Procedimentos operacionais e manuais",
+    "color": "bg-purple-500",
+    "icon": "📖",
+    "created_at": "2025-07-23T10:53:45.980750",
+    "updated_at": "2025-07-23T10:53:45.980751"
+  },
+  {
+    "id": "contracts",
+    "name": "Contratos",
+    "description": "Contratos e acordos comerciais",
+    "color": "bg-orange-500",
+    "icon": "📄",
+    "created_at": "2025-07-23T10:53:45.980752",
+    "updated_at": "2025-07-23T10:53:45.980752"
+  },
+  {
+    "id": "reports",
+    "name": "Relatórios",
+    "description": "Relatórios gerenciais e técnicos",
+    "color": "bg-indigo-500",
+    "icon": "📊",
+    "created_at": "2025-07-23T10:53:45.980753",
+    "updated_at": "2025-07-23T10:53:45.980754"
+  }
+]

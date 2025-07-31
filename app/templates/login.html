@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Wiki Veloz Fibra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {},
+        },
+      };
+    </script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .login-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full space-y-8 p-8">
+      <!-- Logo e Título -->
+      <div class="text-center">
+        <div class="flex items-center justify-center mb-6">
+          <div
+            class="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mr-4"
+          >
+            <i class="fas fa-wifi text-2xl text-white"></i>
+          </div>
+          <div class="text-left">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
+            <p class="text-lg text-gray-600 dark:text-gray-300">Central de Conhecimento</p>
+          </div>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Acesso Seguro</h2>
+        <p class="text-gray-600 dark:text-gray-300">Faça login para acessar a wiki interna</p>
+      </div>
+
+      <!-- Formulário de Login -->
+      <div
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 border border-gray-200 dark:border-gray-700"
+      >
+        <form method="POST" class="space-y-6">
+          <!-- Mensagens de Flash -->
+          {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for
+          category, message in messages %}
+          <div
+            class="p-4 rounded-lg {% if category == 'error' %}bg-red-100 border border-red-400 text-red-700 dark:bg-red-900 dark:border-red-700 dark:text-red-300{% elif category == 'success' %}bg-green-100 border border-green-400 text-green-700 dark:bg-green-900 dark:border-green-700 dark:text-green-300{% else %}bg-blue-100 border border-blue-400 text-blue-700 dark:bg-blue-900 dark:border-blue-700 dark:text-blue-300{% endif %}"
+          >
+            <div class="flex items-center">
+              <i
+                class="fas {% if category == 'error' %}fa-exclamation-circle{% elif category == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %} mr-2"
+              ></i>
+              {{ message }}
+            </div>
+          </div>
+          {% endfor %} {% endif %} {% endwith %}
+
+          <!-- Campo Usuário -->
+          <div>
+            <label
+              for="username"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              <i class="fas fa-user mr-2"></i>Usuário
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+              class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors"
+              placeholder="Digite seu usuário"
+              autocomplete="username"
+            />
+          </div>
+
+          <!-- Campo Senha -->
+          <div>
+            <label
+              for="password"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              <i class="fas fa-lock mr-2"></i>Senha
+            </label>
+            <div class="relative">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-colors pr-12"
+                placeholder="Digite sua senha"
+                autocomplete="current-password"
+              />
+              <button
+                type="button"
+                onclick="togglePassword()"
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+              >
+                <i id="password-icon" class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Botão de Login -->
+          <button
+            type="submit"
+            class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-medium"
+          >
+            <i class="fas fa-sign-in-alt mr-2"></i>
+            Entrar
+          </button>
+        </form>
+
+        <!-- Informações de Segurança -->
+        <div
+          class="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
+        >
+          <div class="flex items-start">
+            <i class="fas fa-shield-alt text-blue-600 dark:text-blue-400 mt-1 mr-3"></i>
+            <div class="text-sm text-blue-800 dark:text-blue-200">
+              <p class="font-medium mb-1">Acesso Seguro</p>
+              <p>
+                Esta é uma área restrita da Veloz Fibra. Todas as atividades são registradas para
+                auditoria.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="text-center text-sm text-gray-500 dark:text-gray-400">
+        <p>&copy; 2025 Veloz Fibra. Sistema desenvolvido por Matheus Gallina.</p>
+        <p class="mt-1">Central de Conhecimento Interno</p>
+      </div>
+    </div>
+
+    <script>
+      function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const passwordIcon = document.getElementById('password-icon');
+
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          passwordIcon.className = 'fas fa-eye-slash';
+        } else {
+          passwordInput.type = 'password';
+          passwordIcon.className = 'fas fa-eye';
+        }
+      }
+
+      // Carregar tema salvo
+      const savedTheme = localStorage.getItem('wiki-theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
+  </body>
+</html>

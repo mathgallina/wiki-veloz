@@ -1,0 +1,2473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wiki Veloz Fibra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              inter: ['Inter', 'system-ui', 'sans-serif'],
+              poppins: ['Poppins', 'system-ui', 'sans-serif'],
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.6s ease-out',
+              'slide-up': 'slideUp 0.6s ease-out',
+              'scale-in': 'scaleIn 0.4s ease-out',
+              float: 'float 3s ease-in-out infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { transform: 'translateY(20px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              scaleIn: {
+                '0%': { transform: 'scale(0.95)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-10px)' },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+      }
+
+      .sidebar-transition {
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .markdown-content h1 {
+        @apply text-3xl font-bold mb-4 text-gray-900 dark:text-white;
+      }
+      .markdown-content h2 {
+        @apply text-2xl font-semibold mb-3 text-gray-800 dark:text-gray-200 mt-6;
+      }
+      .markdown-content h3 {
+        @apply text-xl font-semibold mb-2 text-gray-700 dark:text-gray-300 mt-4;
+      }
+      .markdown-content p {
+        @apply mb-3 text-gray-600 dark:text-gray-300 leading-relaxed;
+      }
+      .markdown-content ul {
+        @apply mb-3 pl-6;
+      }
+      .markdown-content li {
+        @apply mb-1 text-gray-600 dark:text-gray-300;
+      }
+      .markdown-content strong {
+        @apply font-semibold text-gray-900 dark:text-white;
+      }
+      .markdown-content em {
+        @apply italic text-gray-700 dark:text-gray-200;
+      }
+      .markdown-content blockquote {
+        @apply border-l-4 border-blue-500 pl-4 italic text-gray-600 dark:text-gray-300 my-4;
+      }
+      .markdown-content code {
+        @apply bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm font-mono text-gray-800 dark:text-gray-200;
+      }
+      .markdown-content pre {
+        @apply bg-gray-100 dark:bg-gray-700 p-4 rounded-lg overflow-x-auto my-4 text-gray-800 dark:text-gray-200;
+      }
+
+      /* Gradientes modernos */
+      .gradient-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .gradient-secondary {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+
+      .gradient-success {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      }
+
+      .gradient-warning {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      }
+
+      .gradient-info {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      }
+
+      /* Efeitos de hover modernos */
+      .card-hover {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+
+      /* Animações de entrada */
+      .animate-delay-100 {
+        animation-delay: 0.1s;
+      }
+      .animate-delay-200 {
+        animation-delay: 0.2s;
+      }
+      .animate-delay-300 {
+        animation-delay: 0.3s;
+      }
+      .animate-delay-400 {
+        animation-delay: 0.4s;
+      }
+      .animate-delay-500 {
+        animation-delay: 0.5s;
+      }
+      .animate-delay-600 {
+        animation-delay: 0.6s;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-200 font-inter"
+    x-data="wikiApp()"
+  >
+    <!-- Header -->
+    <header
+      class="bg-white/80 backdrop-blur-md shadow-lg border-b border-gray-200/50 dark:bg-gray-800/80 dark:shadow-xl dark:border-gray-700/50 transition-colors duration-200 sticky top-0 z-40"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <button
+              @click="sidebarOpen = !sidebarOpen"
+              class="lg:hidden p-2 rounded-xl text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-gray-700 transition-all duration-200"
+            >
+              <i class="fas fa-bars text-xl"></i>
+            </button>
+            <div class="flex items-center ml-4 lg:ml-0">
+              <a href="/" class="flex items-center group">
+                <div
+                  class="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center mr-3 shadow-lg group-hover:shadow-xl transition-all duration-300 animate-float"
+                >
+                  <i class="fas fa-wifi text-white text-lg"></i>
+                </div>
+                <div class="ml-2">
+                  <h1 class="text-xl font-bold text-gray-900 dark:text-white font-poppins">
+                    VELOZ FIBRA
+                  </h1>
+                  <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                    Central de Conhecimento
+                  </p>
+                </div>
+              </a>
+            </div>
+          </div>
+
+          <!-- Search Bar -->
+          <div class="flex-1 max-w-lg mx-4 hidden md:block">
+            <div class="relative">
+              <input
+                type="text"
+                placeholder="Pesquisar páginas, documentos e arquivos..."
+                class="w-full pl-12 pr-12 py-3 bg-white/80 backdrop-blur-sm border border-gray-300/50 dark:bg-gray-700/80 dark:border-gray-600/50 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-sm"
+                x-model="searchQuery"
+                @input="searchPages()"
+                @keydown.escape="searchQuery = ''; searchPages()"
+              />
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+              </div>
+
+              <!-- Loading indicator -->
+              <div
+                x-show="isSearching"
+                class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none"
+              >
+                <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
+              </div>
+
+              <!-- Clear button -->
+              <button
+                x-show="searchQuery && !isSearching"
+                @click="searchQuery = ''; searchPages()"
+                class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <!-- Theme Toggle Button -->
+            <button
+              @click="toggleTheme()"
+              class="p-3 rounded-xl text-gray-400 hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-sm"
+              :title="isDarkMode ? 'Mudar para modo claro' : 'Mudar para modo escuro'"
+            >
+              <i class="fas fa-sun text-xl" x-show="isDarkMode"></i>
+              <i class="fas fa-moon text-xl" x-show="!isDarkMode"></i>
+            </button>
+
+            <!-- Notifications Button -->
+            <div class="relative" x-data="{ notificationsOpen: false }">
+              <button
+                @click="notificationsOpen = !notificationsOpen; loadNotifications()"
+                class="p-3 rounded-xl text-gray-400 hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 shadow-sm relative"
+                title="Notificações"
+              >
+                <i class="fas fa-bell text-xl"></i>
+                <!-- Notification Badge -->
+                <div
+                  x-show="unreadCount > 0"
+                  class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold shadow-lg"
+                  x-text="unreadCount"
+                ></div>
+              </button>
+
+              <!-- Notifications Dropdown -->
+              <div
+                x-show="notificationsOpen"
+                @click.away="notificationsOpen = false"
+                class="absolute right-0 mt-3 w-80 bg-white/95 backdrop-blur-md dark:bg-gray-800/95 rounded-2xl shadow-2xl py-1 z-50 border border-gray-200/50 dark:border-gray-700/50 max-h-96 overflow-y-auto animate-fade-in"
+              >
+                <!-- Notifications Header -->
+                <div class="px-4 py-3 border-b border-gray-200/50 dark:border-gray-700/50">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">
+                      Notificações
+                    </h3>
+                    <button
+                      @click="markAllAsRead()"
+                      class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
+                      x-show="unreadCount > 0"
+                    >
+                      Marcar todas como lidas
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Notifications List -->
+                <div x-show="notifications.length === 0" class="px-4 py-8 text-center">
+                  <i class="fas fa-bell text-gray-400 text-2xl mb-2"></i>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">Nenhuma notificação</p>
+                </div>
+
+                <template x-for="notification in notifications" :key="notification.id">
+                  <div
+                    class="px-4 py-3 hover:bg-gray-50/80 dark:hover:bg-gray-700/80 transition-all duration-200 cursor-pointer"
+                    :class="!notification.is_read ? 'bg-blue-50/80 dark:bg-blue-900/20' : ''"
+                    @click="markAsRead(notification.id)"
+                  >
+                    <div class="flex items-start space-x-3">
+                      <!-- Notification Icon -->
+                      <div class="flex-shrink-0">
+                        <div
+                          class="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm"
+                          :class="{
+                            'bg-blue-100 text-blue-600': notification.type === 'info',
+                            'bg-green-100 text-green-600': notification.type === 'success',
+                            'bg-yellow-100 text-yellow-600': notification.type === 'warning',
+                            'bg-red-100 text-red-600': notification.type === 'error'
+                          }"
+                        >
+                          <i
+                            class="fas text-sm"
+                            :class="{
+                              'fa-info': notification.type === 'info',
+                              'fa-check': notification.type === 'success',
+                              'fa-exclamation-triangle': notification.type === 'warning',
+                              'fa-exclamation-circle': notification.type === 'error'
+                            }"
+                          ></i>
+                        </div>
+                      </div>
+
+                      <!-- Notification Content -->
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                          <p
+                            class="text-sm font-medium text-gray-900 dark:text-white"
+                            :class="!notification.is_read ? 'font-semibold' : ''"
+                            x-text="notification.title"
+                          ></p>
+                          <div class="flex items-center space-x-2">
+                            <!-- Priority Badge -->
+                            <span
+                              class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium"
+                              :class="{
+                                'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200': notification.priority === 'low',
+                                'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200': notification.priority === 'normal',
+                                'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200': notification.priority === 'high',
+                                'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200': notification.priority === 'urgent'
+                              }"
+                              x-text="notification.priority"
+                            ></span>
+
+                            <!-- Delete Button -->
+                            <button
+                              @click.stop="deleteNotification(notification.id)"
+                              class="text-gray-400 hover:text-red-500 transition-colors"
+                              title="Deletar notificação"
+                            >
+                              <i class="fas fa-trash text-xs"></i>
+                            </button>
+                          </div>
+                        </div>
+                        <p
+                          class="text-sm text-gray-600 dark:text-gray-300 mt-1"
+                          x-text="notification.message"
+                        ></p>
+                        <p
+                          class="text-xs text-gray-500 dark:text-gray-400 mt-2"
+                          x-text="formatDate(notification.created_at)"
+                        ></p>
+
+                        <!-- Action Button -->
+                        <div
+                          x-show="notification.action_url && notification.action_text"
+                          class="mt-2"
+                        >
+                          <a
+                            :href="notification.action_url"
+                            class="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
+                          >
+                            <span x-text="notification.action_text"></span>
+                            <i class="fas fa-external-link-alt ml-1"></i>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <!-- Load More Button -->
+                <div
+                  x-show="notifications.length > 0"
+                  class="px-4 py-3 border-t border-gray-200/50 dark:border-gray-700/50"
+                >
+                  <button
+                    @click="loadMoreNotifications()"
+                    class="w-full text-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium"
+                  >
+                    Carregar mais notificações
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="text-right hidden sm:block">
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
+                {{ current_user.name }}
+              </p>
+              <p class="text-xs text-gray-500 dark:text-gray-400">
+                {{ current_user.role.title() }}
+              </p>
+            </div>
+            <div
+              class="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-lg"
+            >
+              <i class="fas fa-user text-white text-sm"></i>
+            </div>
+
+            <!-- Admin Menu -->
+            {% if current_user.role == 'admin' %}
+            <div class="relative" x-data="{ adminMenuOpen: false }">
+              <button
+                @click="adminMenuOpen = !adminMenuOpen"
+                class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700"
+                title="Administração"
+              >
+                <i class="fas fa-cog text-lg"></i>
+              </button>
+
+              <div
+                x-show="adminMenuOpen"
+                @click.away="adminMenuOpen = false"
+                class="absolute right-0 mt-3 w-48 bg-white/95 backdrop-blur-md dark:bg-gray-800/95 rounded-2xl shadow-2xl py-1 z-50 border border-gray-200/50 dark:border-gray-700/50 animate-fade-in"
+              >
+                <a
+                  href="/admin/analytics"
+                  class="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-700/80 transition-all duration-200"
+                >
+                  <i class="fas fa-chart-line mr-2"></i>
+                  Analytics
+                </a>
+                <a
+                  href="/admin/users"
+                  class="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-700/80 transition-all duration-200"
+                >
+                  <i class="fas fa-users mr-2"></i>
+                  Gerenciar Usuários
+                </a>
+                <a
+                  href="/admin/activity"
+                  class="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-700/80 transition-all duration-200"
+                >
+                  <i class="fas fa-history mr-2"></i>
+                  Logs de Atividade
+                </a>
+                <a
+                  href="/admin/backup"
+                  class="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-700/80 transition-all duration-200"
+                >
+                  <i class="fas fa-database mr-2"></i>
+                  Sistema de Backup
+                </a>
+                <a
+                  href="/admin/pdfs"
+                  class="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-700/80 transition-all duration-200"
+                >
+                  <i class="fas fa-file-pdf mr-2"></i>
+                  Gerenciar PDFs
+                </a>
+              </div>
+            </div>
+            {% endif %}
+
+            <a
+              href="/logout"
+              class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700"
+              title="Sair"
+            >
+              <i class="fas fa-sign-out-alt text-lg"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div
+      class="flex h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-200"
+    >
+      <!-- Sidebar -->
+      <div
+        class="sidebar-transition fixed inset-y-0 left-0 z-50 w-64 bg-white/90 backdrop-blur-md shadow-2xl dark:bg-gray-800/90 transform lg:translate-x-0 lg:static lg:inset-0 transition-all duration-200"
+        :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+      >
+        <div
+          class="flex items-center justify-between h-16 px-4 border-b border-gray-200/50 dark:border-gray-700/50 transition-colors duration-200"
+        >
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white font-poppins">
+            Navegação
+          </h2>
+          <button
+            @click="sidebarOpen = false"
+            class="lg:hidden p-2 rounded-xl text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-gray-700 transition-all duration-200"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <nav class="mt-5 px-2">
+          <div class="space-y-1">
+            <template x-for="category in categories" :key="category">
+              <div>
+                <button
+                  @click="selectCategory(category)"
+                  class="w-full text-left px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200"
+                  :class="selectedCategory === category ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'"
+                >
+                  <i class="fas fa-folder mr-3"></i>
+                  <span x-text="getCategoryName(category)"></span>
+                </button>
+
+                <div x-show="selectedCategory === category" class="ml-4 mt-2 space-y-1">
+                  <template x-for="page in getPagesByCategory(category)" :key="page.id">
+                    <button
+                      @click="selectPage(page)"
+                      class="w-full text-left px-4 py-2 text-sm rounded-xl transition-all duration-200"
+                      :class="selectedPage && selectedPage.id === page.id ? 'bg-blue-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200'"
+                    >
+                      <i class="fas fa-file-alt mr-3"></i>
+                      <span x-text="page.title"></span>
+                    </button>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+        </nav>
+
+        <!-- Documentos Corporations -->
+        <div class="px-2 py-4 border-t border-gray-200/50 dark:border-gray-700/50">
+          <a
+            href="/documents/"
+            class="flex items-center px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white rounded-xl transition-all duration-200"
+          >
+            <i class="fas fa-file-contract mr-3"></i>
+            Documentos Corporations
+          </a>
+        </div>
+
+        <div
+          class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200/50 dark:border-gray-700/50 transition-colors duration-200"
+        >
+          <button
+            @click="showCreateModal = true"
+            class="w-full gradient-primary text-white px-4 py-3 rounded-2xl hover:shadow-xl transition-all duration-300 font-medium shadow-lg"
+          >
+            <i class="fas fa-plus mr-2"></i>
+            Nova Página
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Mobile Search -->
+        <div
+          class="lg:hidden p-4 border-b border-gray-200/50 dark:border-gray-700/50 transition-colors duration-200"
+        >
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Pesquisar páginas..."
+              class="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-300/50 dark:bg-gray-700/80 dark:border-gray-600/50 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-200 shadow-sm"
+              x-model="searchQuery"
+              @input="searchPages()"
+            />
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <i class="fas fa-search text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="flex-1 overflow-auto">
+          <div class="max-w-6xl mx-auto p-6">
+            <!-- Search Results Section -->
+            <div x-show="searchQuery.trim() && searchResults.total_results > 0" class="mb-8">
+              <div
+                class="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50 p-8 animate-fade-in"
+              >
+                <div class="flex items-center justify-between mb-6">
+                  <h2 class="text-2xl font-bold text-gray-900 dark:text-white font-poppins">
+                    Resultados da Pesquisa
+                  </h2>
+                  <span class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                    <span x-text="searchResults.total_results"></span> resultado(s) encontrado(s)
+                  </span>
+                </div>
+
+                <!-- Pages Results -->
+                <div x-show="searchResults.pages && searchResults.pages.length > 0" class="mb-8">
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-poppins">
+                    <i class="fas fa-file-alt mr-3 text-blue-600"></i>
+                    Páginas (<span x-text="searchResults.pages.length"></span>)
+                  </h3>
+                  <div class="space-y-3">
+                    <template x-for="page in searchResults.pages" :key="page.id">
+                      <div
+                        class="p-4 bg-gray-50/80 dark:bg-gray-700/80 rounded-2xl hover:bg-gray-100/80 dark:hover:bg-gray-600/80 cursor-pointer transition-all duration-200 shadow-sm"
+                        @click="selectPage(page)"
+                      >
+                        <div class="flex items-start justify-between">
+                          <div class="flex-1">
+                            <h4
+                              class="font-semibold text-gray-900 dark:text-white mb-1"
+                              x-html="page.titleHighlighted || page.title"
+                            ></h4>
+                            <p
+                              class="text-sm text-gray-500 dark:text-gray-400 mb-2"
+                              x-text="page.category"
+                            ></p>
+                            <p
+                              x-show="page.excerptHighlighted || page.content"
+                              class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2"
+                              x-html="page.excerptHighlighted || (page.content ? page.content.substring(0, 150) + '...' : '')"
+                            ></p>
+                          </div>
+                          <div class="flex items-center space-x-2">
+                            <span
+                              class="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-1 rounded-full"
+                            >
+                              Página
+                            </span>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+
+                <!-- Documents Results -->
+                <div
+                  x-show="searchResults.documents && searchResults.documents.length > 0"
+                  class="mb-8"
+                >
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-poppins">
+                    <i class="fas fa-file-document mr-3 text-purple-600"></i>
+                    Documentos (<span x-text="searchResults.documents.length"></span>)
+                  </h3>
+                  <div class="space-y-3">
+                    <template x-for="doc in searchResults.documents" :key="doc.id">
+                      <div
+                        class="p-4 bg-gray-50/80 dark:bg-gray-700/80 rounded-2xl hover:bg-gray-100/80 dark:hover:bg-gray-600/80 cursor-pointer transition-all duration-200 shadow-sm"
+                        @click="selectDocument(doc)"
+                      >
+                        <div class="flex items-start justify-between">
+                          <div class="flex-1">
+                            <h4
+                              class="font-semibold text-gray-900 dark:text-white mb-1"
+                              x-text="doc.title"
+                            ></h4>
+                            <p
+                              class="text-sm text-gray-500 dark:text-gray-400 mb-2"
+                              x-text="doc.category || 'Documento'"
+                            ></p>
+                            <p
+                              x-show="doc.content"
+                              class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2"
+                              x-text="doc.content.substring(0, 150) + '...'"
+                            ></p>
+                          </div>
+                          <div class="flex items-center space-x-2">
+                            <span
+                              class="text-xs bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 px-2 py-1 rounded-full"
+                            >
+                              Documento
+                            </span>
+                            <i class="fas fa-chevron-right text-gray-400"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+
+                <!-- Files Results -->
+                <div x-show="searchResults.files && searchResults.files.length > 0">
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-poppins">
+                    <i class="fas fa-folder-open mr-3 text-green-600"></i>
+                    Arquivos (<span x-text="searchResults.files.length"></span>)
+                  </h3>
+                  <div class="space-y-3">
+                    <template x-for="file in searchResults.files" :key="file.id">
+                      <div
+                        class="p-4 bg-gray-50/80 dark:bg-gray-700/80 rounded-2xl hover:bg-gray-100/80 dark:hover:bg-gray-600/80 cursor-pointer transition-all duration-200 shadow-sm"
+                        @click="viewFile(file)"
+                      >
+                        <div class="flex items-start justify-between">
+                          <div class="flex items-start">
+                            <i
+                              :class="getFileIcon(file.original_filename) + ' mr-4 text-xl mt-1'"
+                              class="fas"
+                            ></i>
+                            <div class="flex-1">
+                              <h4
+                                class="font-semibold text-gray-900 dark:text-white mb-1"
+                                x-text="file.original_filename"
+                              ></h4>
+                              <p class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                                <span x-text="file.sector_name || 'Geral'"></span>
+                                <span x-show="file.trainer">
+                                  • <span x-text="file.trainer"></span>
+                                </span>
+                              </p>
+                              <p
+                                x-show="file.description"
+                                class="text-sm text-gray-600 dark:text-gray-300 line-clamp-2"
+                                x-text="file.description"
+                              ></p>
+                            </div>
+                          </div>
+                          <div class="flex items-center space-x-2">
+                            <span
+                              class="text-xs bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 px-2 py-1 rounded-full"
+                            >
+                              Arquivo
+                            </span>
+                            <i class="fas fa-eye text-gray-400"></i>
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- No Results Section -->
+            <div
+              x-show="searchQuery.trim() && searchResults.total_results === 0 && !isSearching"
+              class="mb-8"
+            >
+              <div
+                class="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50 p-8 animate-fade-in"
+              >
+                <div class="text-center">
+                  <i class="fas fa-search text-gray-400 text-4xl mb-4"></i>
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                    Nenhum resultado encontrado
+                  </h3>
+                  <p class="text-gray-500 dark:text-gray-400 mb-4">
+                    Não encontramos resultados para "<span
+                      x-text="searchQuery"
+                      class="font-medium"
+                    ></span
+                    >"
+                  </p>
+                  <div class="text-sm text-gray-400 dark:text-gray-500">
+                    <p>Tente:</p>
+                    <ul class="mt-2 space-y-1">
+                      <li>• Verificar a ortografia</li>
+                      <li>• Usar termos mais gerais</li>
+                      <li>• Procurar por sinônimos</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div x-show="!selectedPage" class="py-8">
+              <!-- Hero Section -->
+              <div class="text-center mb-16 animate-fade-in">
+                <div class="flex items-center justify-center mb-8 animate-slide-up">
+                  <div
+                    class="w-20 h-20 gradient-primary rounded-3xl flex items-center justify-center mr-6 shadow-2xl animate-float"
+                  >
+                    <i class="fas fa-wifi text-3xl text-white"></i>
+                  </div>
+                  <div class="text-left">
+                    <h1 class="text-5xl font-bold text-gray-900 dark:text-white font-poppins mb-2">
+                      VELOZ FIBRA
+                    </h1>
+                    <p class="text-xl text-gray-600 dark:text-gray-300 font-medium">
+                      Internet de Ultra Velocidade
+                    </p>
+                  </div>
+                </div>
+                <h2
+                  class="text-4xl font-bold text-gray-900 dark:text-white mb-6 font-poppins animate-slide-up animate-delay-100"
+                >
+                  Central de Conhecimento
+                </h2>
+                <p
+                  class="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed font-medium animate-slide-up animate-delay-200"
+                >
+                  Bem-vindo à nossa Central de Conhecimento. Aqui você encontra tudo sobre
+                  processors, ferramentas, procedimentos e informações essenciais para oferecer a
+                  melhor internet de ultra velocidade para nossos clients.
+                </p>
+              </div>
+
+              <!-- Stats Section -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <div
+                  class="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50 text-center card-hover animate-scale-in animate-delay-300 cursor-pointer"
+                  @click="window.location.href='/planos'"
+                  title="Ver planos de internet"
+                >
+                  <div
+                    class="w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg"
+                  >
+                    <i class="fas fa-wifi text-white text-2xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3 font-poppins">
+                    Ultra Velocidade
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-300 font-medium">
+                    Internet de alta performance
+                  </p>
+                  <div class="mt-4">
+                    <span
+                      class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                    >
+                      <i class="fas fa-arrow-right mr-1"></i>
+                      Ver Planos
+                    </span>
+                  </div>
+                </div>
+                <div
+                  class="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50 text-center card-hover animate-scale-in animate-delay-400 cursor-pointer"
+                  @click="showSupportModal = true"
+                  title="Conheça nossa história"
+                >
+                  <div
+                    class="w-16 h-16 gradient-success rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg"
+                  >
+                    <i class="fas fa-heart text-white text-2xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3 font-poppins">
+                    Nossa História
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-300 font-medium mb-4">
+                    Suporte humano e presente
+                  </p>
+                  <div class="mt-4">
+                    <span
+                      class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                    >
+                      <i class="fas fa-users mr-1"></i>
+                      Conheça Nós
+                    </span>
+                  </div>
+                </div>
+                <div
+                  class="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50 text-center card-hover animate-scale-in animate-delay-500 cursor-pointer"
+                  @click="showFibraModal = true"
+                  title="Conheça nossa tecnologia"
+                >
+                  <div
+                    class="w-16 h-16 gradient-secondary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg"
+                  >
+                    <i class="fas fa-wifi text-white text-2xl"></i>
+                  </div>
+                  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3 font-poppins">
+                    Tecnologia de Ponta
+                  </h3>
+                  <p class="text-gray-600 dark:text-gray-300 font-medium mb-4">Fibra Óptica Pura</p>
+                  <div class="mt-4">
+                    <span
+                      class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
+                    >
+                      <i class="fas fa-lightbulb mr-1"></i>
+                      Saiba Mais
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Categories Grid -->
+              <div class="mb-12">
+                <h3
+                  class="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center font-poppins animate-slide-up animate-delay-600"
+                >
+                  Explore Nossas Seções
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <template x-for="(category, index) in categories" :key="category">
+                    <div
+                      class="bg-white/80 backdrop-blur-md p-8 rounded-3xl shadow-xl border border-gray-200/50 dark:bg-gray-800/80 dark:border-gray-700/50 card-hover cursor-pointer animate-scale-in"
+                      :class="`animate-delay-${(index + 7) * 100}`"
+                      @click="selectCategory(category)"
+                    >
+                      <div class="flex items-center mb-6">
+                        <div
+                          class="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center mr-4 shadow-lg"
+                        >
+                          <i :class="getCategoryIcon(category)" class="fas text-white text-lg"></i>
+                        </div>
+                        <h4
+                          class="font-bold text-gray-900 dark:text-white text-xl font-poppins"
+                          x-text="getCategoryName(category)"
+                        ></h4>
+                      </div>
+                      <p
+                        class="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed"
+                        x-text="getCategoryDescription(category)"
+                      ></p>
+                      <div
+                        class="flex items-center text-blue-600 dark:text-blue-400 group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors font-medium"
+                      >
+                        <span class="text-sm">Explorar</span>
+                        <i class="fas fa-arrow-right ml-3 text-xs"></i>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Quick Actions -->
+              <div
+                class="bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-900/20 dark:to-purple-900/20 backdrop-blur-md p-10 rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700/50"
+              >
+                <h3
+                  class="text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center font-poppins"
+                >
+                  Ações Rápidas
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <button
+                    @click="showCreateModal = true"
+                    class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-all duration-300 text-left group card-hover"
+                  >
+                    <div class="flex items-center">
+                      <div
+                        class="w-12 h-12 gradient-success rounded-2xl flex items-center justify-center mr-4 shadow-lg"
+                      >
+                        <i class="fas fa-plus text-white text-lg"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-bold text-gray-900 dark:text-white text-lg font-poppins">
+                          Nova Página
+                        </h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                          Criar novo conteúdo
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    @click="searchQuery = ''; searchPages()"
+                    class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md p-6 rounded-2xl shadow-lg border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-all duration-300 text-left group card-hover"
+                  >
+                    <div class="flex items-center">
+                      <div
+                        class="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center mr-4 shadow-lg"
+                      >
+                        <i class="fas fa-search text-white text-lg"></i>
+                      </div>
+                      <div>
+                        <h4 class="font-bold text-gray-900 dark:text-white text-lg font-poppins">
+                          Pesquisar
+                        </h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                          Encontrar conteúdo
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div
+              x-show="selectedPage"
+              class="bg-white/90 backdrop-blur-md rounded-3xl shadow-2xl border border-gray-200/50 dark:bg-gray-800/90 dark:border-gray-700/50 transition-all duration-200 animate-fade-in"
+            >
+              <!-- Page Header -->
+              <div
+                class="px-8 py-6 border-b border-gray-200/50 dark:border-gray-700/50 transition-colors duration-200"
+              >
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h1
+                      class="text-3xl font-bold text-gray-900 dark:text-white font-poppins"
+                      x-text="selectedPage.title"
+                    ></h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 font-medium">
+                      Última atualização:
+                      <span x-text="formatDate(selectedPage.updated_at)"></span>
+                    </p>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <button
+                      @click="editMode = !editMode"
+                      class="px-4 py-2 text-sm bg-gray-100/80 text-gray-700 dark:bg-gray-700/80 dark:text-gray-200 rounded-xl hover:bg-gray-200/80 dark:hover:bg-gray-600/80 transition-all duration-200 font-medium"
+                    >
+                      <i class="fas fa-edit mr-2"></i>
+                      <span x-text="editMode ? 'Visualizar' : 'Editar'"></span>
+                    </button>
+                    <button
+                      @click="deletePage(selectedPage.id)"
+                      class="px-4 py-2 text-sm bg-red-100/80 text-red-700 dark:bg-red-700/80 dark:text-white rounded-xl hover:bg-red-200/80 dark:hover:bg-red-600/80 transition-all duration-200 font-medium"
+                    >
+                      <i class="fas fa-trash mr-2"></i>
+                      Excluir
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Page Content -->
+              <div class="p-8">
+                <div
+                  x-show="!editMode"
+                  class="markdown-content"
+                  x-html="renderMarkdown(selectedPage.content)"
+                ></div>
+
+                <div x-show="editMode">
+                  <!-- Upload Area -->
+                  <div class="mb-6">
+                    <div
+                      class="border-2 border-dashed border-gray-300/50 dark:border-gray-600/50 rounded-2xl p-8 text-center hover:border-blue-400 dark:hover:border-blue-500 transition-all duration-200 cursor-pointer bg-gray-50/50 dark:bg-gray-700/50"
+                      @click="$refs.fileInput.click()"
+                      @dragover.prevent
+                      @drop.prevent="handleFileDrop($event)"
+                      x-data="{ isDragOver: false }"
+                      @dragenter="isDragOver = true"
+                      @dragleave="isDragOver = false"
+                      :class="isDragOver ? 'border-blue-400 bg-blue-50/80 dark:bg-blue-900/20' : ''"
+                    >
+                      <input
+                        type="file"
+                        x-ref="fileInput"
+                        @change="handleFileSelect($event)"
+                        class="hidden"
+                        accept="image/*,.pdf,.doc,.docx,.txt,.md,.mp4,.avi,.mov,.wmv,.mp3,.wav,.ogg"
+                        multiple
+                      />
+                      <div class="space-y-4">
+                        <i
+                          class="fas fa-cloud-upload-alt text-4xl text-gray-400 dark:text-gray-500"
+                        ></i>
+                        <div>
+                          <p class="text-lg font-medium text-gray-700 dark:text-gray-300">
+                            Arraste arquivos aqui ou clique para selecionar
+                          </p>
+                          <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                            Imagens, PDFs, documentos, vídeos e áudios são suportados
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Upload Progress -->
+                    <div x-show="uploadingFiles.length > 0" class="mt-6 space-y-3">
+                      <template x-for="file in uploadingFiles" :key="file.id">
+                        <div
+                          class="flex items-center space-x-4 p-4 bg-gray-50/80 dark:bg-gray-700/80 rounded-2xl"
+                        >
+                          <div class="flex-shrink-0">
+                            <i class="fas fa-file text-gray-400 text-lg"></i>
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <p
+                              class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                              x-text="file.name"
+                            ></p>
+                            <div class="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3 mt-2">
+                              <div
+                                class="bg-blue-600 h-3 rounded-full transition-all duration-300"
+                                :style="`width: ${file.progress}%`"
+                              ></div>
+                            </div>
+                          </div>
+                          <div class="flex-shrink-0">
+                            <span
+                              class="text-sm text-gray-500 dark:text-gray-400 font-medium"
+                              x-text="file.progress + '%'"
+                            ></span>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+
+                  <!-- Editor Textarea -->
+                  <textarea
+                    x-model="selectedPage.content"
+                    class="w-full h-96 p-6 bg-white/80 backdrop-blur-sm border border-gray-300/50 dark:bg-gray-700/80 dark:border-gray-600/50 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 font-mono text-sm text-gray-900 dark:text-white transition-all duration-200 shadow-sm"
+                    placeholder="Digite o conteúdo em Markdown...&#10;&#10;Dica: Use ![descrição](url) para imagens&#10;Use [texto](url) para links"
+                  ></textarea>
+
+                  <!-- Editor Toolbar -->
+                  <div class="mt-6 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                      <button
+                        @click="insertMarkdown('**', '**')"
+                        class="p-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-600/80 rounded-xl transition-all duration-200"
+                        title="Negrito"
+                      >
+                        <i class="fas fa-bold"></i>
+                      </button>
+                      <button
+                        @click="insertMarkdown('*', '*')"
+                        class="p-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-600/80 rounded-xl transition-all duration-200"
+                        title="Itálico"
+                      >
+                        <i class="fas fa-italic"></i>
+                      </button>
+                      <button
+                        @click="insertMarkdown('### ', '')"
+                        class="p-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-600/80 rounded-xl transition-all duration-200"
+                        title="Título"
+                      >
+                        <i class="fas fa-heading"></i>
+                      </button>
+                      <button
+                        @click="insertMarkdown('- ', '')"
+                        class="p-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-600/80 rounded-xl transition-all duration-200"
+                        title="Lista"
+                      >
+                        <i class="fas fa-list-ul"></i>
+                      </button>
+                      <button
+                        @click="insertMarkdown('[', '](url)')"
+                        class="p-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-600/80 rounded-xl transition-all duration-200"
+                        title="Link"
+                      >
+                        <i class="fas fa-link"></i>
+                      </button>
+                      <button
+                        @click="insertMarkdown('![', '](url)')"
+                        class="p-3 text-gray-600 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-600/80 rounded-xl transition-all duration-200"
+                        title="Imagem"
+                      >
+                        <i class="fas fa-image"></i>
+                      </button>
+                      <div
+                        class="border-l border-gray-300/50 dark:border-gray-500/50 h-8 mx-3"
+                      ></div>
+                      <button
+                        @click="captureScreenshot()"
+                        class="p-3 text-blue-600 dark:text-blue-400 hover:bg-blue-100/80 dark:hover:bg-blue-900/20 rounded-xl transition-all duration-200"
+                        title="Capturar Print de Tela"
+                      >
+                        <i class="fas fa-camera"></i>
+                      </button>
+                      <button
+                        @click="showScreenshotModal = true"
+                        class="p-3 text-green-600 dark:text-green-400 hover:bg-green-100/80 dark:hover:bg-green-900/20 rounded-xl transition-all duration-200"
+                        title="Gerenciar Prints"
+                      >
+                        <i class="fas fa-images"></i>
+                      </button>
+                    </div>
+
+                    <div class="flex space-x-3">
+                      <button
+                        @click="editMode = false"
+                        class="px-6 py-3 text-gray-700 bg-gray-100/80 dark:text-gray-200 dark:bg-gray-700/80 rounded-xl hover:bg-gray-200/80 dark:hover:bg-gray-600/80 transition-all duration-200 font-medium"
+                      >
+                        Cancelar
+                      </button>
+                      <button
+                        @click="savePage()"
+                        class="px-6 py-3 gradient-primary text-white rounded-xl hover:shadow-xl transition-all duration-300 font-medium shadow-lg"
+                      >
+                        Salvar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Page Modal -->
+    <div x-show="showCreateModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none">
+      <div
+        class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 bg-gray-500/75 backdrop-blur-sm transition-opacity"></div>
+
+        <div
+          class="inline-block align-bottom bg-white/95 backdrop-blur-md dark:bg-gray-800/95 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full animate-scale-in"
+        >
+          <div
+            class="bg-white/95 backdrop-blur-md dark:bg-gray-800/95 px-6 pt-6 pb-4 sm:p-8 sm:pb-6"
+          >
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 font-poppins">
+              Nova Página
+            </h3>
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >Título</label
+                >
+                <input
+                  type="text"
+                  x-model="newPage.title"
+                  class="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-300/50 dark:bg-gray-700/80 dark:border-gray-600/50 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 dark:text-white transition-all duration-200 shadow-sm"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >Categoria</label
+                >
+                <select
+                  x-model="newPage.category"
+                  class="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-300/50 dark:bg-gray-700/80 dark:border-gray-600/50 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 dark:text-white transition-all duration-200 shadow-sm"
+                >
+                  <option value="visao-empresa">Visão da Empresa</option>
+                  <option value="processors">Processors Internos</option>
+                  <option value="ferramentas">Ferramentas Utilizadas</option>
+                  <option value="operational">Operational</option>
+                  <option value="comercial">Comercial</option>
+                  <option value="suporte">Suporte Técnico</option>
+                  <option value="instalacao">Instalação e Manutenção</option>
+                  <option value="planos">Planos e Produtos</option>
+                  <option value="onboarding">Onboarding</option>
+                  <option value="historico">Histórico de Mudanças</option>
+                  <option value="geral">Geral</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >Conteúdo</label
+                >
+                <textarea
+                  x-model="newPage.content"
+                  class="w-full h-32 px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-300/50 dark:bg-gray-700/80 dark:border-gray-600/50 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 dark:text-white transition-all duration-200 shadow-sm"
+                  placeholder="Digite o conteúdo em Markdown..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-gray-50/80 backdrop-blur-md dark:bg-gray-700/80 px-6 py-4 sm:px-8 sm:flex sm:flex-row-reverse"
+          >
+            <button
+              @click="createPage()"
+              class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-lg px-6 py-3 gradient-primary text-base font-medium text-white hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-300"
+            >
+              Criar Página
+            </button>
+            <button
+              @click="showCreateModal = false"
+              class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300/50 dark:border-gray-600/50 shadow-lg px-6 py-3 bg-white/80 backdrop-blur-sm dark:bg-gray-700/80 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50/80 dark:hover:bg-gray-600/80 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-200"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div x-show="showLoginModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none">
+      <div
+        class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 bg-gray-500/75 backdrop-blur-sm transition-opacity"></div>
+
+        <div
+          class="inline-block align-bottom bg-white/95 backdrop-blur-md dark:bg-gray-800/95 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full animate-scale-in"
+        >
+          <div
+            class="bg-white/95 backdrop-blur-md dark:bg-gray-800/95 px-6 pt-6 pb-4 sm:p-8 sm:pb-6"
+          >
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-6 font-poppins">
+              Acesso à Wiki
+            </h3>
+            <div class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >Usuário</label
+                >
+                <input
+                  type="text"
+                  x-model="loginForm.username"
+                  class="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-300/50 dark:bg-gray-700/80 dark:border-gray-600/50 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 dark:text-white transition-all duration-200 shadow-sm"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >Senha</label
+                >
+                <input
+                  type="password"
+                  x-model="loginForm.password"
+                  class="w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-300/50 dark:bg-gray-700/80 dark:border-gray-600/50 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 dark:text-white transition-all duration-200 shadow-sm"
+                />
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-gray-50/80 backdrop-blur-md dark:bg-gray-700/80 px-6 py-4 sm:px-8 sm:flex sm:flex-row-reverse"
+          >
+            <button
+              @click="login()"
+              class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-lg px-6 py-3 gradient-primary text-base font-medium text-white hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-300"
+            >
+              Entrar
+            </button>
+            <button
+              @click="showLoginModal = false"
+              class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300/50 dark:border-gray-600/50 shadow-lg px-6 py-3 bg-white/80 backdrop-blur-sm dark:bg-gray-700/80 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50/80 dark:hover:bg-gray-600/80 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-200"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Support Modal -->
+    <div x-show="showSupportModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none">
+      <div
+        class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 bg-gray-500/75 backdrop-blur-sm transition-opacity"></div>
+
+        <div
+          class="inline-block align-bottom bg-white/95 backdrop-blur-md dark:bg-gray-800/95 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full animate-scale-in"
+        >
+          <div
+            class="bg-white/95 backdrop-blur-md dark:bg-gray-800/95 px-6 pt-6 pb-4 sm:p-8 sm:pb-6"
+          >
+            <div class="flex items-center mb-6">
+              <div
+                class="w-12 h-12 gradient-success rounded-2xl flex items-center justify-center mr-4 shadow-lg"
+              >
+                <i class="fas fa-heart text-white text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white font-poppins">
+                Nossa História
+              </h3>
+            </div>
+
+            <div class="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed">
+              <p class="text-lg">
+                A <strong class="text-blue-600 dark:text-blue-400">Veloz Fibra</strong> nasceu do
+                sonho de oferecer internet de qualidade com atendimento humano e presente. Desde o
+                início, nossa missão foi tratar cada cliente como parte da nossa família.
+              </p>
+
+              <p class="text-lg">
+                Nosso suporte funciona de forma ágil, direta e sempre com alguém do nosso time
+                pronto para resolver. Não usamos robôs para empurrar problemas – aqui a gente
+                resolve!
+              </p>
+
+              <p class="text-lg">
+                Estamos em <strong class="text-green-600 dark:text-green-400">Joinville</strong> e
+                <strong class="text-green-600 dark:text-green-400">Araquari</strong>, e nossa equipe
+                conhece a realidade de cada bairro, cada rua. Isso faz toda a diferença quando você
+                precisa de ajuda de verdade.
+              </p>
+
+              <div
+                class="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-6 rounded-2xl border border-green-200/50 dark:border-green-700/50"
+              >
+                <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                  Nosso Diferencial
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="flex items-center">
+                    <i class="fas fa-whatsapp text-green-600 mr-3"></i>
+                    <span class="font-medium">Atendimento via WhatsApp e telefone</span>
+                  </div>
+                  <div class="flex items-center">
+                    <i class="fas fa-clock text-blue-600 mr-3"></i>
+                    <span class="font-medium">Sem burocracia</span>
+                  </div>
+                  <div class="flex items-center">
+                    <i class="fas fa-tools text-purple-600 mr-3"></i>
+                    <span class="font-medium">Suporte que resolve</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-gray-50/80 backdrop-blur-md dark:bg-gray-700/80 px-6 py-4 sm:px-8 sm:flex sm:flex-row-reverse"
+          >
+            <a
+              href="https://wa.me/554734383050"
+              target="_blank"
+              class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-lg px-6 py-3 gradient-success text-base font-medium text-white hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-300"
+            >
+              <i class="fab fa-whatsapp mr-2"></i>
+              Falar Conosco
+            </a>
+            <button
+              @click="showSupportModal = false"
+              class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300/50 dark:border-gray-600/50 shadow-lg px-6 py-3 bg-white/80 backdrop-blur-sm dark:bg-gray-700/80 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50/80 dark:hover:bg-gray-600/80 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-200"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fibra Óptica Modal -->
+    <div x-show="showFibraModal" class="fixed inset-0 z-50 overflow-y-auto" style="display: none">
+      <div
+        class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 bg-gray-500/75 backdrop-blur-sm transition-opacity"></div>
+
+        <div
+          class="inline-block align-bottom bg-white/95 backdrop-blur-md dark:bg-gray-800/95 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full animate-scale-in"
+        >
+          <div
+            class="bg-white/95 backdrop-blur-md dark:bg-gray-800/95 px-6 pt-6 pb-4 sm:p-8 sm:pb-6"
+          >
+            <div class="flex items-center mb-6">
+              <div
+                class="w-12 h-12 gradient-secondary rounded-2xl flex items-center justify-center mr-4 shadow-lg"
+              >
+                <i class="fas fa-wifi text-white text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-900 dark:text-white font-poppins">
+                Tecnologia de Ponta com Fibra Óptica
+              </h3>
+            </div>
+
+            <div class="space-y-6 text-gray-700 dark:text-gray-300 leading-relaxed">
+              <p class="text-lg">
+                Na <strong class="text-blue-600 dark:text-blue-400">Veloz Fibra</strong>, utilizamos
+                exclusivamente tecnologia em fibra óptica pura, garantindo mais estabilidade,
+                velocidade real e segurança de conexão.
+              </p>
+
+              <p class="text-lg">
+                Diferente de cabos metálicos ou redes mistas, a fibra óptica transmite dados com
+                mínima interferência e alta performance, mesmo em horários de pico. Isso significa
+                mais desempenho para quem trabalha, estuda, joga ou assiste seus conteúdos
+                preferidos.
+              </p>
+
+              <div
+                class="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-2xl border border-blue-200/50 dark:border-blue-700/50"
+              >
+                <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <i class="fas fa-map-marker-alt text-blue-600 mr-2"></i>
+                  Cobertura
+                </h4>
+                <p class="text-gray-700 dark:text-gray-300">
+                  📌 Estamos presentes com fibra óptica nos bairros da zona sul de
+                  <strong class="text-green-600 dark:text-green-400">Joinville</strong> e em toda a
+                  cidade de <strong class="text-green-600 dark:text-green-400">Araquari</strong>.
+                </p>
+              </div>
+
+              <div
+                class="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-6 rounded-2xl border border-green-200/50 dark:border-green-700/50"
+              >
+                <h4 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <i class="fas fa-star text-green-600 mr-2"></i>
+                  Nosso Diferencial
+                </h4>
+                <p class="text-gray-700 dark:text-gray-300">
+                  🌐 Quando você escolhe a Veloz, está escolhendo infraestrutura própria, instalação
+                  rápida e internet de verdade.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="bg-gray-50/80 backdrop-blur-md dark:bg-gray-700/80 px-6 py-4 sm:px-8 sm:flex sm:flex-row-reverse"
+          >
+            <a
+              href="https://wa.me/554734383050"
+              target="_blank"
+              class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-lg px-6 py-3 gradient-secondary text-base font-medium text-white hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-purple-500 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-300"
+            >
+              <i class="fab fa-whatsapp mr-2"></i>
+              Verificar Cobertura
+            </a>
+            <button
+              @click="showFibraModal = false"
+              class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300/50 dark:border-gray-600/50 shadow-lg px-6 py-3 bg-white/80 backdrop-blur-sm dark:bg-gray-700/80 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50/80 dark:hover:bg-gray-600/80 focus:outline-none focus:ring-4 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-all duration-200"
+            >
+              Fechar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function wikiApp() {
+        return {
+          pages: [],
+          categories: [],
+          selectedCategory: null,
+          selectedPage: null,
+          searchQuery: '',
+          editMode: false,
+          sidebarOpen: false,
+          showCreateModal: false,
+          showLoginModal: false,
+          showSupportModal: false,
+          showFibraModal: false,
+          isDarkMode: false,
+          newPage: {
+            title: '',
+            category: 'geral',
+            content: '',
+          },
+          loginForm: {
+            username: '',
+            password: '',
+          },
+          // Notifications properties
+          notifications: [],
+          unreadCount: 0,
+          notificationsLoaded: false,
+
+          // Editor upload properties
+          uploadingFiles: [],
+          uploadCounter: 0,
+
+          // Search and file viewer properties
+          searchResults: { pages: [], documents: [], files: [], total_results: 0 },
+          isSearching: false,
+          selectedFile: null,
+          showFileViewer: false,
+
+          // Screenshot capture properties
+          showScreenshotModal: false,
+          screenshots: [],
+          capturingScreenshot: false,
+
+          init() {
+            this.loadPages();
+            this.loadCategories();
+            this.loadTheme();
+            this.loadUnreadCount();
+          },
+
+          async loadPages() {
+            try {
+              const response = await fetch('/api/pages');
+              if (response.ok) {
+                const data = await response.json();
+                this.pages = data.data || data; // Suporta tanto o formato antigo quanto o novo
+              } else {
+                console.error('Erro ao carregar páginas:', response.status);
+                this.pages = [];
+              }
+            } catch (error) {
+              console.error('Error ao carregar páginas:', error);
+              this.pages = [];
+            }
+          },
+
+          async loadCategories() {
+            try {
+              const response = await fetch('/api/categories');
+              if (response.ok) {
+                this.categories = await response.json();
+              } else {
+                console.error('Erro ao carregar categorias:', response.status);
+                // Fallback: extrair categorias das páginas
+                this.categories = [...new Set(this.pages.map(page => page.category))];
+              }
+            } catch (error) {
+              console.error('Error ao carregar categorias:', error);
+              // Fallback: extrair categorias das páginas
+              this.categories = [...new Set(this.pages.map(page => page.category))];
+            }
+          },
+
+          selectCategory(category) {
+            this.selectedCategory = category;
+            this.selectedPage = null;
+          },
+
+          selectPage(page) {
+            this.selectedPage = page;
+            this.editMode = false;
+          },
+
+          selectDocument(doc) {
+            // TODO: Implement document viewer
+            console.log('Document selected:', doc);
+            // For now, just show an alert
+            alert(`Documento selecionado: ${doc.title}`);
+          },
+
+          getPagesByCategory(category) {
+            return this.pages.filter(page => page.category === category);
+          },
+
+          getCategoryName(category) {
+            const names = {
+              'visao-empresa': 'Visão da Empresa',
+              processors: 'Processors Internos',
+              ferramentas: 'Ferramentas Utilizadas',
+              onboarding: 'Onboarding',
+              historico: 'Histórico de Mudanças',
+              operational: 'Operational',
+              comercial: 'Comercial',
+              suporte: 'Suporte Técnico',
+              instalacao: 'Instalação e Manutenção',
+              planos: 'Planos e Produtos',
+              geral: 'Documentos Gerais',
+              Geral: 'Documentos Gerais',
+              Documentação: 'Documentação',
+              Políticas: 'Políticas da Empresa',
+            };
+            return names[category] || category;
+          },
+
+          getCategoryDescription(category) {
+            const descriptions = {
+              'visao-empresa': 'Missão, valores e objetivos da Veloz Fibra',
+              processors: 'Fluxos de trabalho e procedimentos internos',
+              ferramentas: 'Sistemas, apps e ferramentas utilizadas',
+              onboarding: 'Processo de integração de novos colaboradores',
+              historico: 'Mudanças, decisões e evolução da empresa',
+              operational: 'Processors técnicos e operacionais',
+              comercial: 'Estratégias comerciais e vendas',
+              suporte: 'Procedimentos de suporte ao cliente',
+              instalacao: 'Processors de instalação e manutenção',
+              planos: 'Planos de internet e produtos oferecidos',
+              geral: 'Páginas e arquivos diversos da operação',
+              Geral: 'Páginas e arquivos diversos da operação',
+              Documentação: 'Guias e tutoriais do sistema',
+              Políticas: 'Políticas internas da empresa',
+            };
+            return descriptions[category] || 'Páginas gerais';
+          },
+
+          getCategoryIcon(category) {
+            const icons = {
+              'visao-empresa': 'fa-building',
+              processors: 'fa-microchip',
+              ferramentas: 'fa-wrench',
+              operational: 'fa-cogs',
+              comercial: 'fa-money-bill-wave',
+              suporte: 'fa-headset',
+              instalacao: 'fa-tools',
+              planos: 'fa-chart-line',
+              onboarding: 'fa-user-plus',
+              historico: 'fa-history',
+              geral: 'fa-file-alt',
+              Geral: 'fa-file-alt',
+              Documentação: 'fa-book',
+              Políticas: 'fa-gavel',
+            };
+            return icons[category] || 'fa-folder';
+          },
+
+          searchTimeout: null,
+
+          async searchPages() {
+            // Clear previous timeout
+            if (this.searchTimeout) {
+              clearTimeout(this.searchTimeout);
+            }
+
+            // Debounce search
+            this.searchTimeout = setTimeout(async () => {
+              if (!this.searchQuery.trim()) {
+                await this.loadPages();
+                this.searchResults = { pages: [], documents: [], files: [], total_results: 0 };
+                this.isSearching = false;
+                return;
+              }
+
+              this.isSearching = true;
+
+              try {
+                const response = await fetch(
+                  `/api/search?q=${encodeURIComponent(this.searchQuery)}`
+                );
+                const data = await response.json();
+
+                this.searchResults = data;
+                this.pages = data.pages || [];
+                this.documents = data.documents || [];
+                this.files = data.files || [];
+
+                // Highlight search terms
+                this.highlightSearchTerms();
+              } catch (error) {
+                console.error('Error na pesquisa:', error);
+                this.searchResults = { pages: [], documents: [], files: [], total_results: 0 };
+              } finally {
+                this.isSearching = false;
+              }
+            }, 300); // 300ms debounce
+          },
+
+          highlightSearchTerms() {
+            if (!this.searchQuery.trim()) return;
+
+            const query = this.searchQuery.toLowerCase();
+            const regex = new RegExp(`(${query})`, 'gi');
+
+            // Highlight in page titles and content
+            this.pages.forEach(page => {
+              if (page.title) {
+                page.titleHighlighted = page.title.replace(
+                  regex,
+                  '<mark class="bg-yellow-200 dark:bg-yellow-800">$1</mark>'
+                );
+              }
+              if (page.content) {
+                const excerpt = page.content.substring(0, 200) + '...';
+                page.excerptHighlighted = excerpt.replace(
+                  regex,
+                  '<mark class="bg-yellow-200 dark:bg-yellow-800">$1</mark>'
+                );
+              }
+            });
+          },
+
+          viewFile(file) {
+            this.selectedFile = file;
+            this.showFileViewer = true;
+          },
+
+          getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const icons = {
+              pdf: 'fa-file-pdf',
+              doc: 'fa-file-word',
+              docx: 'fa-file-word',
+              txt: 'fa-file-alt',
+              jpg: 'fa-file-image',
+              jpeg: 'fa-file-image',
+              png: 'fa-file-image',
+              gif: 'fa-file-image',
+              mp4: 'fa-file-video',
+              avi: 'fa-file-video',
+              mov: 'fa-file-video',
+              mp3: 'fa-file-audio',
+              wav: 'fa-file-audio',
+            };
+            return icons[ext] || 'fa-file';
+          },
+
+          renderMarkdown(content) {
+            if (!content) return '';
+
+            // Configurar marked para renderizar links externos
+            marked.setOptions({
+              breaks: true,
+              gfm: true,
+            });
+
+            // Renderizar markdown
+            let html = marked.parse(content);
+
+            // Melhorar exibição de imagens
+            html = html.replace(
+              /<img([^>]+)>/g,
+              '<img$1 class="max-w-full h-auto rounded-lg shadow-md my-4" loading="lazy">'
+            );
+
+            // Melhorar exibição de links
+            html = html.replace(
+              /<a([^>]+)>/g,
+              '<a$1 class="text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">'
+            );
+
+            return html;
+          },
+
+          formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+          },
+
+          async createPage() {
+            // Validação dos campos obrigatórios
+            if (!this.newPage.title || this.newPage.title.trim() === '') {
+              alert('Por favor, insira um título para a página.');
+              return;
+            }
+
+            if (!this.newPage.content || this.newPage.content.trim() === '') {
+              alert('Por favor, insira o conteúdo da página.');
+              return;
+            }
+
+            if (!this.newPage.category) {
+              alert('Por favor, selecione uma categoria.');
+              return;
+            }
+
+            try {
+              const response = await fetch('/api/pages', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  title: this.newPage.title.trim(),
+                  content: this.newPage.content.trim(),
+                  category: this.newPage.category,
+                }),
+              });
+
+              if (response.ok) {
+                const result = await response.json();
+
+                if (result.success) {
+                  // Recarregar páginas para incluir a nova
+                  await this.loadPages();
+
+                  // Selecionar a nova página
+                  const newPage = this.pages.find(p => p.title === this.newPage.title.trim());
+                  if (newPage) {
+                    this.selectedPage = newPage;
+                  }
+
+                  // Fechar modal e limpar formulário
+                  this.showCreateModal = false;
+                  this.newPage = { title: '', category: 'geral', content: '' };
+
+                  // Recarregar categorias
+                  await this.loadCategories();
+
+                  // Mostrar mensagem de sucesso
+                  alert('Página criada com sucesso!');
+                } else {
+                  alert(`Erro ao criar página: ${result.message}`);
+                }
+              } else {
+                const errorData = await response.json();
+                alert(`Erro ao criar página: ${errorData.message || 'Erro desconhecido'}`);
+              }
+            } catch (error) {
+              console.error('Error ao criar página:', error);
+              alert('Erro ao criar página. Verifique sua conexão e tente novamente.');
+            }
+          },
+
+          async savePage() {
+            try {
+              const response = await fetch(`/api/pages/${this.selectedPage.id}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(this.selectedPage),
+              });
+
+              if (response.ok) {
+                const updatedPage = await response.json();
+                const index = this.pages.findIndex(p => p.id === updatedPage.id);
+                if (index !== -1) {
+                  this.pages[index] = updatedPage;
+                }
+                this.editMode = false;
+              }
+            } catch (error) {
+              console.error('Error ao salvar página:', error);
+            }
+          },
+
+          async deletePage(pageId) {
+            if (!confirm('Tem certeza que deseja excluir esta página?')) {
+              return;
+            }
+
+            try {
+              const response = await fetch(`/api/pages/${pageId}`, {
+                method: 'DELETE',
+              });
+
+              if (response.ok) {
+                this.pages = this.pages.filter(p => p.id !== pageId);
+                this.selectedPage = null;
+                await this.loadCategories();
+              }
+            } catch (error) {
+              console.error('Error ao excluir página:', error);
+            }
+          },
+
+          login() {
+            // Simulação de login - em produção seria integrado com sistema de autenticação
+            if (this.loginForm.username && this.loginForm.password) {
+              alert('Login realizado com sucesso!');
+              this.showLoginModal = false;
+              this.loginForm = { username: '', password: '' };
+            } else {
+              alert('Preencha usuário e senha');
+            }
+          },
+
+          loadTheme() {
+            // Carregar tema salvo no localStorage
+            const savedTheme = localStorage.getItem('wiki-theme');
+            if (savedTheme === 'dark') {
+              this.isDarkMode = true;
+              document.documentElement.classList.add('dark');
+            } else {
+              this.isDarkMode = false;
+              document.documentElement.classList.remove('dark');
+            }
+          },
+
+          toggleTheme() {
+            this.isDarkMode = !this.isDarkMode;
+
+            if (this.isDarkMode) {
+              document.documentElement.classList.add('dark');
+              localStorage.setItem('wiki-theme', 'dark');
+            } else {
+              document.documentElement.classList.remove('dark');
+              localStorage.setItem('wiki-theme', 'light');
+            }
+          },
+
+          async loadUnreadCount() {
+            try {
+              const response = await fetch('/api/notifications/unread-count');
+              const data = await response.json();
+              this.unreadCount = data.unread_count;
+            } catch (error) {
+              console.error('Error ao carregar contador de notificações:', error);
+            }
+          },
+
+          // Notifications methods
+          async loadNotifications() {
+            if (this.notificationsLoaded) return;
+            try {
+              const response = await fetch('/api/notifications');
+              const data = await response.json();
+              this.notifications = data.notifications;
+              this.unreadCount = data.unread_count;
+              this.notificationsLoaded = true;
+            } catch (error) {
+              console.error('Error ao carregar notificações:', error);
+            }
+          },
+
+          async markAsRead(notificationId) {
+            try {
+              const response = await fetch(`/api/notifications/${notificationId}/read`, {
+                method: 'POST',
+              });
+              if (response.ok) {
+                const notification = this.notifications.find(n => n.id === notificationId);
+                if (notification) {
+                  notification.is_read = true;
+                  this.unreadCount = Math.max(0, this.unreadCount - 1);
+                }
+              }
+            } catch (error) {
+              console.error('Error ao marcar notificação como lida:', error);
+            }
+          },
+
+          async markAllAsRead() {
+            try {
+              const response = await fetch('/api/notifications/read-all', {
+                method: 'POST',
+              });
+              if (response.ok) {
+                this.notifications = this.notifications.map(n => ({
+                  ...n,
+                  is_read: true,
+                }));
+                this.unreadCount = 0;
+              }
+            } catch (error) {
+              console.error('Error ao marcar todas como lidas:', error);
+            }
+          },
+
+          async deleteNotification(notificationId) {
+            if (!confirm('Tem certeza que deseja excluir esta notificação?')) {
+              return;
+            }
+            try {
+              const response = await fetch(`/api/notifications/${notificationId}`, {
+                method: 'DELETE',
+              });
+              if (response.ok) {
+                const notification = this.notifications.find(n => n.id === notificationId);
+                if (notification && !notification.is_read) {
+                  this.unreadCount = Math.max(0, this.unreadCount - 1);
+                }
+                this.notifications = this.notifications.filter(n => n.id !== notificationId);
+              }
+            } catch (error) {
+              console.error('Error ao excluir notificação:', error);
+            }
+          },
+
+          async loadMoreNotifications() {
+            try {
+              const response = await fetch(
+                `/api/notifications?limit=${this.notifications.length + 10}`
+              );
+              const data = await response.json();
+              this.notifications = data.notifications;
+              this.unreadCount = data.unread_count;
+            } catch (error) {
+              console.error('Error ao carregar mais notificações:', error);
+            }
+          },
+
+          // Editor upload functions
+          handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => this.uploadFile(file));
+          },
+
+          handleFileDrop(event) {
+            const files = Array.from(event.dataTransfer.files);
+            files.forEach(file => this.uploadFile(file));
+          },
+
+          async uploadFile(file) {
+            const fileId = ++this.uploadCounter;
+            const uploadFile = {
+              id: fileId,
+              name: file.name,
+              size: file.size,
+              progress: 0,
+            };
+
+            this.uploadingFiles.push(uploadFile);
+
+            try {
+              const formData = new FormData();
+              formData.append('file', file);
+
+              const response = await fetch('/api/editor/upload', {
+                method: 'POST',
+                body: formData,
+              });
+
+              if (response.ok) {
+                const fileInfo = await response.json();
+                uploadFile.progress = 100;
+
+                // Inserir link no editor baseado no tipo de arquivo
+                this.insertFileLink(fileInfo);
+
+                // Remover da lista após 2 segundos
+                setTimeout(() => {
+                  this.uploadingFiles = this.uploadingFiles.filter(f => f.id !== fileId);
+                }, 2000);
+              } else {
+                const error = await response.json();
+                alert(`Error no upload: ${error.error}`);
+                this.uploadingFiles = this.uploadingFiles.filter(f => f.id !== fileId);
+              }
+            } catch (error) {
+              console.error('Error no upload:', error);
+              alert('Error ao fazer upload do arquivo');
+              this.uploadingFiles = this.uploadingFiles.filter(f => f.id !== fileId);
+            }
+          },
+
+          insertFileLink(fileInfo) {
+            const textarea = document.querySelector('textarea[x-model="selectedPage.content"]');
+            if (!textarea) return;
+
+            const cursorPos = textarea.selectionStart;
+            const textBefore = this.selectedPage.content.substring(0, cursorPos);
+            const textAfter = this.selectedPage.content.substring(cursorPos);
+
+            let markdownLink = '';
+            const fileExt = fileInfo.type.toLowerCase();
+
+            if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(fileExt)) {
+              // Imagem
+              markdownLink = `![${fileInfo.original_name}](${fileInfo.url})`;
+            } else if (['mp4', 'avi', 'mov', 'wmv'].includes(fileExt)) {
+              // Vídeo
+              markdownLink = `[🎥 ${fileInfo.original_name}](${fileInfo.url})`;
+            } else if (['mp3', 'wav', 'ogg'].includes(fileExt)) {
+              // Áudio
+              markdownLink = `[🎵 ${fileInfo.original_name}](${fileInfo.url})`;
+            } else if (fileExt === 'pdf') {
+              // PDF
+              markdownLink = `[📄 ${fileInfo.original_name}](${fileInfo.url})`;
+            } else {
+              // Outros documentos
+              markdownLink = `[📋 ${fileInfo.original_name}](${fileInfo.url})`;
+            }
+
+            this.selectedPage.content = textBefore + markdownLink + '\n' + textAfter;
+
+            // Atualizar cursor
+            setTimeout(() => {
+              const newPos = cursorPos + markdownLink.length + 1;
+              textarea.setSelectionRange(newPos, newPos);
+              textarea.focus();
+            }, 100);
+          },
+
+          insertMarkdown(before, after) {
+            const textarea = document.querySelector('textarea[x-model="selectedPage.content"]');
+            if (!textarea) return;
+
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = this.selectedPage.content.substring(start, end);
+
+            const textBefore = this.selectedPage.content.substring(0, start);
+            const textAfter = this.selectedPage.content.substring(end);
+
+            this.selectedPage.content = textBefore + before + selectedText + after + textAfter;
+
+            // Atualizar cursor
+            setTimeout(() => {
+              const newStart = start + before.length;
+              const newEnd = end + before.length;
+              textarea.setSelectionRange(newStart, newEnd);
+              textarea.focus();
+            }, 100);
+          },
+
+          // Screenshot capture functions
+          async captureScreenshot() {
+            try {
+              this.capturingScreenshot = true;
+
+              // Verificar se a API de captura de tela está disponível
+              if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                alert(
+                  'Captura de tela não suportada neste navegador. Use Ctrl+Shift+I para capturar manualmente.'
+                );
+                this.capturingScreenshot = false;
+                return;
+              }
+
+              // Capturar a tela
+              const stream = await navigator.mediaDevices.getDisplayMedia({
+                video: { mediaSource: 'screen' },
+              });
+
+              // Criar canvas para capturar o frame
+              const video = document.createElement('video');
+              video.srcObject = stream;
+
+              await new Promise(resolve => {
+                video.onloadedmetadata = () => {
+                  video.play();
+                  resolve();
+                };
+              });
+
+              const canvas = document.createElement('canvas');
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(video, 0, 0);
+
+              // Parar a captura
+              stream.getTracks().forEach(track => track.stop());
+
+              // Converter para blob
+              canvas.toBlob(async blob => {
+                await this.uploadScreenshot(blob);
+                this.capturingScreenshot = false;
+              }, 'image/png');
+            } catch (error) {
+              console.error('Error ao capturar screenshot:', error);
+              alert('Error ao capturar screenshot. Tente novamente.');
+              this.capturingScreenshot = false;
+            }
+          },
+
+          async uploadScreenshot(blob) {
+            try {
+              const formData = new FormData();
+              formData.append('file', blob, `screenshot_${Date.now()}.png`);
+
+              const response = await fetch('/api/editor/upload', {
+                method: 'POST',
+                body: formData,
+              });
+
+              if (response.ok) {
+                const result = await response.json();
+
+                // Inserir a imagem no editor
+                const imageMarkdown = `![Screenshot](${result.url})`;
+                this.insertMarkdown(imageMarkdown, '');
+
+                alert('Screenshot capturado e inserido com sucesso!');
+              } else {
+                throw new Error('Error no upload');
+              }
+            } catch (error) {
+              console.error('Error ao fazer upload do screenshot:', error);
+              alert('Error ao fazer upload do screenshot. Tente novamente.');
+            }
+          },
+
+          async loadScreenshots() {
+            try {
+              const response = await fetch('/api/screenshots');
+              this.screenshots = await response.json();
+            } catch (error) {
+              console.error('Error ao carregar screenshots:', error);
+            }
+          },
+        };
+      }
+    </script>
+
+    <!-- File Viewer Modal -->
+    <div
+      x-show="showFileViewer"
+      @click.away="showFileViewer = false"
+      class="fixed inset-0 z-50 overflow-y-auto"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+    >
+      <div
+        class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+        <div
+          class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full"
+        >
+          <!-- Header -->
+          <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <i
+                  :class="getFileIcon(selectedFile?.original_filename || '')"
+                  class="fas text-2xl text-gray-500 mr-3"
+                ></i>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                  <span x-text="selectedFile?.original_filename || 'Arquivo'"></span>
+                </h3>
+              </div>
+              <div class="flex items-center space-x-2">
+                <button
+                  @click="window.open('/api/files/' + selectedFile?.filename + '/view', '_blank')"
+                  class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                >
+                  <i class="fas fa-external-link-alt mr-2"></i>
+                  Abrir em Nova Aba
+                </button>
+                <button
+                  @click="showFileViewer = false"
+                  class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm leading-4 font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                >
+                  <i class="fas fa-times mr-2"></i>
+                  Fechar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="px-4 py-5 sm:p-6">
+            <div class="space-y-4">
+              <!-- File Info -->
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      Nome do Arquivo
+                    </p>
+                    <p
+                      class="text-sm text-gray-900 dark:text-white"
+                      x-text="selectedFile?.original_filename"
+                    ></p>
+                  </div>
+                  <div>
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Tamanho</p>
+                    <p
+                      class="text-sm text-gray-900 dark:text-white"
+                      x-text="selectedFile?.size ? (selectedFile.size / 1024).toFixed(1) + ' KB' : 'N/A'"
+                    ></p>
+                  </div>
+                  <div x-show="selectedFile?.sector_name">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Setor</p>
+                    <p
+                      class="text-sm text-gray-900 dark:text-white"
+                      x-text="selectedFile?.sector_name"
+                    ></p>
+                  </div>
+                  <div x-show="selectedFile?.trainer">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Instrutor</p>
+                    <p
+                      class="text-sm text-gray-900 dark:text-white"
+                      x-text="selectedFile?.trainer"
+                    ></p>
+                  </div>
+                  <div x-show="selectedFile?.description">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Descrição</p>
+                    <p
+                      class="text-sm text-gray-900 dark:text-white"
+                      x-text="selectedFile?.description"
+                    ></p>
+                  </div>
+                  <div x-show="selectedFile?.training_date">
+                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                      Data do Treinamento
+                    </p>
+                    <p
+                      class="text-sm text-gray-900 dark:text-white"
+                      x-text="selectedFile?.training_date"
+                    ></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- File Preview -->
+              <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+                <div
+                  class="bg-gray-100 dark:bg-gray-700 px-4 py-2 border-b border-gray-200 dark:border-gray-600"
+                >
+                  <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Visualização</p>
+                </div>
+                <div class="p-4">
+                  <template x-if="selectedFile?.filename?.endsWith('.pdf')">
+                    <iframe
+                      :src="'/api/files/' + selectedFile?.filename + '/view'"
+                      class="w-full h-96 border-0"
+                      frameborder="0"
+                    ></iframe>
+                  </template>
+                  <template x-if="selectedFile?.filename?.match(/\.(jpg|jpeg|png|gif|webp)$/i)">
+                    <img
+                      :src="'/api/files/' + selectedFile?.filename + '/view'"
+                      :alt="selectedFile?.original_filename"
+                      class="max-w-full h-auto rounded-lg shadow-md"
+                    />
+                  </template>
+                  <template
+                    x-if="!selectedFile?.filename?.match(/\.(pdf|jpg|jpeg|png|gif|webp)$/i)"
+                  >
+                    <div class="text-center py-8">
+                      <i class="fas fa-file text-4xl text-gray-400 mb-4"></i>
+                      <p class="text-gray-500 dark:text-gray-400">
+                        Visualização não disponível para este tipo de arquivo
+                      </p>
+                      <button
+                        @click="window.open('/api/files/' + selectedFile?.filename + '/view', '_blank')"
+                        class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                      >
+                        <i class="fas fa-download mr-2"></i>
+                        Baixar Arquivo
+                      </button>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screenshot Management Modal -->
+    <div
+      x-show="showScreenshotModal"
+      @click.away="showScreenshotModal = false"
+      class="fixed inset-0 z-50 overflow-y-auto"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition ease-in duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+    >
+      <div
+        class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      >
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+        <div
+          class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full"
+        >
+          <!-- Header -->
+          <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6">
+            <div class="flex items-center justify-between">
+              <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">
+                📸 Gerenciar Prints de Tela
+              </h3>
+              <button
+                @click="showScreenshotModal = false"
+                class="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-sm leading-4 font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+              >
+                <i class="fas fa-times mr-2"></i>
+                Fechar
+              </button>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="px-4 py-5 sm:p-6">
+            <div class="space-y-4">
+              <!-- Instructions -->
+              <div
+                class="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-4"
+              >
+                <div class="flex">
+                  <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-blue-400"></i>
+                  </div>
+                  <div class="ml-3">
+                    <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">
+                      Como usar os Prints de Tela
+                    </h3>
+                    <div class="mt-2 text-sm text-blue-700 dark:text-blue-300">
+                      <ul class="list-disc list-inside space-y-1">
+                        <li>Clique no botão 📸 para capturar a tela atual</li>
+                        <li>Selecione a área da tela que deseja capturar</li>
+                        <li>A imagem será automaticamente inserida no editor</li>
+                        <li>Use para ensinar procedimentos passo a passo</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recent Screenshots -->
+              <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                  Screenshots Recentes
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <template x-for="screenshot in screenshots" :key="screenshot.id">
+                    <div
+                      class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 overflow-hidden"
+                    >
+                      <img
+                        :src="screenshot.url"
+                        :alt="screenshot.filename"
+                        class="w-full h-32 object-cover"
+                      />
+                      <div class="p-3">
+                        <p
+                          class="text-sm font-medium text-gray-900 dark:text-white truncate"
+                          x-text="screenshot.filename"
+                        ></p>
+                        <p
+                          class="text-xs text-gray-500 dark:text-gray-400"
+                          x-text="screenshot.created_at"
+                        ></p>
+                        <div class="mt-2 flex space-x-2">
+                          <button
+                            @click="insertMarkdown('![' + screenshot.filename + '](' + screenshot.url + ')', '')"
+                            class="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 transition-colors"
+                          >
+                            Inserir
+                          </button>
+                          <button
+                            @click="window.open(screenshot.url, '_blank')"
+                            class="text-xs bg-gray-600 text-white px-2 py-1 rounded hover:bg-gray-700 transition-colors"
+                          >
+                            Ver
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

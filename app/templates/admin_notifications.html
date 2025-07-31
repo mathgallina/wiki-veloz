@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerenciar Notificações - Wiki Veloz Fibra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {},
+        },
+      };
+    </script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body
+    class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200"
+    x-data="notificationsAdmin()"
+  >
+    <!-- Header -->
+    <header
+      class="bg-white shadow-sm border-b border-gray-200 dark:bg-gray-800 dark:shadow-lg dark:border-gray-700"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <a href="/" class="flex items-center">
+              <div
+                class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-wifi text-white text-sm"></i>
+              </div>
+              <div class="ml-3">
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Gerenciar Notificações</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <a
+              href="/"
+              class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+            >
+              <i class="fas fa-arrow-left mr-2"></i>
+              Voltar à Wiki
+            </a>
+            <a
+              href="/logout"
+              class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+            >
+              <i class="fas fa-sign-out-alt"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          Gerenciar Notificações
+        </h2>
+        <p class="text-gray-600 dark:text-gray-300">
+          Crie e gerencie notificações para todos os usuários
+        </p>
+      </div>
+
+      <!-- Create Notification Form -->
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8"
+      >
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Criar Nova Notificação
+        </h3>
+
+        <form @submit.prevent="createNotification()" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Usuário Destinatário
+              </label>
+              <select
+                x-model="newNotification.user_id"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                required
+              >
+                <option value="">Selecione um usuário</option>
+                <template x-for="user in users" :key="user.id">
+                  <option :value="user.id" x-text="user.name"></option>
+                </template>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Tipo de Notificação
+              </label>
+              <select
+                x-model="newNotification.type"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                required
+              >
+                <option value="info">Informação</option>
+                <option value="success">Sucesso</option>
+                <option value="warning">Aviso</option>
+                <option value="error">Error</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Prioridade
+              </label>
+              <select
+                x-model="newNotification.priority"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                required
+              >
+                <option value="low">Baixa</option>
+                <option value="normal">Normal</option>
+                <option value="high">Alta</option>
+                <option value="urgent">Urgente</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Data de Expiração (opcional)
+              </label>
+              <input
+                type="datetime-local"
+                x-model="newNotification.expires_at"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Título
+            </label>
+            <input
+              type="text"
+              x-model="newNotification.title"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              placeholder="Título da notificação"
+              required
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Mensagem
+            </label>
+            <textarea
+              x-model="newNotification.message"
+              rows="3"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              placeholder="Mensagem da notificação"
+              required
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                URL de Ação (opcional)
+              </label>
+              <input
+                type="url"
+                x-model="newNotification.action_url"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                placeholder="https://exemplo.com"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Texto do Botão de Ação (opcional)
+              </label>
+              <input
+                type="text"
+                x-model="newNotification.action_text"
+                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                placeholder="Ver mais"
+              />
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              type="submit"
+              class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              <i class="fas fa-bell mr-2"></i>
+              Criar Notificação
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Notifications List -->
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+      >
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Todas as Notificações</h3>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                >
+                  Usuário
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                >
+                  Título
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                >
+                  Tipo
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                >
+                  Prioridade
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                >
+                  Status
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                >
+                  Data
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                >
+                  Ações
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <template x-for="notification in notifications" :key="notification.id">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    <span x-text="getUserName(notification.user_id)"></span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                    <span x-text="notification.title"></span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                      :class="{
+                        'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200': notification.type === 'info',
+                        'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200': notification.type === 'success',
+                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200': notification.type === 'warning',
+                        'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200': notification.type === 'error'
+                      }"
+                      x-text="notification.type"
+                    ></span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                      :class="{
+                        'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200': notification.priority === 'low',
+                        'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200': notification.priority === 'normal',
+                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200': notification.priority === 'high',
+                        'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200': notification.priority === 'urgent'
+                      }"
+                      x-text="notification.priority"
+                    ></span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                      :class="notification.is_read ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'"
+                      x-text="notification.is_read ? 'Lida' : 'Não lida'"
+                    ></span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    <span x-text="formatDate(notification.created_at)"></span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button
+                      @click="deleteNotification(notification.id)"
+                      class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                      title="Deletar notificação"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function notificationsAdmin() {
+        return {
+          users: [],
+          notifications: [],
+          newNotification: {
+            user_id: '',
+            title: '',
+            message: '',
+            type: 'info',
+            priority: 'normal',
+            expires_at: '',
+            action_url: '',
+            action_text: '',
+          },
+
+          init() {
+            this.loadUsers();
+            this.loadNotifications();
+          },
+
+          async loadUsers() {
+            try {
+              const response = await fetch('/api/users');
+              this.users = await response.json();
+            } catch (error) {
+              console.error('Error ao carregar usuários:', error);
+            }
+          },
+
+          async loadNotifications() {
+            try {
+              const response = await fetch('/api/notifications?include_read=true&limit=100');
+              const data = await response.json();
+              this.notifications = data.notifications;
+            } catch (error) {
+              console.error('Error ao carregar notificações:', error);
+            }
+          },
+
+          async createNotification() {
+            try {
+              const response = await fetch('/api/notifications', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(this.newNotification),
+              });
+
+              if (response.ok) {
+                const result = await response.json();
+                this.notifications.unshift(result.notification);
+                this.resetForm();
+                alert('Notificação criada com sucesso!');
+              } else {
+                const error = await response.json();
+                alert('Error ao criar notificação: ' + error.error);
+              }
+            } catch (error) {
+              console.error('Error ao criar notificação:', error);
+              alert('Error ao criar notificação');
+            }
+          },
+
+          async deleteNotification(notificationId) {
+            if (!confirm('Tem certeza que deseja excluir esta notificação?')) {
+              return;
+            }
+
+            try {
+              const response = await fetch(`/api/notifications/${notificationId}`, {
+                method: 'DELETE',
+              });
+
+              if (response.ok) {
+                this.notifications = this.notifications.filter(n => n.id !== notificationId);
+                alert('Notificação deletada com sucesso!');
+              } else {
+                alert('Error ao deletar notificação');
+              }
+            } catch (error) {
+              console.error('Error ao deletar notificação:', error);
+              alert('Error ao deletar notificação');
+            }
+          },
+
+          getUserName(userId) {
+            const user = this.users.find(u => u.id === userId);
+            return user ? user.name : 'Usuário não encontrado';
+          },
+
+          formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+          },
+
+          resetForm() {
+            this.newNotification = {
+              user_id: '',
+              title: '',
+              message: '',
+              type: 'info',
+              priority: 'normal',
+              expires_at: '',
+              action_url: '',
+              action_text: '',
+            };
+          },
+        };
+      }
+    </script>
+  </body>
+</html>

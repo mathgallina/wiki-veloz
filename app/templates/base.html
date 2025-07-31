@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Wiki Veloz{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {},
+        },
+      };
+    </script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    {% block extra_head %}{% endblock %}
+  </head>
+  <body
+    class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200"
+  >
+    <!-- Header -->
+    <header
+      class="bg-white shadow-sm border-b border-gray-200 dark:bg-gray-800 dark:shadow-lg dark:border-gray-700 transition-colors duration-200"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <a href="/" class="flex items-center">
+              <div
+                class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-wifi text-white text-sm"></i>
+              </div>
+              <div class="ml-3">
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Central de Conhecimento</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <!-- Dark Mode Toggle -->
+            <button
+              id="darkModeToggle"
+              class="p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <i class="fas fa-moon text-xl dark:hidden"></i>
+              <i class="fas fa-sun text-xl hidden dark:inline"></i>
+            </button>
+
+            <!-- Notifications -->
+            <div class="relative">
+              <button
+                class="p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <i class="fas fa-bell text-xl"></i>
+              </button>
+            </div>
+
+            <!-- User Menu -->
+            <div class="relative">
+              <button
+                class="flex items-center space-x-2 p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                  <span class="text-white text-sm font-medium"
+                    >{{ current_user.name[0] if current_user.name else 'U' }}</span
+                  >
+                </div>
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >{{ current_user.name }}</span
+                >
+                <i class="fas fa-chevron-down text-xs"></i>
+              </button>
+            </div>
+
+            <!-- Logout -->
+            <a
+              href="/logout"
+              class="p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            >
+              <i class="fas fa-sign-out-alt text-xl"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav
+      class="bg-white shadow-sm border-b border-gray-200 dark:bg-gray-800 dark:shadow-lg dark:border-gray-700"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex space-x-8">
+          <a
+            href="/"
+            class="flex items-center px-3 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          >
+            <i class="fas fa-home mr-2"></i>
+            Início
+          </a>
+          <a
+            href="/documents/"
+            class="flex items-center px-3 py-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400"
+          >
+            <i class="fas fa-file-contract mr-2"></i>
+            Documentos
+          </a>
+          <a
+            href="/planos"
+            class="flex items-center px-3 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          >
+            <i class="fas fa-rocket mr-2"></i>
+            Planos
+          </a>
+          <a
+            href="/admin/users"
+            class="flex items-center px-3 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          >
+            <i class="fas fa-users mr-2"></i>
+            Usuários
+          </a>
+          <a
+            href="/admin/analytics"
+            class="flex items-center px-3 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          >
+            <i class="fas fa-chart-bar mr-2"></i>
+            Analytics
+          </a>
+          <a
+            href="/admin/notifications"
+            class="flex items-center px-3 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          >
+            <i class="fas fa-bell mr-2"></i>
+            Notificações
+          </a>
+          <a
+            href="/admin/backup"
+            class="flex items-center px-3 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          >
+            <i class="fas fa-database mr-2"></i>
+            Backup
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1">{% block content %}{% endblock %}</main>
+
+    <!-- Dark Mode Script -->
+    <script>
+      // Dark mode functionality
+      const darkModeToggle = document.getElementById('darkModeToggle');
+
+      // Check for saved dark mode preference or default to system preference
+      if (
+        localStorage.getItem('darkMode') === 'true' ||
+        (!localStorage.getItem('darkMode') &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches)
+      ) {
+        document.documentElement.classList.add('dark');
+      }
+
+      // Toggle dark mode
+      darkModeToggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+      });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+  </body>
+</html>

@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gerenciamento de PDFs por Setores - Wiki Veloz Fibra</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .pdf-preview {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .upload-area {
+        border: 2px dashed #d1d5db;
+        transition: all 0.3s ease;
+      }
+      .upload-area.dragover {
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+      }
+      .sector-card {
+        transition: all 0.3s ease;
+      }
+      .sector-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200"
+    x-data="pdfManager()"
+  >
+    <!-- Header -->
+    <header
+      class="bg-white shadow-sm border-b border-gray-200 dark:bg-gray-800 dark:shadow-lg dark:border-gray-700"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <a href="/" class="flex items-center">
+              <div
+                class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center"
+              >
+                <i class="fas fa-wifi text-white text-sm"></i>
+              </div>
+              <div class="ml-3">
+                <h1 class="text-xl font-bold text-gray-900 dark:text-white">VELOZ FIBRA</h1>
+                <p class="text-xs text-gray-500 dark:text-gray-400">PDFs por Setores</p>
+              </div>
+            </a>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <a
+              href="/"
+              class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+            >
+              <i class="fas fa-arrow-left mr-2"></i>Voltar
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- Page Header -->
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <i class="fas fa-sitemap text-blue-600 mr-3"></i>
+          PDFs Organizados por Setores
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400">
+          Gerencie treinamentos e documentos específicos de cada área da empresa
+        </p>
+      </div>
+
+      <!-- Upload Section -->
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8"
+      >
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+          <i class="fas fa-upload text-green-600 mr-2"></i>
+          Upload de Arquivos por Setor
+        </h2>
+
+        <div
+          class="upload-area rounded-lg p-8 text-center"
+          @dragover.prevent="dragover = true"
+          @dragleave.prevent="dragover = false"
+          @drop.prevent="handleDrop($event)"
+          :class="{ 'dragover': dragover }"
+        >
+          <div class="mb-4">
+            <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              Arraste arquivos aqui ou clique para selecionar
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              Suporta PDF, DOC, DOCX, TXT, JPG, PNG, GIF (máx. 50MB)
+            </p>
+          </div>
+
+          <input
+            type="file"
+            @change="handleFileSelect($event)"
+            accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif"
+            class="hidden"
+            id="fileInput"
+            multiple
+          />
+
+          <button
+            @click="$refs.fileInput.click()"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+          >
+            <i class="fas fa-folder-open mr-2"></i>
+            Selecionar Arquivos
+          </button>
+        </div>
+
+        <!-- Upload Form -->
+        <div x-show="selectedFiles.length > 0" class="mt-6">
+          <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Configurar Upload</h3>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Setor -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Setor <span class="text-red-500">*</span>
+              </label>
+              <select
+                x-model="uploadForm.sector_id"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                required
+              >
+                <option value="">Selecione um setor</option>
+                <template x-for="sector in sectors" :key="sector.id">
+                  <option :value="sector.id" x-text="sector.name"></option>
+                </template>
+              </select>
+            </div>
+
+            <!-- Página (opcional) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Página (opcional)
+              </label>
+              <select
+                x-model="uploadForm.page_id"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              >
+                <option value="">Nenhuma página</option>
+                <template x-for="page in pages" :key="page.id">
+                  <option :value="page.id" x-text="page.title"></option>
+                </template>
+              </select>
+            </div>
+
+            <!-- Data do Treinamento -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Data do Treinamento
+              </label>
+              <input
+                type="date"
+                x-model="uploadForm.training_date"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+
+            <!-- Instrutor -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Instrutor/Treinador
+              </label>
+              <input
+                type="text"
+                x-model="uploadForm.trainer"
+                placeholder="Nome do instrutor"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              />
+            </div>
+
+            <!-- Descrição -->
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Descrição
+              </label>
+              <textarea
+                x-model="uploadForm.description"
+                placeholder="Descreva o conteúdo do arquivo..."
+                rows="3"
+                class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Upload Button -->
+          <div class="mt-6">
+            <button
+              @click="uploadFiles()"
+              :disabled="!uploadForm.sector_id || uploading"
+              class="bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+            >
+              <i class="fas fa-upload mr-2"></i>
+              <span x-text="uploading ? 'Enviando...' : 'Enviar Arquivos'"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Upload Progress -->
+        <div x-show="uploading" class="mt-4">
+          <div class="bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            <div
+              class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              :style="`width: ${uploadProgress}%`"
+            ></div>
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-2" x-text="uploadStatus"></p>
+        </div>
+      </div>
+
+      <!-- Setores Overview -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <template x-for="sector in sectors" :key="sector.id">
+          <div
+            class="sector-card bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 cursor-pointer"
+            @click="selectSector(sector.id)"
+            :class="{ 'ring-2 ring-blue-500': selectedSector === sector.id }"
+          >
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center">
+                <div
+                  :class="`w-10 h-10 bg-${sector.color}-100 dark:bg-${sector.color}-900/20 rounded-lg flex items-center justify-center`"
+                >
+                  <i :class="`${sector.icon} text-${sector.color}-600 text-lg`"></i>
+                </div>
+                <div class="ml-3">
+                  <h3
+                    class="text-lg font-semibold text-gray-900 dark:text-white"
+                    x-text="sector.name"
+                  ></h3>
+                  <p
+                    class="text-sm text-gray-500 dark:text-gray-400"
+                    x-text="sector.description"
+                  ></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500 dark:text-gray-400">
+                <i class="fas fa-file-pdf mr-1"></i>
+                <span x-text="getPdfsBySector(sector.id).length"></span> arquivos
+              </span>
+              <button
+                @click.stop="viewSectorPdfs(sector.id)"
+                class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+              >
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Filters and Search -->
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8"
+      >
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center space-x-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Filtrar por Setor
+              </label>
+              <select
+                x-model="selectedSector"
+                @change="filterPdfs()"
+                class="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              >
+                <option value="">Todos os setores</option>
+                <template x-for="sector in sectors" :key="sector.id">
+                  <option :value="sector.id" x-text="sector.name"></option>
+                </template>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Ordenar por
+              </label>
+              <select
+                x-model="sortBy"
+                @change="sortPdfs()"
+                class="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              >
+                <option value="uploaded_at">Data de Upload</option>
+                <option value="original_filename">Nome do Arquivo</option>
+                <option value="training_date">Data do Treinamento</option>
+                <option value="file_size">Tamanho</option>
+                <option value="download_count">Downloads</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex-1 max-w-md">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Buscar PDFs
+            </label>
+            <input
+              type="text"
+              x-model="searchQuery"
+              @input="searchPdfs()"
+              placeholder="Buscar por nome, descrição ou instrutor..."
+              class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- PDFs List -->
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+      >
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+            <i class="fas fa-list text-blue-600 mr-2"></i>
+            Arquivos (<span x-text="filteredPdfs.length"></span>)
+          </h2>
+        </div>
+
+        <div class="divide-y divide-gray-200 dark:divide-gray-700">
+          <template x-for="pdf in filteredPdfs" :key="pdf.id">
+            <div class="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <div class="flex items-start justify-between">
+                <div class="flex items-start space-x-4 flex-1">
+                  <!-- File Icon -->
+                  <div class="flex-shrink-0">
+                    <div
+                      class="w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center"
+                    >
+                      <i class="fas fa-file-pdf text-red-600 text-xl"></i>
+                    </div>
+                  </div>
+
+                  <!-- File Info -->
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                      <h3
+                        class="text-lg font-medium text-gray-900 dark:text-white"
+                        x-text="pdf.original_filename"
+                      ></h3>
+                      <div class="flex items-center space-x-2">
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300"
+                        >
+                          <i class="fas fa-download mr-1"></i>
+                          <span x-text="pdf.download_count"></span> downloads
+                        </span>
+                        <span
+                          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300"
+                        >
+                          <span x-text="formatFileSize(pdf.file_size)"></span>
+                        </span>
+                      </div>
+                    </div>
+
+                    <p
+                      class="text-sm text-gray-500 dark:text-gray-400 mt-1"
+                      x-text="pdf.description || 'Sem descrição'"
+                    ></p>
+
+                    <div
+                      class="flex items-center space-x-4 mt-2 text-sm text-gray-500 dark:text-gray-400"
+                    >
+                      <span>
+                        <i class="fas fa-calendar mr-1"></i>
+                        <span x-text="formatDate(pdf.uploaded_at)"></span>
+                      </span>
+                      <span x-show="pdf.sector_id">
+                        <i class="fas fa-sitemap mr-1"></i>
+                        <span x-text="getSectorName(pdf.sector_id)"></span>
+                      </span>
+                      <span x-show="pdf.training_date">
+                        <i class="fas fa-graduation-cap mr-1"></i>
+                        <span x-text="formatDate(pdf.training_date)"></span>
+                      </span>
+                      <span x-show="pdf.trainer">
+                        <i class="fas fa-user-tie mr-1"></i>
+                        <span x-text="pdf.trainer"></span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center space-x-2 ml-4">
+                  <button
+                    @click="viewPdf(pdf.id)"
+                    class="p-2 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                    title="Visualizar"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+
+                  <a
+                    :href="`/uploads/${pdf.filename}`"
+                    @click="incrementDownload(pdf.id)"
+                    class="p-2 text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 transition-colors"
+                    title="Download"
+                  >
+                    <i class="fas fa-download"></i>
+                  </a>
+
+                  <button
+                    x-show="currentUser.role === 'admin'"
+                    @click="deletePdf(pdf.id)"
+                    class="p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+                    title="Excluir"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </main>
+
+    <!-- PDF Viewer Modal -->
+    <div
+      x-show="showPdfModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      @click="showPdfModal = false"
+    >
+      <div
+        class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden"
+      >
+        <div
+          class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700"
+        >
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+            <i class="fas fa-file-pdf text-red-600 mr-2"></i>
+            Visualizar PDF
+          </h3>
+          <button
+            @click="showPdfModal = false"
+            class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          >
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        <div class="p-4">
+          <iframe
+            :src="pdfViewerUrl"
+            class="w-full h-96 border border-gray-200 dark:border-gray-700 rounded"
+            frameborder="0"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function pdfManager() {
+        return {
+          pdfs: [],
+          sectors: [],
+          pages: [],
+          currentUser: null,
+          selectedFiles: [],
+          uploading: false,
+          uploadProgress: 0,
+          uploadStatus: '',
+          dragover: false,
+          showPdfModal: false,
+          pdfViewerUrl: '',
+          selectedSector: '',
+          searchQuery: '',
+          sortBy: 'uploaded_at',
+          filteredPdfs: [],
+          uploadForm: {
+            sector_id: '',
+            page_id: '',
+            description: '',
+            training_date: '',
+            trainer: '',
+          },
+
+          async init() {
+            await this.loadData();
+            this.filterPdfs();
+          },
+
+          async loadData() {
+            try {
+              // Carregar PDFs
+              const pdfsResponse = await fetch('/api/pdfs');
+              const pdfsData = await pdfsResponse.json();
+              this.pdfs = pdfsData.pdfs || [];
+
+              // Carregar setores
+              const sectorsResponse = await fetch('/api/sectors');
+              const sectorsData = await sectorsResponse.json();
+              this.sectors = sectorsData.sectors || [];
+
+              // Carregar páginas
+              const pagesResponse = await fetch('/api/pages');
+              const pagesData = await pagesResponse.json();
+              this.pages = pagesData.pages || [];
+
+              // Carregar dados do usuário
+              this.currentUser = {
+                role: 'admin', // Assumindo que é admin para esta página
+              };
+            } catch (error) {
+              console.error('Error ao carregar dados:', error);
+            }
+          },
+
+          handleFileSelect(event) {
+            this.selectedFiles = Array.from(event.target.files);
+          },
+
+          handleDrop(event) {
+            this.dragover = false;
+            this.selectedFiles = Array.from(event.dataTransfer.files);
+          },
+
+          async uploadFiles() {
+            if (!this.uploadForm.sector_id) {
+              alert('Selecione um setor');
+              return;
+            }
+
+            this.uploading = true;
+            this.uploadProgress = 0;
+            this.uploadStatus = 'Iniciando upload...';
+
+            for (let i = 0; i < this.selectedFiles.length; i++) {
+              const file = this.selectedFiles[i];
+              this.uploadStatus = `Enviando ${file.name}...`;
+              this.uploadProgress = ((i + 1) / this.selectedFiles.length) * 100;
+
+              const formData = new FormData();
+              formData.append('file', file);
+              formData.append('sector_id', this.uploadForm.sector_id);
+              formData.append('page_id', this.uploadForm.page_id);
+              formData.append('description', this.uploadForm.description);
+              formData.append('training_date', this.uploadForm.training_date);
+              formData.append('trainer', this.uploadForm.trainer);
+
+              try {
+                const response = await fetch('/api/pdfs', {
+                  method: 'POST',
+                  body: formData,
+                });
+
+                if (!response.ok) {
+                  throw new Error(`Error ao enviar ${file.name}`);
+                }
+              } catch (error) {
+                console.error('Error no upload:', error);
+                alert(`Error ao enviar ${file.name}: ${error.message}`);
+              }
+            }
+
+            this.uploadStatus = 'Upload concluído!';
+            setTimeout(() => {
+              this.uploading = false;
+              this.uploadProgress = 0;
+              this.uploadStatus = '';
+              this.selectedFiles = [];
+              this.uploadForm = {
+                sector_id: '',
+                page_id: '',
+                description: '',
+                training_date: '',
+                trainer: '',
+              };
+              this.loadData();
+              this.filterPdfs();
+            }, 2000);
+          },
+
+          filterPdfs() {
+            let filtered = [...this.pdfs];
+
+            // Filtrar por setor
+            if (this.selectedSector) {
+              filtered = filtered.filter(pdf => pdf.sector_id === this.selectedSector);
+            }
+
+            // Filtrar por busca
+            if (this.searchQuery) {
+              const query = this.searchQuery.toLowerCase();
+              filtered = filtered.filter(
+                pdf =>
+                  pdf.original_filename.toLowerCase().includes(query) ||
+                  (pdf.description && pdf.description.toLowerCase().includes(query)) ||
+                  (pdf.trainer && pdf.trainer.toLowerCase().includes(query))
+              );
+            }
+
+            // Ordenar
+            filtered.sort((a, b) => {
+              switch (this.sortBy) {
+                case 'uploaded_at':
+                  return new Date(b.uploaded_at) - new Date(a.uploaded_at);
+                case 'original_filename':
+                  return a.original_filename.localeCompare(b.original_filename);
+                case 'training_date':
+                  return new Date(b.training_date || 0) - new Date(a.training_date || 0);
+                case 'file_size':
+                  return b.file_size - a.file_size;
+                case 'download_count':
+                  return b.download_count - a.download_count;
+                default:
+                  return 0;
+              }
+            });
+
+            this.filteredPdfs = filtered;
+          },
+
+          searchPdfs() {
+            this.filterPdfs();
+          },
+
+          sortPdfs() {
+            this.filterPdfs();
+          },
+
+          selectSector(sectorId) {
+            this.selectedSector = this.selectedSector === sectorId ? '' : sectorId;
+            this.filterPdfs();
+          },
+
+          viewSectorPdfs(sectorId) {
+            this.selectedSector = sectorId;
+            this.filterPdfs();
+          },
+
+          getPdfsBySector(sectorId) {
+            return this.pdfs.filter(pdf => pdf.sector_id === sectorId);
+          },
+
+          getSectorName(sectorId) {
+            const sector = this.sectors.find(s => s.id === sectorId);
+            return sector ? sector.name : 'Setor não encontrado';
+          },
+
+          getPageTitle(pageId) {
+            const page = this.pages.find(p => p.id === pageId);
+            return page ? page.title : 'Página não encontrada';
+          },
+
+          async viewPdf(pdfId) {
+            this.pdfViewerUrl = `/api/pdfs/${pdfId}/view`;
+            this.showPdfModal = true;
+          },
+
+          async incrementDownload(pdfId) {
+            // O incremento é feito automaticamente pelo servidor
+          },
+
+          async deletePdf(pdfId) {
+            if (!confirm('Tem certeza que deseja excluir este PDF?')) {
+              return;
+            }
+
+            try {
+              const response = await fetch(`/api/pdfs/${pdfId}`, {
+                method: 'DELETE',
+              });
+
+              if (response.ok) {
+                await this.loadData();
+                this.filterPdfs();
+              } else {
+                alert('Error ao excluir PDF');
+              }
+            } catch (error) {
+              console.error('Error ao excluir PDF:', error);
+              alert('Error ao excluir PDF');
+            }
+          },
+
+          formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+          },
+
+          formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleDateString('pt-BR');
+          },
+        };
+      }
+    </script>
+  </body>
+</html>

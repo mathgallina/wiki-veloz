@@ -1,0 +1,87 @@
+[
+  {
+    "id": "visao-empresa",
+    "title": "Visão da Empresa",
+    "category": "visao-empresa",
+    "content": "# Visão da Veloz Fibra\n\n## Nossa Missão\nFornecer internet de alta velocidade e qualidade para conectar pessoas e transformar comunidades.\n\n## Nossos Valores\n- **Qualidade**: Sempre entregar o melhor serviço possível\n- **Inovação**: Buscar constantemente novas tecnologias e soluções\n- **Confiança**: Construir relacionamentos duradouros com nossos clients\n- **Comunidade**: Contribuir para o desenvolvimento das regiões onde atuamos\n\n## Objetivos Estratégicos\n1. Expandir nossa cobertura de fibra óptica\n2. Manter a qualidade do atendimento ao cliente\n3. Investir em tecnologia e inovação\n4. Crescer de forma sustentável",
+    "created_at": "2024-01-15T10:00:00",
+    "updated_at": "2024-01-15T10:00:00"
+  },
+  {
+    "id": "ferramentas-utilizadas",
+    "title": "Ferramentas Utilizadas",
+    "category": "ferramentas",
+    "content": "# Ferramentas da Veloz Fibra\n\n## Gestão de Clients\n- **CRM**: Sistema próprio para gestão de clients\n- **WhatsApp Business**: Comunicação com clients\n- **Google Workspace**: Email e colaboração\n\n## Operational\n- **Sistema de Monitoramento**: Acompanhamento de rede\n- **App de Campo**: Para técnicos em campo\n- **Planilhas Google**: Controle de processors\n\n## Financeiro\n- **Sistema de Cobrança**: Integrado com CRM\n- **Controle de Caixa**: Gestão financeira\n- **Relatórios**: Análise de performance\n\n## Marketing\n- **Redes Sociais**: Instagram, Facebook\n- **Google Ads**: Publicidade online\n- **Site Institucional**: WordPress",
+    "created_at": "2024-01-15T10:00:00",
+    "updated_at": "2024-01-15T10:00:00"
+  },
+  {
+    "id": "processors-internos",
+    "title": "Processors Internos",
+    "category": "processors",
+    "content": "# Processors Internos\n\n## Atendimento ao Cliente\n1. **Recebimento da Solicitação**: Via WhatsApp, telefone ou presencial\n2. **Análise de Viabilidade**: Verificar cobertura na região\n3. **Agendamento**: Marcar instalação ou visita técnica\n4. **Execução**: Técnico realiza instalação\n5. **Acompanhamento**: Monitorar qualidade do serviço\n\n## Instalação de Novos Clients\n1. **Cadastro no Sistema**: Dados completos do cliente\n2. **Verificação de Cobertura**: Confirmar disponibilidade\n3. **Agendamento**: Definir data e horário\n4. **Instalação**: Técnico realiza conexão\n5. **Teste**: Verificar velocidade e estabilidade\n6. **Ativação**: Liberar acesso à internet\n\n## Manutenção\n1. **Identificação do Problema**: Cliente reporta ou sistema detecta\n2. **Análise**: Verificar se é problema de rede ou equipamento\n3. **Agendamento**: Marcar visita técnica se necessário\n4. **Resolução**: Técnico resolve o problema\n5. **Teste**: Confirmar funcionamento\n6. **Fechamento**: Registrar solução no sistema",
+    "created_at": "2024-01-15T10:00:00",
+    "updated_at": "2024-01-15T10:00:00"
+  },
+  {
+    "id": "onboarding",
+    "title": "Onboarding de Novos Colaboradores",
+    "category": "onboarding",
+    "content": "# Onboarding - Bem-vindo à Veloz Fibra!\n\n## Primeiro Dia\n1. **Apresentação**: Conhecer a equipe e a empresa\n2. **Acesso aos Sistemas**: Configurar logins e senhas\n3. **Tour pela Empresa**: Conhecer as instalações\n4. **Documentação**: Receber manual de procedimentos\n\n## Primeira Semana\n1. **Treinamento Técnico**: Aprender sobre produtos e serviços\n2. **Processors**: Entender fluxos de trabalho\n3. **Ferramentas**: Dominar sistemas utilizados\n4. **Expectativas**: Alinhar objetivos e metas\n\n## Primeiro Mês\n1. **Acompanhamento**: Mentor designado para dúvidas\n2. **Feedback**: Avaliação de desempenho\n3. **Integração**: Participar de reuniões e eventos\n4. **Independência**: Assumir responsabilidades\n\n## Recursos Disponíveis\n- Esta wiki para consulta\n- Manual de procedimentos\n- Contatos da equipe\n- Treinamentos online",
+    "created_at": "2024-01-15T10:00:00",
+    "updated_at": "2024-01-15T10:00:00"
+  },
+  {
+    "id": "historico-mudancas",
+    "title": "Histórico de Mudanças",
+    "category": "historico",
+    "content": "# Histórico de Mudanças e Decisões\n\n## Janeiro 2024\n- **15/01**: Implementação da wiki interna\n- **10/01**: Nova política de atendimento ao cliente\n- **05/01**: Atualização do sistema de monitoramento\n\n## Dezembro 2023\n- **20/12**: Expansão da cobertura para bairro novo\n- **15/12**: Contratação de 2 novos técnicos\n- **10/12**: Melhoria no sistema de cobrança\n\n## Novembro 2023\n- **25/11**: Implementação de nova ferramenta de CRM\n- **15/11**: Treinamento da equipe em novas tecnologias\n- **05/11**: Reestruturação do processo de instalação\n\n## Outubro 2023\n- **30/10**: Lançamento do novo plano de internet\n- **20/10**: Parceria com fornecedor de equipamentos\n- **10/10**: Melhoria na infraestrutura de rede",
+    "created_at": "2024-01-15T10:00:00",
+    "updated_at": "2024-01-15T10:00:00"
+  },
+  {
+    "title": "Bem-vindo ao Wiki Veloz",
+    "content": "# Bem-vindo ao Wiki Veloz\n\nEste é o sistema de documentação colaborativa da Veloz Fibra.",
+    "category": "Geral",
+    "tags": [
+      "bem-vindo",
+      "introdução"
+    ],
+    "author_id": "admin-001",
+    "id": "page-e90533cf",
+    "slug": "bem-vindo-ao-wiki-veloz",
+    "created_at": "2025-07-25T11:52:59.048719",
+    "updated_at": "2025-07-25T11:52:59.048747",
+    "version": 1
+  },
+  {
+    "title": "Como Usar o Sistema",
+    "content": "# Como Usar o Sistema\n\nGuia completo de utilização do Wiki Veloz.",
+    "category": "Documentação",
+    "tags": [
+      "guia",
+      "tutorial"
+    ],
+    "author_id": "admin-001",
+    "id": "page-f718843f",
+    "slug": "como-usar-o-sistema",
+    "created_at": "2025-07-25T11:52:59.050531",
+    "updated_at": "2025-07-25T11:52:59.050534",
+    "version": 1
+  },
+  {
+    "title": "Políticas da Empresa",
+    "content": "# Políticas da Empresa\n\nDocumentação das políticas internas.",
+    "category": "Políticas",
+    "tags": [
+      "políticas",
+      "empresa"
+    ],
+    "author_id": "admin-001",
+    "id": "page-e6282048",
+    "slug": "politicas-da-empresa",
+    "created_at": "2025-07-25T11:52:59.051449",
+    "updated_at": "2025-07-25T11:52:59.051450",
+    "version": 1
+  }
+]

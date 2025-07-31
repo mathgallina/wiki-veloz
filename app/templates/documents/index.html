@@ -1,0 +1,944 @@
+{% extends "base.html" %} {% block title %}Documentos - Wiki Veloz{% endblock %} {% block extra_head
+%}
+<style>
+  /* Estilos específicos para dark mode */
+  .dark .bg-white {
+    background-color: #1f2937;
+  }
+
+  .dark .text-gray-900 {
+    color: #f9fafb;
+  }
+
+  .dark .text-gray-700 {
+    color: #d1d5db;
+  }
+
+  .dark .text-gray-600 {
+    color: #9ca3af;
+  }
+
+  .dark .border-gray-300 {
+    border-color: #4b5563;
+  }
+
+  .dark .bg-gray-50 {
+    background-color: #374151;
+  }
+
+  .dark .hover\:bg-gray-50:hover {
+    background-color: #4b5563;
+  }
+
+  /* Card styles for dark mode */
+  .dark .document-card {
+    background-color: #1f2937;
+    border-color: #4b5563;
+  }
+
+  .dark .document-card:hover {
+    background-color: #374151;
+  }
+
+  /* Button styles for dark mode */
+  .dark .btn-primary {
+    background-color: #3b82f6;
+    color: white;
+  }
+
+  .dark .btn-primary:hover {
+    background-color: #2563eb;
+  }
+
+  .dark .btn-danger {
+    background-color: #dc2626;
+    color: white;
+  }
+
+  .dark .btn-danger:hover {
+    background-color: #b91c1c;
+  }
+
+  .dark .btn-success {
+    background-color: #059669;
+    color: white;
+  }
+
+  .dark .btn-success:hover {
+    background-color: #047857;
+  }
+
+  /* Modal styles */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background: white;
+    border-radius: 8px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: auto;
+  }
+
+  .dark .modal-content {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+
+  /* File viewer styles */
+  .file-viewer {
+    width: 100%;
+    height: 80vh;
+    border: none;
+  }
+
+  .image-viewer {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Documentos</h1>
+    <button
+      id="addDocumentBtn"
+      class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors"
+    >
+      <i class="fas fa-plus mr-2"></i>Adicionar Documento
+    </button>
+  </div>
+
+  <!-- Add Document Form with File Upload -->
+  <div
+    id="addDocumentForm"
+    class="hidden mb-8 bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border border-gray-300 dark:border-gray-600"
+  >
+    <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+      Adicionar Novo Documento
+    </h3>
+    <form id="documentForm" enctype="multipart/form-data">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >Título *</label
+          >
+          <input
+            type="text"
+            id="title"
+            name="title"
+            required
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          />
+        </div>
+
+        <div>
+          <label
+            for="category"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >Categoria *</label
+          >
+          <select
+            id="category"
+            name="category"
+            required
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          >
+            <option value="">Selecione uma categoria</option>
+            <option value="Geral">Geral</option>
+            <option value="Documentação">Documentação</option>
+            <option value="Políticas">Políticas</option>
+            <option value="Técnico">Técnico</option>
+            <option value="Financeiro">Financeiro</option>
+            <option value="RH">RH</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Vendas">Vendas</option>
+          </select>
+        </div>
+
+        <div class="md:col-span-2">
+          <label
+            for="description"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >Descrição</label
+          >
+          <textarea
+            id="description"
+            name="description"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            placeholder="Descreva o documento..."
+          ></textarea>
+        </div>
+
+        <div class="md:col-span-2">
+          <label
+            for="content"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >Conteúdo *</label
+          >
+          <textarea
+            id="content"
+            name="content"
+            rows="5"
+            required
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            placeholder="Digite o conteúdo do documento..."
+          ></textarea>
+        </div>
+
+        <div class="md:col-span-2">
+          <label for="file" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <i class="fas fa-paperclip mr-2"></i>Anexo (PDF, PNG, JPG)
+          </label>
+          <input
+            type="file"
+            id="file"
+            name="file"
+            accept=".pdf,.png,.jpg,.jpeg"
+            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-gray-600 dark:file:text-gray-300"
+          />
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Formatos aceitos: PDF, PNG, JPG. Máximo 50MB.
+          </p>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-6">
+        <button
+          type="button"
+          id="cancelBtn"
+          class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+        >
+          <i class="fas fa-save mr-2"></i>Salvar Documento
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="mb-6">
+    <div class="relative">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Buscar documentos..."
+        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+      />
+      <button
+        id="searchBtn"
+        class="absolute right-3 top-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+      >
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Documents Grid -->
+  <div id="documentsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Documents will be loaded here -->
+  </div>
+
+  <!-- Loading State -->
+  <div id="loadingState" class="hidden text-center py-8">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+    <p class="mt-4 text-gray-600 dark:text-gray-400">Carregando documentos...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div id="emptyState" class="hidden text-center py-12">
+    <i class="fas fa-file-alt text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+    <h3 class="text-xl font-semibold text-gray-600 dark:text-gray-400 mb-2">
+      Nenhum documento encontrado
+    </h3>
+    <p class="text-gray-500 dark:text-gray-500 mb-4">Adicione o primeiro documento para começar!</p>
+    <button
+      id="addFirstDocumentBtn"
+      class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-colors"
+    >
+      Adicionar Primeiro Documento
+    </button>
+  </div>
+</div>
+
+<!-- File Viewer Modal -->
+<div id="fileViewerModal" class="modal-overlay hidden">
+  <div class="modal-content p-6 w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+    <div
+      class="flex justify-between items-center mb-6 border-b border-gray-200 dark:border-gray-700 pb-4"
+    >
+      <h3 id="fileViewerTitle" class="text-xl font-semibold text-gray-900 dark:text-white"></h3>
+      <button
+        id="closeFileViewer"
+        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+      >
+        <i class="fas fa-times text-xl"></i>
+      </button>
+    </div>
+    <div id="fileViewerContent" class="text-center">
+      <!-- File content will be loaded here -->
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal-overlay hidden">
+  <div class="modal-content p-6 w-full max-w-md">
+    <div class="text-center">
+      <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Confirmar Exclusão</h3>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">
+        Tem certeza que deseja excluir este documento? Esta ação não pode ser desfeita.
+      </p>
+      <div class="flex justify-center gap-3">
+        <button
+          id="cancelDelete"
+          class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          id="confirmDelete"
+          class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+        >
+          <i class="fas fa-trash mr-2"></i>Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const addDocumentBtn = document.getElementById('addDocumentBtn');
+    const addDocumentForm = document.getElementById('addDocumentForm');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const documentForm = document.getElementById('documentForm');
+    const addFirstDocumentBtn = document.getElementById('addFirstDocumentBtn');
+    const fileViewerModal = document.getElementById('fileViewerModal');
+    const closeFileViewer = document.getElementById('closeFileViewer');
+    const deleteModal = document.getElementById('deleteModal');
+    const cancelDelete = document.getElementById('cancelDelete');
+    const confirmDelete = document.getElementById('confirmDelete');
+
+    let currentDocumentToDelete = null;
+
+    // Show/hide form
+    function toggleForm() {
+      addDocumentForm.classList.toggle('hidden');
+    }
+
+    addDocumentBtn.addEventListener('click', toggleForm);
+    cancelBtn.addEventListener('click', toggleForm);
+    addFirstDocumentBtn.addEventListener('click', toggleForm);
+
+    // Close modals
+    function closeModal(modal) {
+      modal.classList.add('hidden');
+    }
+
+    closeFileViewer.addEventListener('click', () => closeModal(fileViewerModal));
+    cancelDelete.addEventListener('click', () => closeModal(deleteModal));
+
+    // Close modal when clicking outside
+    fileViewerModal.addEventListener('click', e => {
+      if (e.target === fileViewerModal) {
+        closeModal(fileViewerModal);
+      }
+    });
+
+    deleteModal.addEventListener('click', e => {
+      if (e.target === deleteModal) {
+        closeModal(deleteModal);
+      }
+    });
+
+    // Handle form submission with file upload
+    documentForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append('title', document.getElementById('title').value);
+      formData.append('category', document.getElementById('category').value);
+      formData.append('description', document.getElementById('description').value);
+      formData.append('content', document.getElementById('content').value);
+      formData.append('type', 'documento');
+      formData.append('priority', 'media');
+      formData.append('author', 'Matheus Gallina');
+
+      const fileInput = document.getElementById('file');
+      if (fileInput.files.length > 0) {
+        formData.append('file', fileInput.files[0]);
+      }
+
+      try {
+        const response = await fetch('/documents/create', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert('Documento criado com sucesso!');
+          documentForm.reset();
+          toggleForm();
+          loadDocuments();
+        } else {
+          alert('Erro ao criar documento: ' + result.message);
+        }
+      } catch (error) {
+        alert('Erro ao criar documento: ' + error.message);
+      }
+    });
+
+    // Load documents
+    async function loadDocuments() {
+      const loadingState = document.getElementById('loadingState');
+      const documentsGrid = document.getElementById('documentsGrid');
+      const emptyState = document.getElementById('emptyState');
+
+      loadingState.classList.remove('hidden');
+      documentsGrid.innerHTML = '';
+
+      try {
+        const response = await fetch('/documents/api/');
+        const data = await response.json();
+
+        loadingState.classList.add('hidden');
+
+        if (data.success && data.data.length > 0) {
+          data.data.forEach(doc => {
+            const docCard = createDocumentCard(doc);
+            documentsGrid.appendChild(docCard);
+          });
+        } else {
+          emptyState.classList.remove('hidden');
+        }
+      } catch (error) {
+        loadingState.classList.add('hidden');
+        console.error('Erro ao carregar documentos:', error);
+      }
+    }
+
+    function createDocumentCard(doc) {
+      const card = document.createElement('div');
+      card.className =
+        'bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700';
+
+      const hasAttachment = doc.filename || doc.attachment_path;
+      const attachmentIcon = hasAttachment
+        ? '<i class="fas fa-paperclip text-blue-500 mr-2" title="Contém anexo"></i>'
+        : '';
+
+      card.innerHTML = `
+        <div class="flex justify-between items-start mb-4">
+          <div class="flex-1">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">${attachmentIcon}${
+        doc.title
+      }</h3>
+            <span class="inline-block px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded mt-2">${
+              doc.category
+            }</span>
+          </div>
+          <button 
+            class="delete-doc-btn text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors"
+            data-doc-id="${doc.id}"
+            title="Excluir documento"
+          >
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">${
+          doc.description || 'Sem descrição'
+        }</p>
+        <div class="text-xs text-gray-500 dark:text-gray-500 mb-4">
+          <p>Autor: ${doc.author || 'Sistema'}</p>
+          <p>Criado: ${new Date(doc.created_at).toLocaleDateString()}</p>
+          ${
+            hasAttachment
+              ? '<p class="text-blue-600 dark:text-blue-400"><i class="fas fa-file mr-1"></i>Contém anexo</p>'
+              : ''
+          }
+        </div>
+        <div class="flex gap-2">
+          <button 
+            class="view-doc-btn flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+            data-doc-id="${doc.id}"
+          >
+            <i class="fas fa-eye mr-1"></i>Visualizar
+          </button>
+          ${
+            hasAttachment
+              ? `
+            <button 
+              class="view-attachment-btn px-3 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+              data-doc-id="${doc.id}"
+              title="Visualizar anexo"
+            >
+              <i class="fas fa-file"></i>
+            </button>
+          `
+              : ''
+          }
+          ${
+            window.currentUserRole === 'admin'
+              ? `
+            <button 
+              class="edit-doc-btn px-3 py-2 bg-yellow-600 text-white text-sm rounded hover:bg-yellow-700 transition-colors"
+              data-doc-id="${doc.id}"
+              title="Editar documento"
+            >
+              <i class="fas fa-edit"></i>
+            </button>
+          `
+              : ''
+          }
+        </div>
+      `;
+
+      // Add event listeners
+      const deleteBtn = card.querySelector('.delete-doc-btn');
+      const viewBtn = card.querySelector('.view-doc-btn');
+      const viewAttachmentBtn = card.querySelector('.view-attachment-btn');
+      const editBtn = card.querySelector('.edit-doc-btn');
+
+      deleteBtn.addEventListener('click', () => showDeleteConfirmation(doc.id));
+      viewBtn.addEventListener('click', () => viewDocument(doc));
+      if (viewAttachmentBtn) {
+        viewAttachmentBtn.addEventListener('click', () => viewAttachment(doc));
+      }
+      if (editBtn) {
+        editBtn.addEventListener('click', () => editDocument(doc.id));
+      }
+
+      return card;
+    }
+
+    function showDeleteConfirmation(docId) {
+      currentDocumentToDelete = docId;
+      deleteModal.classList.remove('hidden');
+    }
+
+    confirmDelete.addEventListener('click', async () => {
+      if (!currentDocumentToDelete) return;
+
+      try {
+        const response = await fetch(`/documents/${currentDocumentToDelete}`, {
+          method: 'DELETE',
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          closeModal(deleteModal);
+          loadDocuments();
+          alert('Documento excluído com sucesso!');
+        } else {
+          alert('Erro ao excluir documento: ' + result.message);
+        }
+      } catch (error) {
+        alert('Erro ao excluir documento: ' + error.message);
+      }
+    });
+
+    function viewDocument(doc) {
+      // Show document details in modal
+      const hasAttachment = doc.filename || doc.attachment_path;
+
+      // Set modal title
+      document.getElementById('fileViewerTitle').textContent = doc.title;
+
+      const content = document.getElementById('fileViewerContent');
+
+      // Create document info
+      const documentInfo = `
+        <div class="mb-6 text-left">
+          <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-2">Informações do Documento</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Título:</span>
+                <span class="text-gray-900 dark:text-white ml-2">${doc.title}</span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Categoria:</span>
+                <span class="text-gray-900 dark:text-white ml-2">${doc.category}</span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Autor:</span>
+                <span class="text-gray-900 dark:text-white ml-2">${doc.author || 'Sistema'}</span>
+              </div>
+              <div>
+                <span class="font-medium text-gray-700 dark:text-gray-300">Criado em:</span>
+                <span class="text-gray-900 dark:text-white ml-2">${new Date(
+                  doc.created_at
+                ).toLocaleDateString()}</span>
+              </div>
+            </div>
+            ${
+              doc.description
+                ? `
+              <div class="mt-3">
+                <span class="font-medium text-gray-700 dark:text-gray-300">Descrição:</span>
+                <p class="text-gray-900 dark:text-white mt-1">${doc.description}</p>
+              </div>
+            `
+                : ''
+            }
+          </div>
+        </div>
+      `;
+
+      if (hasAttachment) {
+        // Document has attachment - show file viewer
+        const filePath = doc.attachment_path || `/documents/${doc.id}/view`;
+        const fileName = doc.original_filename || doc.filename;
+
+        if (doc.filename && doc.filename.toLowerCase().endsWith('.pdf')) {
+          content.innerHTML = `
+            ${documentInfo}
+            <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+              <iframe src="${filePath}" class="w-full h-96 border-0" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              </iframe>
+              <div class="hidden text-center py-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <i class="fas fa-exclamation-triangle text-2xl text-red-500 mb-2"></i>
+                <p class="text-red-700 dark:text-red-300 mb-2">Erro ao carregar o arquivo</p>
+                <p class="text-sm text-red-600 dark:text-red-400">O arquivo pode ter sido movido ou excluído.</p>
+                <div class="mt-4">
+                  <a href="/documents/${doc.id}/download" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-download mr-2"></i>Tentar Download
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div id="confirmationSection" class="mt-6 text-center">
+              <!-- Confirmation button will be loaded here -->
+            </div>
+          `;
+        } else if (doc.filename && /\.(png|jpg|jpeg|gif|webp)$/i.test(doc.filename)) {
+          content.innerHTML = `
+            ${documentInfo}
+            <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+              <img src="${filePath}" class="w-full max-h-96 object-contain" alt="${fileName}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+              <div class="hidden text-center py-8 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <i class="fas fa-exclamation-triangle text-2xl text-red-500 mb-2"></i>
+                <p class="text-red-700 dark:text-red-300 mb-2">Erro ao carregar a imagem</p>
+                <p class="text-sm text-red-600 dark:text-red-400">A imagem pode ter sido movida ou excluída.</p>
+                <div class="mt-4">
+                  <a href="/documents/${doc.id}/download" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-download mr-2"></i>Tentar Download
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div id="confirmationSection" class="mt-6 text-center">
+              <!-- Confirmation button will be loaded here -->
+            </div>
+          `;
+        } else {
+          content.innerHTML = `
+            ${documentInfo}
+            <div class="text-center py-8">
+              <i class="fas fa-file text-4xl text-gray-400 mb-4"></i>
+              <p class="text-gray-600 dark:text-gray-400 mb-4">Visualização não disponível para este tipo de arquivo.</p>
+              <div class="flex justify-center gap-3">
+                <a href="/documents/${doc.id}/download" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                  <i class="fas fa-download mr-2"></i>Baixar Arquivo
+                </a>
+                <a href="/documents/${doc.id}/view" target="_blank" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
+                  <i class="fas fa-external-link-alt mr-2"></i>Abrir em Nova Aba
+                </a>
+              </div>
+            </div>
+            <div id="confirmationSection" class="mt-6 text-center">
+              <!-- Confirmation button will be loaded here -->
+            </div>
+          `;
+        }
+      } else {
+        // Document has no attachment
+        content.innerHTML = `
+          ${documentInfo}
+          <div class="text-center py-8">
+            <i class="fas fa-file-alt text-4xl text-gray-400 mb-4"></i>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">Este documento não possui arquivo anexado.</p>
+            <p class="text-sm text-gray-500 dark:text-gray-500">Apenas as informações do documento estão disponíveis.</p>
+          </div>
+          <div id="confirmationSection" class="mt-6 text-center">
+            <!-- Confirmation button will be loaded here -->
+          </div>
+        `;
+      }
+
+      // Load confirmation status and button
+      loadConfirmationStatus(doc.id);
+
+      fileViewerModal.classList.remove('hidden');
+    }
+
+    function viewAttachment(doc) {
+      if (!doc.filename && !doc.attachment_path) {
+        alert('Este documento não possui anexo.');
+        return;
+      }
+
+      const filePath = doc.attachment_path || `/documents/${doc.id}/view`;
+      const fileName = doc.original_filename || doc.filename;
+
+      document.getElementById('fileViewerTitle').textContent = `Anexo: ${fileName}`;
+
+      const content = document.getElementById('fileViewerContent');
+
+      if (doc.filename && doc.filename.toLowerCase().endsWith('.pdf')) {
+        content.innerHTML = `
+          <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+            <iframe src="${filePath}" class="w-full h-96 border-0"></iframe>
+          </div>
+        `;
+      } else if (doc.filename && /\.(png|jpg|jpeg|gif|webp)$/i.test(doc.filename)) {
+        content.innerHTML = `
+          <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+            <img src="${filePath}" class="w-full max-h-96 object-contain" alt="${fileName}">
+          </div>
+        `;
+      } else {
+        content.innerHTML = `
+          <div class="text-center py-8">
+            <i class="fas fa-file text-4xl text-gray-400 mb-4"></i>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">Visualização não disponível para este tipo de arquivo.</p>
+            <div class="flex justify-center gap-3">
+              <a href="${filePath}" download="${fileName}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                <i class="fas fa-download mr-2"></i>Baixar Arquivo
+              </a>
+              <a href="/documents/${doc.id}/download" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors">
+                <i class="fas fa-external-link-alt mr-2"></i>Abrir em Nova Aba
+              </a>
+            </div>
+          </div>
+        `;
+      }
+
+      fileViewerModal.classList.remove('hidden');
+    }
+
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+
+    function performSearch() {
+      const query = searchInput.value.trim();
+      if (query) {
+        // Implement search logic
+        console.log('Searching for:', query);
+      } else {
+        loadDocuments();
+      }
+    }
+
+    searchBtn.addEventListener('click', performSearch);
+    searchInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+    // Get current user role
+    async function getCurrentUserRole() {
+      try {
+        const response = await fetch('/auth/current-user');
+        const data = await response.json();
+        if (data.success) {
+          window.currentUserRole = data.data.role;
+        } else {
+          window.currentUserRole = 'user'; // Default to user
+        }
+      } catch (error) {
+        console.error('Erro ao obter papel do usuário:', error);
+        window.currentUserRole = 'user'; // Default to user
+      }
+    }
+
+    function editDocument(documentId) {
+      window.location.href = `/documents/${documentId}/edit`;
+    }
+
+    // Initial load
+    getCurrentUserRole().then(() => {
+      loadDocuments();
+    });
+
+    // Confirmation functions
+    async function loadConfirmationStatus(documentId) {
+      try {
+        const response = await fetch(`/documents/${documentId}/confirmation`);
+        const data = await response.json();
+
+        if (data.success) {
+          updateConfirmationButton(documentId, data.data);
+        } else {
+          console.error('Erro ao carregar status de confirmação:', data.message);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar status de confirmação:', error);
+      }
+    }
+
+    function updateConfirmationButton(documentId, confirmationData) {
+      const confirmationSection = document.getElementById('confirmationSection');
+
+      if (confirmationData.confirmed) {
+        // User already confirmed - show confirmation message
+        const confirmedDate = new Date(confirmationData.confirmation.confirmed_at);
+        const formattedDate = confirmedDate.toLocaleDateString('pt-BR');
+        const formattedTime = confirmedDate.toLocaleTimeString('pt-BR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+        confirmationSection.innerHTML = `
+          <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+            <div class="flex items-center justify-center">
+              <i class="fas fa-check-circle text-2xl text-green-500 mr-3"></i>
+              <div class="text-center">
+                <p class="text-green-700 dark:text-green-300 font-medium">Documento lido</p>
+                <p class="text-sm text-green-600 dark:text-green-400">Confirmado em ${formattedDate} às ${formattedTime}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        // User hasn't confirmed - show confirmation button
+        confirmationSection.innerHTML = `
+          <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <p class="text-blue-700 dark:text-blue-300 mb-3">Confirme que você leu este documento:</p>
+            <button 
+              id="confirmReadBtn"
+              class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition-colors flex items-center justify-center mx-auto"
+              onclick="confirmDocumentRead('${documentId}')"
+            >
+              <i class="fas fa-check mr-2"></i>✅ Confirmar Leitura
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    async function confirmDocumentRead(documentId) {
+      try {
+        const confirmBtn = document.getElementById('confirmReadBtn');
+        if (confirmBtn) {
+          confirmBtn.disabled = true;
+          confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Confirmando...';
+        }
+
+        const response = await fetch(`/documents/${documentId}/confirm`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Show success message
+          const confirmationSection = document.getElementById('confirmationSection');
+          confirmationSection.innerHTML = `
+            <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+              <div class="flex items-center justify-center">
+                <i class="fas fa-check-circle text-2xl text-green-500 mr-3"></i>
+                <div class="text-center">
+                  <p class="text-green-700 dark:text-green-300 font-medium">Leitura confirmada!</p>
+                  <p class="text-sm text-green-600 dark:text-green-400">Obrigado por confirmar a leitura deste documento.</p>
+                </div>
+              </div>
+            </div>
+          `;
+
+          // Show success notification
+          showNotification('Leitura confirmada com sucesso!', 'success');
+        } else {
+          // Show error message
+          showNotification('Erro ao confirmar leitura: ' + data.message, 'error');
+
+          // Reset button
+          if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = '<i class="fas fa-check mr-2"></i>✅ Confirmar Leitura';
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao confirmar leitura:', error);
+        showNotification('Erro ao confirmar leitura. Tente novamente.', 'error');
+
+        // Reset button
+        const confirmBtn = document.getElementById('confirmReadBtn');
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.innerHTML = '<i class="fas fa-check mr-2"></i>✅ Confirmar Leitura';
+        }
+      }
+    }
+
+    function showNotification(message, type = 'info') {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full ${
+        type === 'success'
+          ? 'bg-green-500 text-white'
+          : type === 'error'
+          ? 'bg-red-500 text-white'
+          : 'bg-blue-500 text-white'
+      }`;
+
+      notification.innerHTML = `
+        <div class="flex items-center">
+          <i class="fas ${
+            type === 'success'
+              ? 'fa-check-circle'
+              : type === 'error'
+              ? 'fa-exclamation-circle'
+              : 'fa-info-circle'
+          } mr-2"></i>
+          <span>${message}</span>
+        </div>
+      `;
+
+      document.body.appendChild(notification);
+
+      // Animate in
+      setTimeout(() => {
+        notification.classList.remove('translate-x-full');
+      }, 100);
+
+      // Remove after 3 seconds
+      setTimeout(() => {
+        notification.classList.add('translate-x-full');
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+  });
+</script>
+{% endblock %}

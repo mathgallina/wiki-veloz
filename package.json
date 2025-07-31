@@ -1,0 +1,35 @@
+{
+  "name": "wiki-veloz-fibra",
+  "version": "1.0.0",
+  "description": "Sistema de Wiki Interna da Veloz Fibra",
+  "main": "app.py",
+  "scripts": {
+    "dev": "python3 app.py",
+    "test": "pytest",
+    "format": "black . --line-length=88",
+    "lint": "flake8 . --max-line-length=88 --extend-ignore=E203,W503",
+    "sort": "isort . --profile=black --line-length=88",
+    "check": "npm run format && npm run lint && npm run sort",
+    "build:css": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch",
+    "build:css:prod": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --minify"
+  },
+  "keywords": [
+    "wiki",
+    "flask",
+    "python",
+    "tailwindcss",
+    "alpinejs"
+  ],
+  "author": "Matheus Gallina",
+  "license": "MIT",
+  "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "tailwindcss": "^3.4.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

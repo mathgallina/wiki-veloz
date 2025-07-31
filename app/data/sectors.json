@@ -1,0 +1,58 @@
+[
+  {
+    "id": "comercial",
+    "name": "Comercial",
+    "description": "Setor responsável por vendas e relacionamento com clients",
+    "color": "blue",
+    "icon": "fas fa-handshake",
+    "created_at": "2025-07-17T11:26:30.532056"
+  },
+  {
+    "id": "tecnico",
+    "name": "Técnico",
+    "description": "Setor responsável por instalação e manutenção técnica",
+    "color": "green",
+    "icon": "fas fa-tools",
+    "created_at": "2025-07-17T11:26:30.532070"
+  },
+  {
+    "id": "financeiro",
+    "name": "Financeiro",
+    "description": "Setor responsável por contabilidade e finanças",
+    "color": "yellow",
+    "icon": "fas fa-calculator",
+    "created_at": "2025-07-17T11:26:30.532072"
+  },
+  {
+    "id": "rh",
+    "name": "Recursos Humanos",
+    "description": "Setor responsável por gestão de pessoas",
+    "color": "purple",
+    "icon": "fas fa-users",
+    "created_at": "2025-07-17T11:26:30.532093"
+  },
+  {
+    "id": "administration",
+    "name": "Administration",
+    "description": "Setor responsável por administração geral",
+    "color": "gray",
+    "icon": "fas fa-building",
+    "created_at": "2025-07-17T11:26:30.532099"
+  },
+  {
+    "id": "marketing",
+    "name": "Marketing",
+    "description": "Setor responsável por marketing e comunicação",
+    "color": "pink",
+    "icon": "fas fa-bullhorn",
+    "created_at": "2025-07-17T11:26:30.532100"
+  },
+  {
+    "id": "ti",
+    "name": "Tecnologia da Informação",
+    "description": "Setor responsável por sistemas e tecnologia",
+    "color": "indigo",
+    "icon": "fas fa-laptop-code",
+    "created_at": "2025-07-17T11:26:30.532101"
+  }
+]

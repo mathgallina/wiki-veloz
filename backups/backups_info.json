@@ -1,0 +1,314 @@
+[
+  {
+    "id": "backup_20250723_160711",
+    "name": "wiki_veloz_backup_20250723_160711",
+    "filename": "wiki_veloz_backup_20250723_160711.zip.encrypted",
+    "size": 13870840,
+    "created_at": "2025-07-23T16:07:12.263310",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_160920",
+    "name": "wiki_veloz_backup_20250723_160920",
+    "filename": "wiki_veloz_backup_20250723_160920.zip.encrypted",
+    "size": 13870948,
+    "created_at": "2025-07-23T16:09:20.480433",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_161348",
+    "name": "wiki_veloz_backup_20250723_161348",
+    "filename": "wiki_veloz_backup_20250723_161348.zip.encrypted",
+    "size": 13871052,
+    "created_at": "2025-07-23T16:13:48.608943",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_161350",
+    "name": "wiki_veloz_backup_20250723_161350",
+    "filename": "wiki_veloz_backup_20250723_161350.zip.encrypted",
+    "size": 13871160,
+    "created_at": "2025-07-23T16:13:51.105453",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_161413",
+    "name": "wiki_veloz_backup_20250723_161413",
+    "filename": "wiki_veloz_backup_20250723_161413.zip.encrypted",
+    "size": 13871288,
+    "created_at": "2025-07-23T16:14:14.016420",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_161436",
+    "name": "wiki_veloz_backup_20250723_161436",
+    "filename": "wiki_veloz_backup_20250723_161436.zip.encrypted",
+    "size": 13871396,
+    "created_at": "2025-07-23T16:14:36.880044",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_161935",
+    "name": "wiki_veloz_backup_20250723_161935",
+    "filename": "wiki_veloz_backup_20250723_161935.zip.encrypted",
+    "size": 13871500,
+    "created_at": "2025-07-23T16:19:35.758798",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_161944",
+    "name": "wiki_veloz_backup_20250723_161944",
+    "filename": "wiki_veloz_backup_20250723_161944.zip.encrypted",
+    "size": 13871608,
+    "created_at": "2025-07-23T16:19:44.391033",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_161953",
+    "name": "wiki_veloz_backup_20250723_161953",
+    "filename": "wiki_veloz_backup_20250723_161953.zip.encrypted",
+    "size": 13871716,
+    "created_at": "2025-07-23T16:19:54.053122",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_162015",
+    "name": "wiki_veloz_backup_20250723_162015",
+    "filename": "wiki_veloz_backup_20250723_162015.zip.encrypted",
+    "size": 13871820,
+    "created_at": "2025-07-23T16:20:15.953571",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_162025",
+    "name": "wiki_veloz_backup_20250723_162025",
+    "filename": "wiki_veloz_backup_20250723_162025.zip.encrypted",
+    "size": 13872012,
+    "created_at": "2025-07-23T16:20:26.119445",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_162033",
+    "name": "wiki_veloz_backup_20250723_162033",
+    "filename": "wiki_veloz_backup_20250723_162033.zip.encrypted",
+    "size": 13872120,
+    "created_at": "2025-07-23T16:20:33.686604",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_162040",
+    "name": "wiki_veloz_backup_20250723_162040",
+    "filename": "wiki_veloz_backup_20250723_162040.zip.encrypted",
+    "size": 13872312,
+    "created_at": "2025-07-23T16:20:40.852260",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_162052",
+    "name": "wiki_veloz_backup_20250723_162052",
+    "filename": "wiki_veloz_backup_20250723_162052.zip.encrypted",
+    "size": 13872440,
+    "created_at": "2025-07-23T16:20:52.703957",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_162058",
+    "name": "wiki_veloz_backup_20250723_162058",
+    "filename": "wiki_veloz_backup_20250723_162058.zip.encrypted",
+    "size": 13872716,
+    "created_at": "2025-07-23T16:20:58.903980",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_162121",
+    "name": "wiki_veloz_backup_20250723_162121",
+    "filename": "wiki_veloz_backup_20250723_162121.zip.encrypted",
+    "size": 13872824,
+    "created_at": "2025-07-23T16:21:22.281532",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_162151",
+    "name": "wiki_veloz_backup_20250723_162151",
+    "filename": "wiki_veloz_backup_20250723_162151.zip.encrypted",
+    "size": 13872996,
+    "created_at": "2025-07-23T16:21:52.199809",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_162328",
+    "name": "wiki_veloz_backup_20250723_162328",
+    "filename": "wiki_veloz_backup_20250723_162328.zip.encrypted",
+    "size": 13873100,
+    "created_at": "2025-07-23T16:23:28.520216",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_162522",
+    "name": "wiki_veloz_backup_20250723_162522",
+    "filename": "wiki_veloz_backup_20250723_162522.zip.encrypted",
+    "size": 13873228,
+    "created_at": "2025-07-23T16:25:23.161958",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_162702",
+    "name": "wiki_veloz_backup_20250723_162702",
+    "filename": "wiki_veloz_backup_20250723_162702.zip.encrypted",
+    "size": 13873336,
+    "created_at": "2025-07-23T16:27:02.489404",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_163002",
+    "name": "wiki_veloz_backup_20250723_163002",
+    "filename": "wiki_veloz_backup_20250723_163002.zip.encrypted",
+    "size": 13873464,
+    "created_at": "2025-07-23T16:30:02.427080",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_163956",
+    "name": "wiki_veloz_backup_20250723_163956",
+    "filename": "wiki_veloz_backup_20250723_163956.zip.encrypted",
+    "size": 13873548,
+    "created_at": "2025-07-23T16:39:56.621104",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_163956",
+    "name": "wiki_veloz_backup_20250723_163956",
+    "filename": "wiki_veloz_backup_20250723_163956.zip.encrypted",
+    "size": 13873656,
+    "created_at": "2025-07-23T16:39:57.066761",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_164158",
+    "name": "wiki_veloz_backup_20250723_164158",
+    "filename": "wiki_veloz_backup_20250723_164158.zip.encrypted",
+    "size": 13873804,
+    "created_at": "2025-07-23T16:41:58.406491",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_164209",
+    "name": "wiki_veloz_backup_20250723_164209",
+    "filename": "wiki_veloz_backup_20250723_164209.zip.encrypted",
+    "size": 13874020,
+    "created_at": "2025-07-23T16:42:10.351155",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250723_164951",
+    "name": "wiki_veloz_backup_20250723_164951",
+    "filename": "wiki_veloz_backup_20250723_164951.zip.encrypted",
+    "size": 13874148,
+    "created_at": "2025-07-23T16:49:52.268429",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250724_101829",
+    "name": "wiki_veloz_backup_20250724_101829",
+    "filename": "wiki_veloz_backup_20250724_101829.zip.encrypted",
+    "size": 13875000,
+    "created_at": "2025-07-24T10:18:29.456158",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250724_101829",
+    "name": "wiki_veloz_backup_20250724_101829",
+    "filename": "wiki_veloz_backup_20250724_101829.zip.encrypted",
+    "size": 13875108,
+    "created_at": "2025-07-24T10:18:29.838407",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250724_103350",
+    "name": "wiki_veloz_backup_20250724_103350",
+    "filename": "wiki_veloz_backup_20250724_103350.zip.encrypted",
+    "size": 13876600,
+    "created_at": "2025-07-24T10:33:50.908758",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250724_103449",
+    "name": "wiki_veloz_backup_20250724_103449",
+    "filename": "wiki_veloz_backup_20250724_103449.zip.encrypted",
+    "size": 13876876,
+    "created_at": "2025-07-24T10:34:49.887093",
+    "description": "Backup automático",
+    "encrypted": true,
+    "compressed": true
+  },
+  {
+    "id": "backup_20250725_152028",
+    "name": "wiki_veloz_backup_20250725_152028",
+    "filename": "wiki_veloz_backup_20250725_152028.zip.encrypted",
+    "size": 18456568,
+    "created_at": "2025-07-25T15:20:28.573436",
+    "description": "",
+    "encrypted": true,
+    "compressed": true,
+    "google_drive_id": null,
+    "status": "completed"
+  }
+]
