@@ -1391,5 +1391,26 @@
     "action": "document_created",
     "details": "Documento criado: Comercial",
     "timestamp": "2025-07-25T15:53:47.763209"
+  },
+  {
+    "id": "activity-20250731133943",
+    "user_id": "bruna-001",
+    "action": "login",
+    "details": "Login realizado por Bruna Silva",
+    "timestamp": "2025-07-31T13:39:43.619883"
+  },
+  {
+    "id": "activity-20250731134006",
+    "user_id": "admin-001",
+    "action": "user_updated",
+    "details": "Usuário atualizado: Matheus Gallina",
+    "timestamp": "2025-07-31T13:40:06.651564"
+  },
+  {
+    "user_id": "bruna-001",
+    "action": "user_update",
+    "details": "Usuário: {data.get('username', 'N/A')} - user_update",
+    "timestamp": "2025-07-31T13:40:06.652874",
+    "ip_address": "127.0.0.1"
   }
 ]

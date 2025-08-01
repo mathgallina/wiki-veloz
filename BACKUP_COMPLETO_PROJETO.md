@@ -36,8 +36,8 @@ python3 app.py
 ```
 
 ### **5. Acesse no navegador**
-- **http://localhost:8000**
-- **http://127.0.0.1:8000**
+- **http://localhost:8002**
+- **http://127.0.0.1:8002**
 
 ## 🔧 **Comandos Úteis**
 
@@ -46,12 +46,12 @@ python3 app.py
 
 ### **Para verificar se está rodando:**
 ```bash
-curl -I http://127.0.0.1:8000
+curl -I http://127.0.0.1:8002
 ```
 
-### **Para matar processos na porta 8000:**
+### **Para matar processos na porta 8002:**
 ```bash
-lsof -i :8000
+lsof -i :8002
 kill -9 PID_DO_PROCESSO
 ```
 
@@ -68,7 +68,7 @@ git push origin main
 - ✅ Repositório conectado ao GitHub
 - ✅ Ambiente virtual configurado
 - ✅ Todas as dependências instaladas
-- ✅ Servidor rodando na porta 8000
+- ✅ Servidor rodando na porta 8002
 - ✅ Sistema de login funcionando
 - ✅ Interface web acessível
 - ✅ Todas as funcionalidades ativas
@@ -127,10 +127,10 @@ wiki-veloz/
 - **Role:** admin
 
 ### **URLs de Acesso:**
-- **Login:** http://localhost:8000/auth/login
-- **Dashboard:** http://localhost:8000/
-- **Documentos:** http://localhost:8000/documents/
-- **Admin:** http://localhost:8000/admin/users
+- **Login:** http://localhost:8002/auth/login
+- **Dashboard:** http://localhost:8002/
+- **Documentos:** http://localhost:8002/documents/
+- **Admin:** http://localhost:8002/admin/users
 
 ## 📝 **Dependências Principais**
 
@@ -169,9 +169,9 @@ source .venv/bin/activate
 pip install Flask==2.3.3
 ```
 
-### **Porta 8000 ocupada:**
+### **Porta 8002 ocupada:**
 ```bash
-lsof -i :8000
+lsof -i :8002
 kill -9 PID_DO_PROCESSO
 ```
 

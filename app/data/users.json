@@ -7,19 +7,19 @@
     "password_hash": "pbkdf2:sha256:600000$kVTml0jFnKGnRP9r$68d165e1e5b581a02c601f3a80c430a6fc8116c4d173caf8b93eb2ff9592d492",
     "role": "admin",
     "created_at": "2025-07-23T10:36:39.763526",
-    "last_login": null,
+    "last_login": "2025-07-31T13:39:43.618533",
     "is_active": true,
-    "updated_at": "2025-07-25T14:49:32.418016"
+    "updated_at": "2025-07-31T13:39:43.618546"
   },
   {
     "id": "admin-001",
     "username": "admin",
     "name": "Matheus Gallina",
     "email": "matheus@velozfibra.com",
-    "password_hash": "pbkdf2:sha256:600000$40iOBDW3ayQ9gwwA$6291dbe141569200ed8b63006f2a3cd2295919dcb94fc3818c0c25031a3e9387",
+    "password_hash": "pbkdf2:sha256:600000$g5nvNTekDojLL2Wl$67434c1e38d779c7dedaa59d95e1240a8dbe4a833605a7c88c9b422822fb9565",
     "role": "admin",
     "created_at": "2025-07-25T12:55:56.968465",
-    "updated_at": "2025-07-25T15:51:27.415469",
+    "updated_at": "2025-07-31T13:40:06.651322",
     "last_login": "2025-07-25T15:51:27.415460",
     "is_active": true
   }
